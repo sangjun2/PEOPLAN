@@ -34,6 +34,12 @@ public class PlannerView extends ConstraintLayout {
     Button notificationButton;
     Button calendarSelectButton;
 
+    boolean isExistToday;
+    Button todayButton;
+
+    Button previousButton;
+    Button nextButton;
+
     public PlannerView(Context context) {
         super(context);
         this.context = context;
@@ -48,6 +54,7 @@ public class PlannerView extends ConstraintLayout {
 
     public void initView(final LocalDate localDate) {
         removeAllViews();
+        this.isExistToday = false;
 
         String infService = Context.LAYOUT_INFLATER_SERVICE;
         LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(infService);
@@ -56,6 +63,9 @@ public class PlannerView extends ConstraintLayout {
         addView(view);
 
         if(localDate != null) {
+            if(getToday(new LocalDate(), localDate)) {
+                this.isExistToday = true;
+            }
             yearText = view.findViewById(R.id.calendar_year_text);
             monthText = view.findViewById(R.id.calendar_month_text);
             calendarView = view.findViewById(R.id.calendar_view);
@@ -116,10 +126,36 @@ public class PlannerView extends ConstraintLayout {
                 }
             });
 
+            previousButton = view.findViewById(R.id.calendar_previous_bt);
+            previousButton.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    initView(localDate.minusMonths(1));
+                }
+            });
+            nextButton = view.findViewById(R.id.calendar_next_bt);
+            nextButton.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    initView(localDate.plusMonths(1));
+                }
+            });
+
+            todayButton = view.findViewById(R.id.calendar_today_bt);
+            todayButton.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    initView(new LocalDate());
+                }
+            });
 
             yearText.setText(localDate.year().getAsText());
             monthText.setText(String.valueOf(localDate.monthOfYear().get()));
             calendarView.setAdapter(new CalendarAdapter(localDate));
+
+            if(!this.isExistToday) {
+                todayButton.setVisibility(View.VISIBLE);
+            }
         }
 
     }
@@ -167,22 +203,45 @@ public class PlannerView extends ConstraintLayout {
         public View getView(int i, View view, ViewGroup viewGroup) {
             View v = LayoutInflater.from(context).inflate(R.layout.planner_item, null);
             TextView dateText = v.findViewById(R.id.planner_item_day);
+            LinearLayout dateLayout = v.findViewById(R.id.planner_item_layout);
             v.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, viewGroup.getHeight() / (this.count / 7)));
 
             LocalDate today = new LocalDate();
 
-            if(i < startDay) {
+            if(i < startDay) {// 전달
                 this.previousCalendar = this.calendar.minusDays(startDay - i);
                 dateText.setText(this.previousCalendar.dayOfMonth().getAsText());
-            } else if(i >= startDay + this.calendar.toDateTimeAtStartOfDay().dayOfMonth().withMaximumValue().getDayOfMonth()) {
+                if(getToday(today, this.previousCalendar)) {
+                    dateText.setBackgroundResource(R.drawable.ic_highlight_24dp);
+                    isExistToday = true;
+                }
+            } else if(i >= startDay + this.calendar.toDateTimeAtStartOfDay().dayOfMonth().withMaximumValue().getDayOfMonth()) { // 다음달
                 this.nextCalendar = this.calendar.plusMonths(1).plusDays(plusCount++);
                 dateText.setText(this.nextCalendar.dayOfMonth().getAsText());
-            } else {
-                dateText.setText(String.valueOf(this.calendar.dayOfMonth().get() + currentCount++));
+                if(getToday(today, this.nextCalendar)) {
+                    dateText.setBackgroundResource(R.drawable.ic_highlight_24dp);
+                    isExistToday = true;
+                }
+            } else { // 현재달
+                dateText.setText(String.valueOf(this.calendar.dayOfMonth().get()));
                 dateText.setTextColor(Color.parseColor("#000000"));
+                if(getToday(today, this.calendar)) {
+                    dateText.setBackgroundResource(R.drawable.ic_highlight_24dp);
+                    dateText.setTextColor(Color.parseColor("#ffffff"));
+                    isExistToday = true;
+                }
+
+                this.calendar = this.calendar.plusDays(1);
             }
 
             return v;
         }
+    }
+
+    private boolean getToday(LocalDate today, LocalDate date) {
+        int[] todays = today.getValues(); // size : 3 [0] = year, [1] = month, [2] = day
+        int[] dates = date.getValues();
+
+        return todays[0] == dates[0] && todays[1] == dates[1] && todays[2] == dates[2];
     }
 }
