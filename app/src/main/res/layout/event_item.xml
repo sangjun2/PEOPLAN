@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <TextView
+        android:id="@+id/eventType"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="그룹명 또는 my"/>
+    <ListView
+        android:id="@+id/eventList"
+        android:layout_width="match_parent"
+        app:layout_constraintTop_toBottomOf="@+id/eventType"
+        android:layout_height="wrap_content"></ListView>
+
+</android.support.constraint.ConstraintLayout>

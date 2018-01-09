@@ -1,11 +1,12 @@
 package com.sang.peoplan;
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * Created by sanginLee on 2018-01-09.
  */
-
-public class Group {
+@SuppressWarnings("serial")
+public class Group implements Serializable {
     private String groupId;
     private String groupName;
     private ArrayList<String> groupMember;
