@@ -14,6 +14,8 @@ import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
 import java.security.acl.Group;
 
 public class MainActivity extends AppCompatActivity {
+    FragmentManager fragmentManager;
+    FragmentTransaction fragmentTransaction;
 
     public static FragmentTransaction transaction;
 
@@ -22,36 +24,33 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        fragmentManager = getSupportFragmentManager();
+        fragmentTransaction = fragmentManager.beginTransaction();
+
         BottomNavigationViewEx bnve = findViewById(R.id.navigation);
 
         bnve.enableAnimation(false);
-        bnve.enableItemShiftingMode(false);
         bnve.enableShiftingMode(false);
-        bnve.setTextVisibility(false);
         bnve.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                transaction = getSupportFragmentManager().beginTransaction();
-                switch (item.getItemId()){
-                    case R.id.navigation_calendar:
-                        transaction.replace(R.id.frame, PlannerFragment.newInstance()).commit();
+                switch (item.getItemId()) {
+                    case R.id.navigation_planner:
+                        fragmentTransaction = fragmentManager.beginTransaction();
+                        fragmentTransaction.replace(R.id.frame, PlannerFragment.newInstance());
+                        fragmentTransaction.commit();
                         return true;
                     case R.id.navigation_group:
-                        transaction.replace(R.id.frame, GroupFragment.newInstance()).commit();
+                        fragmentTransaction = fragmentManager.beginTransaction();
+                        fragmentTransaction.replace(R.id.frame, GroupFragment.newInstance());
+                        fragmentTransaction.commit();
                         return true;
-                    case R.id.navigation_post:
-                        return true;
-                    case R.id.navigation_business_card:
-                        return true;
-                    default:
-                        break;
                 }
                 return false;
             }
         });
 
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
         fragmentTransaction.add(R.id.frame, PlannerFragment.newInstance());
         fragmentTransaction.commit();
 

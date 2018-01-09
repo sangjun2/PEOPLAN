@@ -1,10 +1,9 @@
 <resources>
     <string name="app_name">PEOPLAN</string>
-    <string name="title_calendar">Calendar</string>
-    <string name="title_group">Group</string>
-    <string name="title_post">Post</string>
-    <string name="title_business_card">BusinessCard</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_planner">Planner</string>
+    <string name="title_group">Group</string>
+    <string name="title_timeline">TImeline</string>
+    <string name="title_businesscard">BusinessCard</string>
+    <string name="title_account">Account</string>
 </resources>

@@ -6,23 +6,16 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.BaseAdapter;
-import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-
-
 public class GroupFragment extends Fragment {
-
-    ListView myGroup_list;
-    ArrayList<Group> myGroups;
+    FragmentManager fragmentManager;
+    FragmentTransaction fragmentTransaction;
 
     public GroupFragment() {
         // Required empty public constructor
@@ -45,22 +38,18 @@ public class GroupFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_group, container, false);
-        myGroup_list = view.findViewById(R.id.myGroup);
-        myGroups = new ArrayList<>();
 
-        myGroups.add(new Group("111", "비트코인 가족"));
-        myGroups.add(new Group("222", "가 족같은 우리회사 ^^"));
-        myGroup_list.setAdapter(new MyGroupAdapter(myGroups));
+        Toolbar toolbar = view.findViewById(R.id.group_toolbar);
+        TextView title = view.findViewById(R.id.toolbar_title);
+        title.setText("그룹");
 
-        myGroup_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                FragmentTransaction fragmentTransaction =getFragmentManager().beginTransaction();
-                fragmentTransaction.replace(R.id.frame, GroupDetailFragment.newInstance(myGroups.get(i)));
-                fragmentTransaction.addToBackStack(null);
-                fragmentTransaction.commit();
-            }
-        });
+        AppCompatActivity activity = (AppCompatActivity) getActivity();
+        activity.setSupportActionBar(toolbar);
+
+        fragmentManager = getActivity().getSupportFragmentManager();
+        fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.add(R.id.group_frame, GroupListFragment.newInstance());
+        fragmentTransaction.commit();
 
         return view;
     }
