@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.GridView;
@@ -39,6 +40,9 @@ public class PlannerView extends ConstraintLayout {
 
     Button previousButton;
     Button nextButton;
+
+    private DayScheduleDialog mDayScheduleDialog;
+
 
     public PlannerView(Context context) {
         super(context);
@@ -156,6 +160,15 @@ public class PlannerView extends ConstraintLayout {
             if(!this.isExistToday) {
                 todayButton.setVisibility(View.VISIBLE);
             }
+
+            calendarView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                    mDayScheduleDialog = new DayScheduleDialog(getContext());
+                    mDayScheduleDialog.setCanceledOnTouchOutside(true);
+                    mDayScheduleDialog.show();
+                }
+            });
         }
 
     }

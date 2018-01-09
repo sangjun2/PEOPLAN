@@ -21,7 +21,6 @@ public class GroupFragment extends Fragment {
         // Required empty public constructor
     }
 
-
     // TODO: Rename and change types and number of parameters
     public static GroupFragment newInstance() {
         GroupFragment fragment = new GroupFragment();
@@ -63,5 +62,39 @@ public class GroupFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
+    }
+
+    public class MyGroupAdapter extends BaseAdapter{
+        ArrayList<Group> groups;
+
+        public MyGroupAdapter(ArrayList groups){
+            this.groups = groups;
+        }
+        @Override
+        public int getCount() {
+            return groups.size();
+        }
+
+        @Override
+        public Group getItem(int i) {
+            return groups.get(i);
+        }
+
+        @Override
+        public long getItemId(int i) {
+            return i;
+        }
+
+        @Override
+        public View getView(int i, View view, ViewGroup viewGroup) {
+            View v = LayoutInflater.from(getContext()).inflate(R.layout.group_list_item, null);
+            ImageView groupImage = v.findViewById(R.id.groupImage);
+            TextView groupName = v.findViewById(R.id.groupName);
+
+            groupName.setText(groups.get(i).getGroupName());
+
+
+            return v;
+        }
     }
 }
