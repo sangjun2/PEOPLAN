@@ -11,7 +11,11 @@ import android.widget.TextView;
 
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
 
+import java.security.acl.Group;
+
 public class MainActivity extends AppCompatActivity {
+
+    public static FragmentTransaction transaction;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,7 +31,21 @@ public class MainActivity extends AppCompatActivity {
         bnve.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-
+                transaction = getSupportFragmentManager().beginTransaction();
+                switch (item.getItemId()){
+                    case R.id.navigation_calendar:
+                        transaction.replace(R.id.frame, PlannerFragment.newInstance()).commit();
+                        return true;
+                    case R.id.navigation_group:
+                        transaction.replace(R.id.frame, GroupFragment.newInstance()).commit();
+                        return true;
+                    case R.id.navigation_post:
+                        return true;
+                    case R.id.navigation_business_card:
+                        return true;
+                    default:
+                        break;
+                }
                 return false;
             }
         });
