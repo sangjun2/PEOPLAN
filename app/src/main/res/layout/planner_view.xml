@@ -146,20 +146,18 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/calendar_top_layout"/>
 
-    <GridView
-        android:id="@+id/calendar_view"
+    <android.support.v4.view.ViewPager
+        android:id="@+id/calendar_viewpager"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="@drawable/border"
-        android:numColumns="7"
-        android:isScrollContainer="false"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/calendar_header">
 
-    </GridView>
+    </android.support.v4.view.ViewPager>
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/calendar_select_view"

@@ -8,6 +8,8 @@
     <com.sang.peoplan.PlannerView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/planner"/>
+        android:id="@+id/planner">
+
+    </com.sang.peoplan.PlannerView>
 
 </FrameLayout>

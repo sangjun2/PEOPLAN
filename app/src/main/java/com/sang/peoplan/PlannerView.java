@@ -3,15 +3,16 @@ package com.sang.peoplan;
 import android.content.Context;
 import android.graphics.Color;
 import android.support.constraint.ConstraintLayout;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.NumberPicker;
 import android.widget.TextView;
@@ -29,7 +30,9 @@ public class PlannerView extends ConstraintLayout {
     LinearLayout calendarSelectLayout;
     ConstraintLayout calendarSelectView;
     boolean isCalendarSelectClicked;
-    GridView calendarView;
+
+    ViewPager viewPager;
+
     Context context;
 
     Button notificationButton;
@@ -40,6 +43,8 @@ public class PlannerView extends ConstraintLayout {
 
     Button previousButton;
     Button nextButton;
+
+    LocalDate date;
 
     private DayScheduleDialog mDayScheduleDialog;
 
@@ -57,6 +62,7 @@ public class PlannerView extends ConstraintLayout {
     }
 
     public void initView(final LocalDate localDate) {
+        this.date = localDate;
         removeAllViews();
         this.isExistToday = false;
 
@@ -66,15 +72,60 @@ public class PlannerView extends ConstraintLayout {
         final View view = inflater.inflate(R.layout.planner_view, this, false);
         addView(view);
 
-        if(localDate != null) {
-            if(getToday(new LocalDate(), localDate)) {
+        if(this.date != null) {
+            if(isExistToday(this.date)) {
                 this.isExistToday = true;
             }
             yearText = view.findViewById(R.id.calendar_year_text);
             monthText = view.findViewById(R.id.calendar_month_text);
-            calendarView = view.findViewById(R.id.calendar_view);
-            calendarSelectView = view.findViewById(R.id.calendar_select_view);
-            calendarSelectView.setOnClickListener(new OnClickListener() {
+
+            viewPager = view.findViewById(R.id.calendar_viewpager);
+            viewPager.setAdapter(new CalendarPagerAdapter(this.date));
+            viewPager.setCurrentItem(1);
+            viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+                CalendarPagerAdapter calendarPagerAdapter;
+
+                @Override
+                public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+                }
+
+                @Override
+                public void onPageSelected(int position) {
+                    if(position == 0) {
+                        date = date.minusMonths(1);
+                        calendarPagerAdapter = new CalendarPagerAdapter(date);
+                    } else if(position == 2) {
+                        date = date.plusMonths(1);
+                        calendarPagerAdapter = new CalendarPagerAdapter(date);
+                    }
+                }
+
+                @Override
+                public void onPageScrollStateChanged(int state) {
+                    if(state == ViewPager.SCROLL_STATE_IDLE) {
+                        isExistToday = false;
+
+                        viewPager.setAdapter(calendarPagerAdapter);
+                        viewPager.setCurrentItem(1);
+                        yearText.setText(date.year().getAsText());
+                        monthText.setText(String.valueOf(date.monthOfYear().get()));
+
+                        if(isExistToday(date)) {
+                            isExistToday = true;
+                        }
+
+                        if(!isExistToday) {
+                            todayButton.setVisibility(View.VISIBLE);
+                        } else {
+                            todayButton.setVisibility(View.GONE);
+                        }
+                    }
+                }
+            });
+
+            calendarSelectView = view.findViewById(R.id.calendar_select_view); // number picker부분
+            calendarSelectView.setOnClickListener(new OnClickListener() { // 검은배경 클릭시
                 @Override
                 public void onClick(View view) {
 
@@ -155,104 +206,139 @@ public class PlannerView extends ConstraintLayout {
 
             yearText.setText(localDate.year().getAsText());
             monthText.setText(String.valueOf(localDate.monthOfYear().get()));
-            calendarView.setAdapter(new CalendarAdapter(localDate));
 
             if(!this.isExistToday) {
                 todayButton.setVisibility(View.VISIBLE);
             }
-
-            calendarView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                    mDayScheduleDialog = new DayScheduleDialog(getContext());
-                    mDayScheduleDialog.setCanceledOnTouchOutside(true);
-                    mDayScheduleDialog.show();
-                }
-            });
         }
 
     }
 
+    public class CalendarPagerAdapter extends PagerAdapter {
+        LocalDate[] localDates;
+        int size;
 
-    public class CalendarAdapter extends BaseAdapter {
+        public CalendarPagerAdapter(LocalDate localDate) {
+            this.size = 3;
+            LocalDate date = localDate.withDayOfMonth(1);
+            localDates = new LocalDate[this.size];
+            localDates[0] = date.minusMonths(1);
+            localDates[1] = date;
+            localDates[2] = date.plusMonths(1);
+         }
+
+        @Override
+        public Object instantiateItem(ViewGroup container, int position) {
+            View view = LayoutInflater.from(context).inflate(R.layout.planner_recyclerview, null);
+
+            RecyclerView recyclerView = view.findViewById(R.id.calendar_recyclerview);
+            recyclerView.setLayoutManager(new GridLayoutManager(context, 7, LinearLayoutManager.VERTICAL, false));
+            recyclerView.setAdapter(new CalendarRecyclerViewAdapter(localDates[position]));
+            container.addView(view);
+            return view;
+        }
+
+        @Override
+        public void destroyItem(ViewGroup container, int position, Object object) {
+            container.removeView((ConstraintLayout) object);
+        }
+
+        @Override
+        public boolean isViewFromObject(View view, Object object) {
+            return view == object;
+        }
+
+        @Override
+        public int getCount() {
+            return this.size;
+        }
+    }
+
+    public class CalendarRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         public LocalDate calendar;
         private int startDay;
         private int lastDay;
         private int count;
 
-        private int currentCount;
+        private int calendarCount;
         private int plusCount;
 
         LocalDate previousCalendar;
         LocalDate nextCalendar;
 
+        Context mContext;
 
-        public CalendarAdapter(LocalDate localDate) {
-            this.calendar = new LocalDate(localDate.year().get(), localDate.monthOfYear().get(), 1);
+        public CalendarRecyclerViewAdapter(LocalDate localDate) {
+            this.calendar = localDate;
             this.startDay = this.calendar.getDayOfWeek() == 7 ? 0 : this.calendar.getDayOfWeek(); // 1일의 요일
             this.lastDay = this.calendar.toDateTimeAtStartOfDay().dayOfMonth().withMaximumValue().getDayOfWeek() == 7 ? 0 : this.calendar.toDateTimeAtStartOfDay().dayOfMonth().withMaximumValue().getDayOfWeek(); // 마지막날 요일(일요일은 7)
-            this.count = startDay + (6 - lastDay) + this.calendar.dayOfMonth().withMaximumValue().getDayOfMonth();
+            this.calendarCount = this.calendar.dayOfMonth().withMaximumValue().getDayOfMonth();
+            this.count = startDay + (6 - lastDay) + this.calendarCount;
 
-            this.currentCount = 0;
             this.plusCount = 0;
         }
 
         @Override
-        public int getCount() {
-            return this.count;
+        public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            mContext = parent.getContext();
+            View view = LayoutInflater.from(context).inflate(R.layout.planner_item, parent, false);
+            view.setLayoutParams(new LinearLayout.LayoutParams(parent.getWidth() / 7, parent.getHeight() / (this.count / 7)));
+            ViewHolder viewHolder = new ViewHolder(view);
+
+            return viewHolder;
         }
 
         @Override
-        public Object getItem(int i) {
-            return null;
-        }
+        public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+            ViewHolder viewHolder = (ViewHolder) holder;
 
-        @Override
-        public long getItemId(int i) {
-            return 0;
-        }
-
-        @Override
-        public View getView(int i, View view, ViewGroup viewGroup) {
-            View v = LayoutInflater.from(context).inflate(R.layout.planner_item, null);
-            TextView dateText = v.findViewById(R.id.planner_item_day);
-            LinearLayout dateLayout = v.findViewById(R.id.planner_item_layout);
-            v.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, viewGroup.getHeight() / (this.count / 7)));
-
-            LocalDate today = new LocalDate();
-
-            if(i < startDay) {// 전달
-                this.previousCalendar = this.calendar.minusDays(startDay - i);
-                dateText.setText(this.previousCalendar.dayOfMonth().getAsText());
-                if(getToday(today, this.previousCalendar)) {
-                    dateText.setBackgroundResource(R.drawable.ic_highlight_24dp);
+            if (position < startDay) {// 전달
+                this.previousCalendar = this.calendar.minusDays(startDay - position);
+                viewHolder.dateText.setText(this.previousCalendar.dayOfMonth().getAsText());
+                viewHolder.dateText.setTextColor(Color.parseColor("#A9A9A9"));
+                if (isExistToday(this.previousCalendar)) {
+                    viewHolder.dateText.setBackgroundResource(R.drawable.ic_highlight_24dp);
                     isExistToday = true;
                 }
-            } else if(i >= startDay + this.calendar.toDateTimeAtStartOfDay().dayOfMonth().withMaximumValue().getDayOfMonth()) { // 다음달
+            } else if (position >= startDay + this.calendarCount) { // 다음달
                 this.nextCalendar = this.calendar.plusMonths(1).plusDays(plusCount++);
-                dateText.setText(this.nextCalendar.dayOfMonth().getAsText());
-                if(getToday(today, this.nextCalendar)) {
-                    dateText.setBackgroundResource(R.drawable.ic_highlight_24dp);
+                viewHolder.dateText.setText(this.nextCalendar.dayOfMonth().getAsText());
+                viewHolder.dateText.setTextColor(Color.parseColor("#A9A9A9"));
+                if (isExistToday(this.nextCalendar)) {
+                    viewHolder.dateText.setBackgroundResource(R.drawable.ic_highlight_24dp);
                     isExistToday = true;
                 }
             } else { // 현재달
-                dateText.setText(String.valueOf(this.calendar.dayOfMonth().get()));
-                dateText.setTextColor(Color.parseColor("#000000"));
-                if(getToday(today, this.calendar)) {
-                    dateText.setBackgroundResource(R.drawable.ic_highlight_24dp);
-                    dateText.setTextColor(Color.parseColor("#ffffff"));
+                viewHolder.dateText.setText(this.calendar.dayOfMonth().getAsText());
+                viewHolder.dateText.setTextColor(Color.parseColor("#000000"));
+                if (isExistToday(this.calendar)) {
+                    viewHolder.dateText.setBackgroundResource(R.drawable.ic_highlight_24dp);
+                    viewHolder.dateText.setTextColor(Color.parseColor("#ffffff"));
                     isExistToday = true;
                 }
 
                 this.calendar = this.calendar.plusDays(1);
             }
+        }
 
-            return v;
+        @Override
+        public int getItemCount() {
+            return this.count;
+        }
+
+        public class ViewHolder extends RecyclerView.ViewHolder {
+            TextView dateText;
+
+            public ViewHolder(View itemView) {
+                super(itemView);
+
+                dateText = itemView.findViewById(R.id.planner_item_day);
+            }
         }
     }
 
-    private boolean getToday(LocalDate today, LocalDate date) {
-        int[] todays = today.getValues(); // size : 3 [0] = year, [1] = month, [2] = day
+    private boolean isExistToday(LocalDate date) {
+        int[] todays = new LocalDate().getValues(); // size : 3 [0] = year, [1] = month, [2] = day
         int[] dates = date.getValues();
 
         return todays[0] == dates[0] && todays[1] == dates[1] && todays[2] == dates[2];
