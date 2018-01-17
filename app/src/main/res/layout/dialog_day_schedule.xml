@@ -1,57 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="400dp"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:layout_height="wrap_content">
+
     <LinearLayout
-        android:id="@+id/dayContainer"
+        android:id="@+id/day_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="right"
         android:orientation="vertical"
-        android:gravity="right">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="this day"
-            android:textSize="20sp"/>
+            android:text=""
+            android:id="@+id/dialog_day_text"
+            android:padding="8dp"
+            android:textSize="20sp" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:orientation="horizontal"
-            >
+            android:orientation="horizontal">
+
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="1dp"
                 android:layout_weight="1"
                 android:orientation="horizontal"></LinearLayout>
+
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="1dp"
                 android:layout_weight="3"
-                android:orientation="horizontal"
-                android:background="#000000"></LinearLayout>
+                android:background="#000000"
+                android:orientation="horizontal"></LinearLayout>
         </LinearLayout>
     </LinearLayout>
+
     <LinearLayout
-        android:id="@+id/EventContainer"
+        android:id="@+id/event_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:minHeight="200dp"
         android:orientation="vertical"
-        app:layout_constraintTop_toBottomOf="@+id/dayContainer">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/day_container">
+
         <ListView
-            android:id="@+id/eventTypeList"
+            android:id="@+id/event_listview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"></ListView>
     </LinearLayout>
-    <com.melnykov.fab.FloatingActionButton
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_margin="8dp"
-        app:fab_colorNormal="@color/colorPrimary"
-        android:src="@drawable/ic_add_white_36dp"
 
-        ></com.melnykov.fab.FloatingActionButton>
+    <android.support.design.widget.FloatingActionButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/dialog_floating_bt"
+        android:backgroundTint="@color/colorPrimary"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.95"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.95"
+        app:srcCompat="@drawable/ic_add_white_24dp" />
 
 </android.support.constraint.ConstraintLayout>

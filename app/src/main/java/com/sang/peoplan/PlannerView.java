@@ -19,6 +19,8 @@ import android.widget.TextView;
 
 import org.joda.time.LocalDate;
 
+import java.text.SimpleDateFormat;
+
 
 /**
  * Created by Sangjun on 2018-01-06.
@@ -283,7 +285,18 @@ public class PlannerView extends ConstraintLayout {
             mContext = parent.getContext();
             View view = LayoutInflater.from(context).inflate(R.layout.planner_item, parent, false);
             view.setLayoutParams(new LinearLayout.LayoutParams(parent.getWidth() / 7, parent.getHeight() / (this.count / 7)));
-            ViewHolder viewHolder = new ViewHolder(view);
+            final ViewHolder viewHolder = new ViewHolder(view);
+
+            view.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    DayScheduleDialog dialog = new DayScheduleDialog(context);
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd");
+                    String date = dateFormat.format(viewHolder.getLocalDate().toDate());
+                    dialog.setDay(date);
+                    dialog.show();
+                }
+            }); // item click listener
 
             return viewHolder;
         }
@@ -294,6 +307,7 @@ public class PlannerView extends ConstraintLayout {
 
             if (position < startDay) {// 전달
                 this.previousCalendar = this.calendar.minusDays(startDay - position);
+                viewHolder.setLocalDate(this.previousCalendar);
                 viewHolder.dateText.setText(this.previousCalendar.dayOfMonth().getAsText());
                 viewHolder.dateText.setTextColor(Color.parseColor("#A9A9A9"));
                 if (isExistToday(this.previousCalendar)) {
@@ -301,7 +315,8 @@ public class PlannerView extends ConstraintLayout {
                     isExistToday = true;
                 }
             } else if (position >= startDay + this.calendarCount) { // 다음달
-                this.nextCalendar = this.calendar.plusMonths(1).plusDays(plusCount++);
+                this.nextCalendar = this.calendar.plusDays(plusCount++);
+                viewHolder.setLocalDate(this.nextCalendar);
                 viewHolder.dateText.setText(this.nextCalendar.dayOfMonth().getAsText());
                 viewHolder.dateText.setTextColor(Color.parseColor("#A9A9A9"));
                 if (isExistToday(this.nextCalendar)) {
@@ -309,6 +324,7 @@ public class PlannerView extends ConstraintLayout {
                     isExistToday = true;
                 }
             } else { // 현재달
+                viewHolder.setLocalDate(this.calendar);
                 viewHolder.dateText.setText(this.calendar.dayOfMonth().getAsText());
                 viewHolder.dateText.setTextColor(Color.parseColor("#000000"));
                 if (isExistToday(this.calendar)) {
@@ -328,11 +344,20 @@ public class PlannerView extends ConstraintLayout {
 
         public class ViewHolder extends RecyclerView.ViewHolder {
             TextView dateText;
+            LocalDate localDate;
 
             public ViewHolder(View itemView) {
                 super(itemView);
 
                 dateText = itemView.findViewById(R.id.planner_item_day);
+            }
+
+            public void setLocalDate(LocalDate localDate) {
+                this.localDate = localDate;
+            }
+
+            public LocalDate getLocalDate() {
+                return this.localDate;
             }
         }
     }
