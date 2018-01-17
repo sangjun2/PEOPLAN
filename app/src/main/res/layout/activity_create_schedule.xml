@@ -4,10 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.sang.peoplan.CreateGroupActivity">
+    tools:context="com.sang.peoplan.CreateScheduleActivity">
 
     <include
-        android:id="@+id/group_toolbar"
+        android:id="@+id/schedule_toolbar"
         layout="@layout/confirm_toolbar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"

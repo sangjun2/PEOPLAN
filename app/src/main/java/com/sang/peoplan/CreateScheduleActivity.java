@@ -3,32 +3,21 @@ package com.sang.peoplan;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.view.MenuItem;
 import android.widget.TextView;
 
-public class CreateGroupActivity extends AppCompatActivity {
+public class CreateScheduleActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_create_group);
+        setContentView(R.layout.activity_create_schedule);
 
-        Toolbar toolbar = findViewById(R.id.group_toolbar);
+        Toolbar toolbar = findViewById(R.id.schedule_toolbar);
         TextView toolbarTitle = findViewById(R.id.confirm_toolbar_title);
-        toolbarTitle.setText("그룹 만들기");
+        toolbarTitle.setText("일정 추가");
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                onBackPressed();
-                return true;
-        }
 
-        return false;
     }
 
     @Override
