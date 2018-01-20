@@ -19,7 +19,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".CreateGroupActivity" />
-        <activity android:name=".CreateScheduleActivity"></activity>
+        <activity android:name=".CreateScheduleActivity" />
+        <activity android:name=".SetEventRepeatActivity" />
     </application>
 
 </manifest>
