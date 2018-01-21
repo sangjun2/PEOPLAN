@@ -124,35 +124,97 @@
             android:layout_height="wrap_content"
             android:padding="8dp"
             android:orientation="vertical">
-            <Button
-                android:id="@+id/eventStartButton"
+            <LinearLayout
+                android:id="@+id/eventStart"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="#ffffff"
-                android:gravity="left|center"
-                android:text="시작"/>
-            <Button
-                android:id="@+id/eventEndButton"
+                android:orientation="horizontal"
+                android:padding="8dp"
+                android:background="#ffffff">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="30dp"
+                    android:text="시작"
+                    android:textSize="15sp"
+                    android:layout_weight="5"
+                    android:gravity="left|center"
+                    android:textColor="#000000"/>
+                <TextView
+                    android:id="@+id/eventStartConfirm"
+                    android:layout_width="0dp"
+                    android:layout_height="30dp"
+                    android:textSize="15sp"
+                    android:layout_weight="1"/>
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/eventEnd"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="#ffffff"
-                android:gravity="left|center"
-                android:text="종료"/>
-            <Button
-                android:id="@+id/repeatButton"
+                android:orientation="horizontal"
+                android:padding="8dp"
+                android:background="#ffffff">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="30dp"
+                    android:text="종료"
+                    android:textSize="15sp"
+                    android:layout_weight="5"
+                    android:gravity="left|center"
+                    android:textColor="#000000"/>
+                <TextView
+                    android:id="@+id/eventEndConfirm"
+                    android:layout_width="0dp"
+                    android:layout_height="30dp"
+                    android:textSize="15sp"
+                    android:layout_weight="1"/>
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/repeatView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="#ffffff"
-                android:gravity="left|center"
-                android:text="반복"/>
-            <Button
-                android:id="@+id/alarmSelectButton"
+                android:orientation="horizontal"
+                android:padding="8dp"
+                android:background="#ffffff">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="30dp"
+                    android:text="반복"
+                    android:textSize="15sp"
+                    android:layout_weight="5"
+                    android:gravity="left|center"
+                    android:textColor="#000000"/>
+                <TextView
+                    android:id="@+id/repeatConfirm"
+                    android:layout_width="0dp"
+                    android:layout_height="30dp"
+                    android:textSize="15sp"
+                    android:text="없음"
+                    android:layout_weight="1"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/alarmSelect"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="#ffffff"
-                android:gravity="left|center"
+                android:orientation="horizontal"
+                android:padding="8dp"
                 android:visibility="gone"
-                android:text="알림음"/>
+                android:background="#ffffff">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="30dp"
+                    android:text="알림음"
+                    android:textSize="15sp"
+                    android:layout_weight="5"
+                    android:gravity="left|center"
+                    android:textColor="#000000"/>
+                <TextView
+                    android:id="@+id/alarmConfirm"
+                    android:layout_width="0dp"
+                    android:layout_height="30dp"
+                    android:textSize="15sp"
+                    android:layout_weight="1"/>
+            </LinearLayout>
             <EditText
                 android:id="@+id/eventContent"
                 android:layout_width="match_parent"

@@ -1,12 +1,25 @@
 package com.sang.peoplan;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class SetEventRepeatActivity extends AppCompatActivity {
+    RadioGroup radioGroup;
+    Button confirm;
+    RadioButton radioButton;
+
+    final int RESULTCODE_REPEAT = 200;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -15,9 +28,26 @@ public class SetEventRepeatActivity extends AppCompatActivity {
 
         Toolbar toolbar = findViewById(R.id.event_repeat_toolbar);
         TextView toolbarTitle = findViewById(R.id.confirm_toolbar_title);
-        toolbarTitle.setText("그룹 만들기");
+        toolbarTitle.setText("반복 설정");
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        radioGroup = findViewById(R.id.repeatGroup);
+        confirm = findViewById(R.id.confirm_toolbar_bt);
+
+        confirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                radioButton = findViewById(radioGroup.getCheckedRadioButtonId());
+                Toast.makeText(SetEventRepeatActivity.this, radioButton.getText(), Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent();
+                intent.putExtra("repeat", radioButton.getText());
+                setResult(Activity.RESULT_OK, intent);
+                finish();
+
+            }
+        });
+
     }
 
     @Override
