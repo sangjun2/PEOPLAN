@@ -1,5 +1,7 @@
 package com.sang.peoplan;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -7,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -16,16 +19,27 @@ public class CreateScheduleActivity extends AppCompatActivity {
     Switch isAlarm;
     EditText eventTitle;
     Button selectGroupButton;
-    Button eventStartButton;
-    Button eventEndButton;
-    Button repeatButton;
-    Button alarmSelectButton;
+    LinearLayout eventStart;
+    LinearLayout eventEnd;
+    LinearLayout repeatView;
+    LinearLayout alarmSelect;
     EditText eventContent;
     Button confirm;
+    TextView repeatConfirm;
 
     final int REQUESTCODE_GROUP = 100;
     final int REQUESTCODE_REPEAT = 200;
     final int REQUESTCODE_ALARM = 300;
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode == REQUESTCODE_REPEAT){
+            if(resultCode == Activity.RESULT_OK){
+                String repeat = data.getStringExtra("repeat");
+                repeatConfirm.setText(repeat);
+            }
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,12 +55,13 @@ public class CreateScheduleActivity extends AppCompatActivity {
         isAlarm = findViewById(R.id.isAlarm);
         eventTitle = findViewById(R.id.eventTitle);
         selectGroupButton = findViewById(R.id.selectGroupButton);
-        eventStartButton = findViewById(R.id.eventStartButton);
-        eventEndButton = findViewById(R.id.eventEndButton);
-        repeatButton = findViewById(R.id.repeatButton);
-        alarmSelectButton = findViewById(R.id.alarmSelectButton);
+        eventStart = findViewById(R.id.eventStart);
+        eventEnd = findViewById(R.id.eventEnd);
+        repeatView = findViewById(R.id.repeatView);
+        alarmSelect = findViewById(R.id.alarmSelect);
         eventContent = findViewById(R.id.eventContent);
         confirm = findViewById(R.id.confirm_toolbar_bt);
+        repeatConfirm = findViewById(R.id.repeatConfirm);
 
 
         isGroup.setOnCheckedChangeListener(new Switch.OnCheckedChangeListener(){
@@ -65,10 +80,10 @@ public class CreateScheduleActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if(b){
-                    alarmSelectButton.setVisibility(View.VISIBLE);
+                    alarmSelect.setVisibility(View.VISIBLE);
                 }
                 else{
-                    alarmSelectButton.setVisibility(View.GONE);
+                    alarmSelect.setVisibility(View.GONE);
                 }
             }
         });
@@ -80,28 +95,29 @@ public class CreateScheduleActivity extends AppCompatActivity {
             }
         });
 
-        eventStartButton.setOnClickListener(new View.OnClickListener() {
+        eventStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
             }
         });
 
-        eventEndButton.setOnClickListener(new View.OnClickListener() {
+        eventEnd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
             }
         });
 
-        repeatButton.setOnClickListener(new View.OnClickListener() {
+        repeatView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                Intent intent = new Intent(getApplicationContext(), SetEventRepeatActivity.class);
+                startActivityForResult(intent, REQUESTCODE_REPEAT);
             }
         });
 
-        alarmSelectButton.setOnClickListener(new View.OnClickListener() {
+        alarmSelect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 

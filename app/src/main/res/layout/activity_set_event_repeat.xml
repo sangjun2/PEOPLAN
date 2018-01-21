@@ -27,23 +27,50 @@
             android:id="@+id/repeatGroup"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:background="#ffffff">
-                <Button
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:background="#ffffff"
-                    android:text="없음"
-                    android:layout_weight="7"
-                    android:gravity="left|center"/>
                 <RadioButton
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"/>
-            </LinearLayout>
+                    android:checked="true"
+                    android:layout_margin="8dp"
+                    android:padding="8dp"
+                    android:layoutDirection="rtl"
+                    android:text="없음"
+                    android:id="@+id/none"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+                <RadioButton
+                    android:layout_margin="8dp"
+                    android:padding="8dp"
+                    android:layoutDirection="rtl"
+                    android:text="매일"
+                    android:id="@+id/everyday"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <RadioButton
+                    android:layout_margin="8dp"
+                    android:padding="8dp"
+                    android:text="매주"
+                    android:layoutDirection="rtl"
+                    android:id="@+id/everyWeek"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <RadioButton
+                    android:layout_margin="8dp"
+                    android:padding="8dp"
+                    android:text="매월"
+                    android:layoutDirection="rtl"
+                    android:id="@+id/everyMonth"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <RadioButton
+                    android:layout_margin="8dp"
+                    android:padding="8dp"
+                    android:text="매년"
+                    android:layoutDirection="rtl"
+                    android:id="@+id/everyYear"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
         </RadioGroup>
     </LinearLayout>
 
