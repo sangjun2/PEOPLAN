@@ -1,5 +1,7 @@
 package com.sang.peoplan;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -16,8 +18,6 @@ import java.security.acl.Group;
 public class MainActivity extends AppCompatActivity {
     FragmentManager fragmentManager;
     FragmentTransaction fragmentTransaction;
-
-    public static FragmentTransaction transaction;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +50,15 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        /*
+        SharedPreferences preferences = getSharedPreferences("Account", MODE_PRIVATE);
+        boolean existData = preferences.getBoolean("Login", false);
+        if(!existData) {
+            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+            startActivity(intent);
+            //finish();
+        }
+        */
 
         fragmentTransaction.add(R.id.frame, PlannerFragment.newInstance());
         fragmentTransaction.commit();

@@ -17,7 +17,6 @@ public class CreateScheduleActivity extends AppCompatActivity {
         toolbarTitle.setText("일정 추가");
         setSupportActionBar(toolbar);
 
-
     }
 
     @Override
