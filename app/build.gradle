@@ -28,6 +28,16 @@ dependencies {
     implementation 'com.android.support:support-v4:26.1.0'
     compile 'com.github.ittianyu:BottomNavigationViewEx:1.2.4'
     compile 'joda-time:joda-time:2.9.9'
+
+    // 카카오 로그인 sdk를 사용하기 위해 필요.
+    compile group: 'com.kakao.sdk', name: 'usermgmt', version: '1.5.1'
+
+    // 카카오링크 sdk를 사용하기 위해 필요.
+    compile group: 'com.kakao.sdk', name: 'kakaolink', version: '1.5.1'
+
+    // 카카오톡 sdk를 사용하기 위해 필요.
+    compile group: 'com.kakao.sdk', name: 'kakaotalk', version: '1.5.1'
+
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
