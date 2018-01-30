@@ -27,9 +27,14 @@ public class CreateScheduleActivity extends AppCompatActivity {
     Button confirm;
     TextView repeatConfirm;
 
+    TextView eventStartText;
+    TextView eventEndText;
+
     final int REQUESTCODE_GROUP = 100;
     final int REQUESTCODE_REPEAT = 200;
     final int REQUESTCODE_ALARM = 300;
+
+    private String day = "";
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -51,7 +56,10 @@ public class CreateScheduleActivity extends AppCompatActivity {
         toolbarTitle.setText("일정 추가");
         setSupportActionBar(toolbar);
 
-        isGroup = findViewById(R.id.isGroup);
+        Intent intent = getIntent();
+        this.day = intent.getStringExtra("day");
+
+        isGroup = findViewById(R.id.is_group);
         isAlarm = findViewById(R.id.isAlarm);
         eventTitle = findViewById(R.id.eventTitle);
         selectGroupButton = findViewById(R.id.selectGroupButton);
@@ -62,6 +70,9 @@ public class CreateScheduleActivity extends AppCompatActivity {
         eventContent = findViewById(R.id.eventContent);
         confirm = findViewById(R.id.confirm_toolbar_bt);
         repeatConfirm = findViewById(R.id.repeatConfirm);
+
+        eventStartText = findViewById(R.id.eventStartConfirm);
+        eventEndText = findViewById(R.id.eventEndConfirm);
 
 
         isGroup.setOnCheckedChangeListener(new Switch.OnCheckedChangeListener(){
@@ -95,6 +106,7 @@ public class CreateScheduleActivity extends AppCompatActivity {
             }
         });
 
+        eventStartText.setText(day);
         eventStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -114,6 +126,7 @@ public class CreateScheduleActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), SetEventRepeatActivity.class);
                 startActivityForResult(intent, REQUESTCODE_REPEAT);
+                overridePendingTransition(R.anim.anim_slide_in_right, R.anim.anim_slide_out_left);
             }
         });
 

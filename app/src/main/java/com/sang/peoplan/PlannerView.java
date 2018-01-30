@@ -332,7 +332,6 @@ public class PlannerView extends ConstraintLayout {
                     viewHolder.dateText.setTextColor(Color.parseColor("#ffffff"));
                     isExistToday = true;
                 }
-
                 this.calendar = this.calendar.plusDays(1);
             }
         }
