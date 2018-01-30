@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.sang.peoplan">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:name=".GlobalApplication"
         android:allowBackup="true"
@@ -10,9 +12,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity
-            android:name=".MainActivity">
-        </activity>
+        <activity android:name=".MainActivity" />
         <activity android:name=".CreateGroupActivity" />
         <activity android:name=".CreateScheduleActivity" />
 
@@ -21,7 +21,8 @@
             android:value="@string/kakao_app_key" />
 
         <activity android:name=".LoginActivity" />
-        <activity android:name=".SplashActivity"
+        <activity
+            android:name=".SplashActivity"
             android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -30,6 +31,11 @@
             </intent-filter>
         </activity>
         <activity android:name=".SetEventRepeatActivity" />
+        <activity android:name=".TestAlarmActivity" />
+
+        <receiver android:name=".AlarmReceiver" />
+
+        <activity android:name=".AlarmActivity"></activity>
     </application>
 
 </manifest>
