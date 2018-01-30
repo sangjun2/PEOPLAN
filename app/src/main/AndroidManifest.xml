@@ -3,6 +3,7 @@
     package="com.sang.peoplan">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
 
     <application
         android:name=".GlobalApplication"
@@ -12,6 +13,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+      
         <activity android:name=".MainActivity" />
         <activity android:name=".CreateGroupActivity" />
         <activity android:name=".CreateScheduleActivity" />
@@ -31,6 +33,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".SetEventRepeatActivity" />
+        <activity android:name=".KakaoSignupActivity"></activity>
         <activity android:name=".TestAlarmActivity" />
 
         <receiver android:name=".AlarmReceiver" />

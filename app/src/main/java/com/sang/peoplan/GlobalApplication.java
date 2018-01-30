@@ -16,6 +16,7 @@ import com.kakao.auth.KakaoSDK;
 
 public class GlobalApplication extends Application {
     private static volatile GlobalApplication instance = null;
+    public static final String SERVER_URL = "http://13.125.152.173:9000";
 
     public static GlobalApplication getGlobalApplicationContext() {
         if(instance == null) {

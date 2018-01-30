@@ -58,6 +58,7 @@ public class DayScheduleDialog extends Dialog {
                 Activity activity = (Activity) mContext;
 
                 Intent intent = new Intent(getContext(), CreateScheduleActivity.class);
+                intent.putExtra("day", day);
                 getContext().startActivity(intent);
                 activity.overridePendingTransition(R.anim.anim_slide_in_bottom, R.anim.anim_noanim);
             }

@@ -44,7 +44,7 @@ public class SetEventRepeatActivity extends AppCompatActivity {
                 intent.putExtra("repeat", radioButton.getText());
                 setResult(Activity.RESULT_OK, intent);
                 finish();
-
+                overridePendingTransition(R.anim.anim_slide_in_left, R.anim.anim_slide_out_right);
             }
         });
 
@@ -66,6 +66,6 @@ public class SetEventRepeatActivity extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
         finish();
-        overridePendingTransition(R.anim.anim_noanim, R.anim.anim_slide_out_bottom);
+        overridePendingTransition(R.anim.anim_slide_in_left, R.anim.anim_slide_out_right);
     }
 }
