@@ -120,7 +120,8 @@ public class CreateScheduleActivity extends AppCompatActivity {
         alarmSelect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                Intent intent = new Intent(getApplicationContext(), TestAlarmActivity.class);
+                startActivityForResult(intent, REQUESTCODE_ALARM);
             }
         });
 
