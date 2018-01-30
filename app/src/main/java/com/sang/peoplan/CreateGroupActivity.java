@@ -21,7 +21,6 @@ public class CreateGroupActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-
     }
 
     @Override

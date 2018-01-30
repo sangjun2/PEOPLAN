@@ -1,7 +1,10 @@
 package com.sang.peoplan;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -18,6 +21,7 @@ import java.security.acl.Group;
 public class MainActivity extends AppCompatActivity {
     FragmentManager fragmentManager;
     FragmentTransaction fragmentTransaction;
+    private static MediaPlayer player;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +65,32 @@ public class MainActivity extends AppCompatActivity {
         fragmentTransaction.add(R.id.frame, PlannerFragment.newInstance());
         fragmentTransaction.commit();
 
+
     }
 
+    public static void startAlarm(Context context, int ResId){
+        player = MediaPlayer.create(context, ResId);
+        player.setOnPreparedListener(new MediaPlayer.OnPreparedListener()
+        {
+            @Override
+            public void onPrepared(MediaPlayer mp)
+            {
+                mp.start();
+            }
+        });
+        try
+        {
+            player.prepare();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    public static void stopAlarm() {
+        player.stop();
+        player.release();
+        player = null;
+    }
 }
