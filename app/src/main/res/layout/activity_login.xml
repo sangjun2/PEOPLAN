@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.sang.peoplan.LoginActivity">
+    tools:context="com.sang.peoplan.LoginActivity"
+    android:background="@drawable/splash">
 
     <com.kakao.usermgmt.LoginButton
         android:layout_width="0dp"
@@ -14,10 +15,10 @@
         android:layout_marginStart="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.8">
+        app:layout_constraintVertical_bias="0.831">
 
     </com.kakao.usermgmt.LoginButton>
 
