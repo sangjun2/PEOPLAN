@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:background="#ffffff"
+    android:padding="8dp">
+
+    <com.nex3z.togglebuttongroup.MultiSelectToggleGroup
+        android:id="@+id/group_weekdays"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:tbgChildSpacing="auto">
+        
+        <com.nex3z.togglebuttongroup.button.CircularToggle
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/weekdays_sun"
+            android:text="일">
+
+        </com.nex3z.togglebuttongroup.button.CircularToggle>
+
+        <com.nex3z.togglebuttongroup.button.CircularToggle
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/weekdays_mon"
+            android:text="월">
+
+        </com.nex3z.togglebuttongroup.button.CircularToggle>
+
+        <com.nex3z.togglebuttongroup.button.CircularToggle
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/weekdays_tue"
+            android:text="화">
+
+        </com.nex3z.togglebuttongroup.button.CircularToggle>
+
+        <com.nex3z.togglebuttongroup.button.CircularToggle
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/weekdays_wed"
+            android:text="수">
+
+        </com.nex3z.togglebuttongroup.button.CircularToggle>
+
+        <com.nex3z.togglebuttongroup.button.CircularToggle
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/weekdays_thu"
+            android:text="목">
+
+        </com.nex3z.togglebuttongroup.button.CircularToggle>
+
+        <com.nex3z.togglebuttongroup.button.CircularToggle
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/weekdays_fri"
+            android:text="금">
+
+        </com.nex3z.togglebuttongroup.button.CircularToggle>
+
+        <com.nex3z.togglebuttongroup.button.CircularToggle
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/weekdays_sat"
+            android:text="토">
+
+        </com.nex3z.togglebuttongroup.button.CircularToggle>
+
+    </com.nex3z.togglebuttongroup.MultiSelectToggleGroup>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/weekdays_check_layout"
+        android:orientation="vertical"
+        android:animateLayoutChanges="true">
+
+    </LinearLayout>
+
+</LinearLayout>

@@ -61,12 +61,22 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (Session.getCurrentSession().handleActivityResult(requestCode, resultCode, data)) {
+            return;
+        }
+
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
     private void requestMe() {
         UserManagement.requestMe(new MeResponseCallback() {
             @Override
             public void onFailure(ErrorResult errorResult) {
                 String message = "failed to get user info. msg=" + errorResult;
                 Logger.d(message);
+                Log.d("KAKAOTAG==", "onFailure");
 
                 ErrorCode result = ErrorCode.valueOf(errorResult.getErrorCode());
                 if (result == ErrorCode.CLIENT_ERROR_CODE) {
@@ -78,10 +88,12 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void onSessionClosed(ErrorResult errorResult) {
+                Log.d("KAKAOTAG==", "onSessionClosed");
             }
 
             @Override
             public void onSuccess(UserProfile userProfile) {
+                Log.d("KAKAOTAG==", "onSuccess");
                 USER_PROFILE = userProfile;
                 Intent intent = new Intent(LoginActivity.this, KakaoSignupActivity.class);
                 startActivity(intent);
@@ -90,6 +102,7 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void onNotSignedUp() {
+                Log.d("KAKAOTAG==", "onNotSignedUp");
             }
         });
     }

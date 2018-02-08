@@ -23,6 +23,9 @@ import android.widget.Toast;
 
 import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.TedPermission;
+import com.kakao.network.ErrorResult;
+import com.kakao.usermgmt.UserManagement;
+import com.kakao.usermgmt.callback.MeResponseCallback;
 import com.kakao.usermgmt.response.model.UserProfile;
 import com.squareup.picasso.Picasso;
 import com.victorminerva.widget.edittext.AutofitEdittext;
@@ -211,7 +214,8 @@ public class KakaoSignupActivity extends AppCompatActivity {
 
     private void setJsonData(JSONObject jsonObject, String name, String data) {
         try {
-            if(!data.equals("")) {
+            if(data == null) {
+            } else if(data != null) {
                 jsonObject.accumulate(name, data);
             }
         } catch (JSONException e) {
