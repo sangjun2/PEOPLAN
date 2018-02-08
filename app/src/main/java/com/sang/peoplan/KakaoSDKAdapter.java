@@ -33,7 +33,7 @@ public class KakaoSDKAdapter extends KakaoAdapter {
 
             @Override
             public boolean isSecureMode() {
-                return false;
+                return true;
             }
 
             @Override

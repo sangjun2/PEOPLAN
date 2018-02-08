@@ -5,7 +5,7 @@ android {
     defaultConfig {
         applicationId "com.sang.peoplan"
         minSdkVersion 16
-        targetSdkVersion 23
+        targetSdkVersion 21
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -31,6 +31,7 @@ dependencies {
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.github.victorminerva:AutoResizeEditText:0.1.0'
     compile 'gun0912.ted:tedpermission:2.1.0'
+    compile 'com.nex3z:toggle-button-group:1.1.2'
 
     // 카카오 로그인 sdk를 사용하기 위해 필요.
     compile group: 'com.kakao.sdk', name: 'usermgmt', version: '1.5.1'

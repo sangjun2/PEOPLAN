@@ -5,20 +5,29 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.NumberPicker;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.joda.time.DateTime;
+import org.joda.time.LocalTime;
+
 public class CreateScheduleActivity extends AppCompatActivity {
-    Switch isGroup;
-    Switch isAlarm;
+    Switch isByDay;
+    Switch isAllDay;
     EditText eventTitle;
     Button selectGroupButton;
+
+    LinearLayout timeGroup;
+
     LinearLayout eventStart;
     LinearLayout eventEnd;
     LinearLayout repeatView;
@@ -29,6 +38,11 @@ public class CreateScheduleActivity extends AppCompatActivity {
 
     TextView eventStartText;
     TextView eventEndText;
+
+    DayPicker eventStartNumberPicker;
+    DayPicker eventEndNumberPicker;
+
+    WeekdaysGroup weekdaysGroup;
 
     final int REQUESTCODE_GROUP = 100;
     final int REQUESTCODE_REPEAT = 200;
@@ -59,8 +73,8 @@ public class CreateScheduleActivity extends AppCompatActivity {
         Intent intent = getIntent();
         this.day = intent.getStringExtra("day");
 
-        isGroup = findViewById(R.id.is_group);
-        isAlarm = findViewById(R.id.isAlarm);
+        isByDay = findViewById(R.id.is_byday);
+        isAllDay = findViewById(R.id.is_allday);
         eventTitle = findViewById(R.id.eventTitle);
         selectGroupButton = findViewById(R.id.selectGroupButton);
         eventStart = findViewById(R.id.eventStart);
@@ -74,27 +88,41 @@ public class CreateScheduleActivity extends AppCompatActivity {
         eventStartText = findViewById(R.id.eventStartConfirm);
         eventEndText = findViewById(R.id.eventEndConfirm);
 
+        eventStartNumberPicker = findViewById(R.id.event_start_daypicker);
+        eventEndNumberPicker = findViewById(R.id.event_end_daypicker);
 
-        isGroup.setOnCheckedChangeListener(new Switch.OnCheckedChangeListener(){
+        weekdaysGroup = findViewById(R.id.weekdays_group);
+        weekdaysGroup.initView();
+
+        timeGroup = findViewById(R.id.group_time);
+
+        isByDay.setOnCheckedChangeListener(new Switch.OnCheckedChangeListener(){
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if(b){
-                    selectGroupButton.setVisibility(View.VISIBLE);
+                if(b){ // 요일별
+                    weekdaysGroup.setVisibility(View.VISIBLE);
+                    timeGroup.setVisibility(View.GONE);
                 }
-                else{
-                    selectGroupButton.setVisibility(View.GONE);
+                else{ // 날짜별
+                    weekdaysGroup.setVisibility(View.GONE);
+                    timeGroup.setVisibility(View.VISIBLE);
                 }
             }
         });
 
-        isAlarm.setOnCheckedChangeListener(new Switch.OnCheckedChangeListener(){
+        isAllDay.setChecked(true);
+        isAllDay.setOnCheckedChangeListener(new Switch.OnCheckedChangeListener(){
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if(b){
-                    alarmSelect.setVisibility(View.VISIBLE);
+                if(b){ // 하루종일
+                    eventStartText.setText(day);
+                    eventEndText.setText(day);
                 }
-                else{
-                    alarmSelect.setVisibility(View.GONE);
+                else{ // not 하루종일
+                    LocalTime localTime = new LocalTime();
+                    int hour = localTime.getHourOfDay();
+                    eventStartText.setText(day + " " + String.valueOf(hour) + ":00");
+                    eventEndText.setText(day + " " + String.valueOf(hour + 1) + ":00");
                 }
             }
         });
@@ -110,14 +138,15 @@ public class CreateScheduleActivity extends AppCompatActivity {
         eventStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                eventStartNumberPicker.initView(day);
             }
         });
 
+        eventEndText.setText(day);
         eventEnd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                eventEndNumberPicker.initView(day);
             }
         });
 
