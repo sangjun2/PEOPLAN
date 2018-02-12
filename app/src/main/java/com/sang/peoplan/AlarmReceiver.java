@@ -1,5 +1,6 @@
 package com.sang.peoplan;
 
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -24,10 +25,12 @@ public class AlarmReceiver extends BroadcastReceiver{
 
         boolean[] week = intent.getBooleanArrayExtra("weekday");
         int music_res = intent.getIntExtra("musicRes", R.raw.impact_intermezzo);
-        int hourOfDay = intent.getIntExtra("hourOfDay", 0);
-        int minute = intent.getIntExtra("minute", 0);
         Calendar cal = Calendar.getInstance();
         // 오늘 요일의 알람 재생이 true이면 사운드 재생
+        if(false){
+            PendingIntent pendingIntent = null;
+            CreateScheduleActivity._am.cancel(pendingIntent);
+        }
 
         if (!week[cal.get(Calendar.DAY_OF_WEEK)])
             return;
