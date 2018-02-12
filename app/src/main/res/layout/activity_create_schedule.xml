@@ -275,8 +275,7 @@
                     android:layout_height="wrap_content"
                     android:background="#ffffff"
                     android:orientation="horizontal"
-                    android:padding="8dp"
-                    android:visibility="gone">
+                    android:padding="8dp">
 
                     <TextView
                         android:layout_width="0dp"
@@ -292,6 +291,9 @@
                         android:layout_width="0dp"
                         android:layout_height="30dp"
                         android:layout_weight="1"
+                        android:gravity="center_vertical|right"
+                        android:paddingRight="8dp"
+                        android:text="없음"
                         android:textSize="16sp" />
                 </LinearLayout>
 
