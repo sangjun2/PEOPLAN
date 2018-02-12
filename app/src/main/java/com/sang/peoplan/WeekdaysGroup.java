@@ -107,9 +107,16 @@ public class WeekdaysGroup extends LinearLayout {
                         isCheckedLayout.removeView(isCheckedLayout.findViewWithTag("sat"));
                     }
                 }
-
-
             }
         });
+
+        for(int i = 0; i < isCheckedLayout.getChildCount(); i++){
+            isCheckedLayout.getChildAt(i).setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                }
+            });
+        }
     }
 }

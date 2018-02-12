@@ -27,7 +27,6 @@ import java.util.Calendar;
 import java.util.Date;
 
 public class TestAlarmActivity extends AppCompatActivity {
-    private static final String BASE_PATH = Environment.getRootDirectory().getPath();
 
     private AlarmManager _am;
     Intent intent;
@@ -47,6 +46,7 @@ public class TestAlarmActivity extends AppCompatActivity {
         Log.i("AndroidVideoView", "Res Name: " + resName + "==> Res ID = " + resID);
         return resID;
     }
+
     private TimePickerDialog.OnTimeSetListener listener = new TimePickerDialog.OnTimeSetListener() {
         @Override
         public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
@@ -59,12 +59,10 @@ public class TestAlarmActivity extends AppCompatActivity {
 
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test_alarm);
 
-//        Log.d("filepath==", );
         intent = new Intent(this, AlarmReceiver.class);
 
 
@@ -116,33 +114,42 @@ public class TestAlarmActivity extends AppCompatActivity {
 //        File file = new File();
         MediaPlayer mp = MediaPlayer.create(this, R.raw.impact_intermezzo);
 
-        boolean[] week = { false, _toggleSun.isChecked(), _toggleMon.isChecked(), _toggleTue.isChecked(), _toggleWed.isChecked(),
-                _toggleThu.isChecked(), _toggleFri.isChecked(), _toggleSat.isChecked() }; // sunday=1 이라서 0의 자리에는 아무 값이나 넣었음
+        boolean[] week = {false, _toggleSun.isChecked(), _toggleMon.isChecked(), _toggleTue.isChecked(), _toggleWed.isChecked(),
+                _toggleThu.isChecked(), _toggleFri.isChecked(), _toggleSat.isChecked()}; // sunday=1 이라서 0의 자리에는 아무 값이나 넣었음
 
 
 //        intent.putExtra("file", (Serializable) mp);
         intent.putExtra("weekday", week);
-        intent.putExtra("music", R.raw.impact_intermezzo);
-        intent.putExtra("hourOfDay", hourOfDay);
-        intent.putExtra("minute", minute);
-        PendingIntent pIntent = PendingIntent.getBroadcast(this, mp.hashCode(), intent, PendingIntent.FLAG_UPDATE_CURRENT);//알람을 해재할때의 식별자 hashcode
 
-        Calendar cal = Calendar.getInstance();
-        cal.set(Calendar.SECOND, cal.get(Calendar.SECOND));
-        DateTime dateTime = new DateTime(2018, 1, 30, hourOfDay, minute);
+        if(true){//날짜별 알람인 경우
+            DateTime dateTime = new DateTime(2018, 1, 30, hourOfDay, minute);//날짜 정하기
+            //알람에 대한 hashcode정보 또한 db에 저장되어야함.
+            PendingIntent pIntent = PendingIntent.getBroadcast(this, dateTime.hashCode(), intent, PendingIntent.FLAG_UPDATE_CURRENT);//알람을 해재할때의 식별자 hashcode
+            long oneday = 24 * 60 * 60 * 1000;// 24시간
 
-        long oneday = 24 * 60 * 60 * 1000;// 24시간
+            // 10초 뒤에 시작해서 매일 같은 시간에 반복하기
+            _am.setRepeating(AlarmManager.RTC_WAKEUP, dateTime.getMillis(), oneday, pIntent);
+        }
+        else{//요일별 알람인 경우
+            DateTime dateTime = new DateTime();
+            PendingIntent pIntent = PendingIntent.getBroadcast(this, dateTime.hashCode(), intent, PendingIntent.FLAG_UPDATE_CURRENT);//알람을 해재할때의 식별자 hashcode
+            long oneday = 24 * 60 * 60 * 1000;// 24시간
 
-        // 10초 뒤에 시작해서 매일 같은 시간에 반복하기
-        _am.setRepeating(AlarmManager.RTC_WAKEUP, dateTime.getMillis(), oneday, pIntent);
+            // 10초 뒤에 시작해서 매일 같은 시간에 반복하기
+            _am.setRepeating(AlarmManager.RTC_WAKEUP, dateTime.getMillis(), oneday, pIntent);
+        }
+
     }
 
-    public void onUnregist()
-    {
+    public void onUnregist() {//dateTime에 대한 hash코드를 db에서 불러와 alarmmanager 삭제
         MediaPlayer mp = MediaPlayer.create(this, R.raw.impact_intermezzo);
         PendingIntent pIntent = PendingIntent.getBroadcast(this, mp.hashCode(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         _am.cancel(pIntent);
+    }
+
+    public void registWeekDay(boolean[] week){
+
     }
 
 
