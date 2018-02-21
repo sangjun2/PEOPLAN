@@ -283,6 +283,8 @@ public class CreateScheduleActivity extends AppCompatActivity {
                     SimpleDateFormat dateFormat = new SimpleDateFormat("(yyyy.MM.dd HH:mm)");
                     Toast.makeText(getApplicationContext(), dateFormat.format(startTime.toDate()) + ", " + dateFormat.format(endTime.toDate()), Toast.LENGTH_SHORT).show();
                     intentAlarm.putExtra("eventTitle", eventTitle.getText().toString());
+                    Intent intent1 = new Intent(CreateScheduleActivity.this, AlarmActivity.class);
+                    startActivity(intent1);
                 }
             }
         });
@@ -406,12 +408,7 @@ public class CreateScheduleActivity extends AppCompatActivity {
     // 설정 시간 정보를 담은 객체를 hashcode를 생성하여 broadcast해 pendingintent를 사용한다.
     // intent로 넘어가는 extras만이 업데이트됨
     {
-
-
-//        File file = new File();
         MediaPlayer mp = MediaPlayer.create(this, R.raw.impact_intermezzo);
-
-
 
         if(true){//날짜별 알람인 경우
             DateTime dateTime = new DateTime(2018, 1, 30, hourOfDay, minute);//날짜 정하기
