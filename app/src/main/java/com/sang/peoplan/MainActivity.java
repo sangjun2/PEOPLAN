@@ -89,6 +89,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public static void stopAlarm() {
+        if(player == null){
+            return;
+        }
         player.stop();
         player.release();
         player = null;
