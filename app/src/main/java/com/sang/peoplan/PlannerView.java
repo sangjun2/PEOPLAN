@@ -96,9 +96,11 @@ public class PlannerView extends ConstraintLayout {
                 public void onPageSelected(int position) {
                     if(position == 0) {
                         date = date.minusMonths(1);
+                        calendarPagerAdapter = null;
                         calendarPagerAdapter = new CalendarPagerAdapter(date);
                     } else if(position == 2) {
                         date = date.plusMonths(1);
+                        calendarPagerAdapter = null;
                         calendarPagerAdapter = new CalendarPagerAdapter(date);
                     }
                 }
@@ -227,7 +229,8 @@ public class PlannerView extends ConstraintLayout {
             localDates[0] = date.minusMonths(1);
             localDates[1] = date;
             localDates[2] = date.plusMonths(1);
-         }
+        }
+
 
         @Override
         public Object instantiateItem(ViewGroup container, int position) {

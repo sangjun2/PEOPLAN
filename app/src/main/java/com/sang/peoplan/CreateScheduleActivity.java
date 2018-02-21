@@ -26,6 +26,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import com.victorminerva.widget.edittext.AutofitEdittext;
+
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
@@ -40,7 +42,7 @@ import java.text.SimpleDateFormat;
 public class CreateScheduleActivity extends AppCompatActivity {
     Switch isByDay;
     Switch isAllDay;
-    EditText eventTitle;
+    AutofitEdittext eventTitle;
     Button selectGroupButton;
 
     LinearLayout timeGroup;
@@ -66,6 +68,16 @@ public class CreateScheduleActivity extends AppCompatActivity {
     final int REQUESTCODE_ALARM = 300;
 
     private String day = "";
+
+    public static final int DATE_YEAR_TYPE = 0;
+    public static final int DATE_MONTH_TYPE = 1;
+    public static final int DATE_DAY_TYPE = 2;
+    public static final int DATE_AMPM_TYPE = 3;
+    public static final int DATE_HOUR_TYPE = 4;
+    public static final int DATE_MINUTE_TYPE = 5;
+    public static final int DATE_TYPE = 6;
+    public static final int DATE_TIME_TYPE = 7;
+    public static final int DATE_FULL_HOUR_TYPE = 8;
 
     public static AlarmManager _am;
     Intent intentAlarm;
@@ -159,10 +171,6 @@ public class CreateScheduleActivity extends AppCompatActivity {
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 removeViews();
 
-                eventStartText.setText(day);
-                eventEndText.setText(day);
-
-                /*
                 if(b){ // 하루종일
                     eventStartText.setText(day);
                     eventEndText.setText(day);
@@ -178,7 +186,6 @@ public class CreateScheduleActivity extends AppCompatActivity {
                         eventEndText.setText(day + " " + "오후 " + String.valueOf(hour + 1 - 12) + ":00");
                     }
                 }
-                */
             }
         });
 
@@ -196,9 +203,9 @@ public class CreateScheduleActivity extends AppCompatActivity {
                 if(eventStartNumberPicker.getChildCount() == 0) {
                     removePickerView(view);
                     if(isAllDay.isChecked()) {
-                        eventStartNumberPicker.initView(day);
+                        eventStartNumberPicker.initView(getDateToString(eventStartText, DATE_TYPE));
                     } else {
-                        eventStartNumberPicker.initView(day, new LocalTime().getHourOfDay() + 1);
+                        eventStartNumberPicker.initView(getDateToString(eventStartText, DATE_TYPE), Integer.parseInt(getDateToString(eventStartText, DATE_FULL_HOUR_TYPE)));
                     }
                 } else {
                     eventStartNumberPicker.removeAllViews();
@@ -213,9 +220,9 @@ public class CreateScheduleActivity extends AppCompatActivity {
                 if(eventEndNumberPicker.getChildCount() == 0) {
                     removePickerView(view);
                     if(isAllDay.isChecked()) {
-                        eventEndNumberPicker.initView(day);
+                        eventEndNumberPicker.initView(getDateToString(eventEndText, DATE_TYPE));
                     } else {
-                        eventEndNumberPicker.initView(day, new LocalTime().getHourOfDay() + 2);
+                        eventEndNumberPicker.initView(getDateToString(eventEndText, DATE_TYPE), Integer.parseInt(getDateToString(eventEndText, DATE_FULL_HOUR_TYPE)));
                     }
                 } else {
                     eventEndNumberPicker.removeAllViews();
@@ -246,66 +253,94 @@ public class CreateScheduleActivity extends AppCompatActivity {
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                intentAlarm.putExtra("eventTitle", eventTitle.getText().toString());
-                Intent intent1 = new Intent(CreateScheduleActivity.this, AlarmActivity.class);
-                startActivity(intent1);
+                LocalDate startDate = new LocalDate(Integer.parseInt(getDateToString(eventStartText, DATE_YEAR_TYPE)),
+                                                    Integer.parseInt(getDateToString(eventStartText, DATE_MONTH_TYPE)),
+                                                    Integer.parseInt(getDateToString(eventStartText, DATE_DAY_TYPE)));
 
+                LocalDate endDate = new LocalDate(Integer.parseInt(getDateToString(eventEndText, DATE_YEAR_TYPE)),
+                        Integer.parseInt(getDateToString(eventEndText, DATE_MONTH_TYPE)),
+                        Integer.parseInt(getDateToString(eventEndText, DATE_DAY_TYPE)));
+
+                DateTime startTime;
+                DateTime endTime;
+
+                if(!isAllDay.isChecked()) {
+                    int startHour = Integer.parseInt(getDateToString(eventStartText, DATE_FULL_HOUR_TYPE));
+                    int startMinute = Integer.parseInt(getDateToString(eventStartText, DATE_MINUTE_TYPE));
+
+                    int endHour = Integer.parseInt(getDateToString(eventEndText, DATE_FULL_HOUR_TYPE));
+                    int endMinute = Integer.parseInt(getDateToString(eventEndText, DATE_MINUTE_TYPE));
+
+                    startTime = startDate.toDateTime(new LocalTime(startHour, startMinute));
+                    endTime = endDate.toDateTime(new LocalTime(endHour, endMinute));
+                } else {
+                    startTime = startDate.toDateTime(new LocalTime(0, 0));
+                    endTime = endDate.toDateTime(new LocalTime(23, 59));
+                }
+
+                if(isExistAllData(startTime, endTime)) {
+                    //db 등록
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("(yyyy.MM.dd HH:mm)");
+                    Toast.makeText(getApplicationContext(), dateFormat.format(startTime.toDate()) + ", " + dateFormat.format(endTime.toDate()), Toast.LENGTH_SHORT).show();
+                    intentAlarm.putExtra("eventTitle", eventTitle.getText().toString());
+                    Intent intent1 = new Intent(CreateScheduleActivity.this, AlarmActivity.class);
+                    startActivity(intent1);
+                }
             }
         });
 
 
     }
 
-    private boolean isExistAllData() {
+    private String getDateToString(TextView text, int type) {
+        String[] texts = text.getText().toString().split(" ");
+        String[] dates = texts[0].split("\\.");
+
+        switch (type) {
+            case DATE_YEAR_TYPE:
+                return dates[0];
+            case DATE_MONTH_TYPE:
+                return dates[1];
+            case DATE_DAY_TYPE:
+                return dates[2];
+            case DATE_AMPM_TYPE:
+                return texts[1];
+            case DATE_HOUR_TYPE:
+                return texts[2].split(":")[0];
+            case DATE_FULL_HOUR_TYPE:
+                int hour = Integer.parseInt(texts[2].split(":")[0]);
+
+                if(texts[1].equals("오전")) {
+                    if(hour == 12) {
+                        return "0";
+                    } else {
+                        return String.valueOf(hour);
+                    }
+                } else {
+                    if(hour != 12) {
+                        return String.valueOf(hour + 12);
+                    }
+                }
+            case DATE_MINUTE_TYPE:
+                return texts[2].split(":")[1];
+            case DATE_TYPE:
+                return texts[0];
+            case DATE_TIME_TYPE:
+                return texts[2];
+            default:
+                return "";
+        }
+    }
+
+    private boolean isExistAllData(DateTime startTime, DateTime endTime) {
         if(eventTitle.getText().toString().equals("")) {
             Toast.makeText(getApplicationContext(), "제목을 입력해주세요.", Toast.LENGTH_SHORT).show();
             return false;
         }
-        String[] eventStartTexts = eventStartText.getText().toString().split(" ");
-        String[] eventEndTexts = eventEndText.getText().toString().split(" ");
 
-        String[] startDates = eventStartTexts[0].split("\\.");
-        LocalDate startDate = new LocalDate(Integer.parseInt(startDates[0]), Integer.parseInt(startDates[1]), Integer.parseInt(startDates[2]));
-
-        String[] endDates = eventEndTexts[0].split("\\.");
-        LocalDate endDate = new LocalDate(Integer.parseInt(endDates[0]), Integer.parseInt(endDates[1]), Integer.parseInt(endDates[2]));
-
-        if(startDate.toDate().getTime() > endDate.toDate().getTime()) {
+        if(startTime.getMillis() > endTime.getMillis()) {
             Toast.makeText(getApplicationContext(), "종료시간이 시작시간보다 빠릅니다.", Toast.LENGTH_SHORT).show();
             return false;
-        }
-
-        if(!isAllDay.isChecked()) {
-            String startType = eventStartTexts[1];
-            String endType = eventEndTexts[1];
-
-            int startHour = Integer.parseInt(eventStartTexts[2].split(":")[0]);
-            int startMinute = Integer.parseInt(eventStartTexts[2].split(":")[1]);
-            if(startType.equals("오전")) {
-                if(startHour == 12) {
-                    startHour = 0;
-                }
-            } else {
-                startHour -= 12;
-            }
-
-            int endHour = Integer.parseInt(eventEndTexts[2].split(":")[0]);
-            int endMinute = Integer.parseInt(eventEndTexts[2].split(":")[1]);
-            if(endType.equals("오전")) {
-                if(endHour == 12) {
-                    endHour = 0;
-                }
-            } else {
-                endHour -= 12;
-            }
-
-            DateTime startTime = startDate.toDateTime(new LocalTime(startHour, startMinute));
-            DateTime endTime = endDate.toDateTime(new LocalTime(endHour, endMinute));
-
-            if(startTime.getMillis() > endTime.getMillis()) {
-                Toast.makeText(getApplicationContext(), "종료시간이 시작시간보다 빠릅니다.", Toast.LENGTH_SHORT).show();
-                return false;
-            }
         }
 
         return true;
