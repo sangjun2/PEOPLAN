@@ -43,6 +43,10 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import retrofit2.Call;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
 public class KakaoSignupActivity extends AppCompatActivity {
     UserProfile userProfile;
     ImageView userImage;
@@ -94,15 +98,13 @@ public class KakaoSignupActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 User user = new User();
-                user.setKakaoUID(userProfile.getUUID());
+                user.setKakaoUID(String.valueOf(userProfile.getId()));
                 user.setName(userName.getText().toString());
                 user.setTel(userTel.getText().toString());
                 user.setEmail(userEmail.getText().toString());
 
-                HashMap<String, User> hashMap = new HashMap<>();
-                hashMap.put("POST", user);
-                ConnectASyncTask aSyncTask = new ConnectASyncTask();
-                aSyncTask.execute(hashMap);
+                CreateUserAsyncTask task = new CreateUserAsyncTask();
+                task.execute(user);
             }
         });
 
@@ -127,6 +129,47 @@ public class KakaoSignupActivity extends AppCompatActivity {
         }
 
         return phoneNumber;
+    }
+
+    public class CreateUserAsyncTask extends AsyncTask<User, Void, Boolean> {
+        Retrofit retrofit;
+        APIService service;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+            retrofit = new Retrofit.Builder()
+                    .baseUrl(GlobalApplication.SERVER_URL)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
+
+            service = retrofit.create(APIService.class);
+        }
+
+        @Override
+        protected void onPostExecute(Boolean isSuccessed) {
+            super.onPostExecute(isSuccessed);
+            if(isSuccessed) {
+                Intent intent = new Intent(KakaoSignupActivity.this, MainActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        }
+
+        @Override
+        protected Boolean doInBackground(User... users) {
+            Call<User> user = service.createUser(users[0]);
+            try {
+                if(user.execute().code() == 200) {
+                    return true;
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return false;
+        }
     }
 
     public class ConnectASyncTask extends AsyncTask<HashMap<String, User>, Void, String> {

@@ -54,14 +54,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-/*
-        SharedPreferences preferences = getSharedPreferences("Account", MODE_PRIVATE);
-        boolean existData = preferences.getBoolean("Login", false);
-        if(!existData) {
-            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-            startActivity(intent);
-        }
-*/
         fragmentTransaction.add(R.id.frame, PlannerFragment.newInstance());
         fragmentTransaction.commit();
 

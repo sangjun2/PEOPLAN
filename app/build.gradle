@@ -32,6 +32,9 @@ dependencies {
     compile 'com.github.victorminerva:AutoResizeEditText:0.1.0'
     compile 'gun0912.ted:tedpermission:2.1.0'
     compile 'com.nex3z:toggle-button-group:1.1.2'
+    compile 'com.squareup.retrofit2:retrofit:2.3.0'
+    compile 'com.squareup.retrofit2:converter-gson:2.3.0'
+    compile 'com.google.code.gson:gson:2.8.2'
 
     // 카카오 로그인 sdk를 사용하기 위해 필요.
     compile group: 'com.kakao.sdk', name: 'usermgmt', version: '1.5.1'
