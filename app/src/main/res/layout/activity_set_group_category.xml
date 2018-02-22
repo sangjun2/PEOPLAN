@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.sang.peoplan.SetGroupCategoryActivity">
+
+    <include
+        android:id="@+id/set_group_category_toolbar"
+        layout="@layout/confirm_toolbar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        app:layout_constraintTop_toBottomOf="@id/set_group_category_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="8dp">
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        <RadioGroup
+            android:id="@+id/category_group"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <RadioButton
+                android:checked="true"
+                android:layout_margin="8dp"
+                android:padding="8dp"
+                android:layoutDirection="rtl"
+                android:text="문화/예술"
+                android:id="@+id/cultrue"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+            <RadioButton
+                android:layout_margin="8dp"
+                android:padding="8dp"
+                android:layoutDirection="rtl"
+                android:text="육아/결혼"
+                android:id="@+id/marry"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <RadioButton
+                android:layout_margin="8dp"
+                android:padding="8dp"
+                android:text="요리/맛집"
+                android:layoutDirection="rtl"
+                android:id="@+id/cook"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <RadioButton
+                android:layout_margin="8dp"
+                android:padding="8dp"
+                android:text="패션/미용"
+                android:layoutDirection="rtl"
+                android:id="@+id/fassion_beauty"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <RadioButton
+                android:layout_margin="8dp"
+                android:padding="8dp"
+                android:text="스포츠"
+                android:layoutDirection="rtl"
+                android:id="@+id/sports"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+            <RadioButton
+                android:layout_margin="8dp"
+                android:padding="8dp"
+                android:text="여행"
+                android:layoutDirection="rtl"
+                android:id="@+id/travel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+            <RadioButton
+                android:layout_margin="8dp"
+                android:padding="8dp"
+                android:text="뉴스"
+                android:layoutDirection="rtl"
+                android:id="@+id/news"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+            <RadioButton
+                android:layout_margin="8dp"
+                android:padding="8dp"
+                android:text="비즈니스"
+                android:layoutDirection="rtl"
+                android:id="@+id/business"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+            <RadioButton
+                android:layout_margin="8dp"
+                android:padding="8dp"
+                android:text="기타"
+                android:layoutDirection="rtl"
+                android:id="@+id/etc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </RadioGroup>
+        </ScrollView>
+    </LinearLayout>
+
+
+</android.support.constraint.ConstraintLayout>
