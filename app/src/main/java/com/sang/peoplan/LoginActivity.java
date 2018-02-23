@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -24,10 +25,29 @@ import com.kakao.usermgmt.response.model.UserProfile;
 import com.kakao.util.exception.KakaoException;
 import com.kakao.util.helper.log.Logger;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
 public class LoginActivity extends AppCompatActivity {
     private SessionCallback callback;
     public static UserProfile USER_PROFILE;
     private Context mContext;
+    private final String getURL = "/api/users/";
 
 
     @Override
@@ -95,9 +115,9 @@ public class LoginActivity extends AppCompatActivity {
             public void onSuccess(UserProfile userProfile) {
                 Log.d("KAKAOTAG==", "onSuccess");
                 USER_PROFILE = userProfile;
-                Intent intent = new Intent(LoginActivity.this, KakaoSignupActivity.class);
-                startActivity(intent);
-                finish();
+
+                GetUserAsyncTask asyncTask = new GetUserAsyncTask();
+                asyncTask.execute(String.valueOf(USER_PROFILE.getId()));
             }
 
             @Override
@@ -105,5 +125,60 @@ public class LoginActivity extends AppCompatActivity {
                 Log.d("KAKAOTAG==", "onNotSignedUp");
             }
         });
+    }
+
+    public class GetUserAsyncTask extends AsyncTask<String, Void, Boolean> {
+        Retrofit retrofit;
+        APIService service;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+            retrofit = new Retrofit.Builder()
+                    .baseUrl(GlobalApplication.SERVER_URL)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
+
+            service = retrofit.create(APIService.class);
+        }
+
+        @Override
+        protected void onPostExecute(Boolean isExist) {
+            super.onPostExecute(isExist);
+
+            if(isExist) {
+                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                startActivity(intent);
+                finish();
+            } else {
+                Intent intent = new Intent(LoginActivity.this, KakaoSignupActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        }
+
+        @Override
+        protected Boolean doInBackground(String... uid) {
+            Call<List<User>> users = service.getUser(uid[0]);
+
+            try {
+                Response<List<User>> response = users.execute();
+                if(response.code() == 404) {
+                    return false;
+                } else if(response.code() == 500) {
+                    return false;
+                } else if(response.code() == 200) {
+                    if(response.body().size() == 1) {
+                        return true;
+                    }
+                    return false;
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return false;
+        }
     }
 }

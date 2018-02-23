@@ -3,6 +3,8 @@ package com.sang.peoplan;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.google.gson.annotations.SerializedName;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -19,10 +21,14 @@ import java.net.URL;
  */
 
 public class User {
-    private String kakaoUID;
-    private String name;
-    private String tel;
-    private String email;
+    @SerializedName("kakaoid")
+    public String kakaoUID;
+    @SerializedName("name")
+    public String name;
+    @SerializedName("tel")
+    public String tel;
+    @SerializedName("email")
+    public String email;
 
     public User() {
         this.kakaoUID = null;

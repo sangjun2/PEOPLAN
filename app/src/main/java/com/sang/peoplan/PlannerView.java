@@ -102,6 +102,8 @@ public class PlannerView extends ConstraintLayout {
                         date = date.plusMonths(1);
                         calendarPagerAdapter = null;
                         calendarPagerAdapter = new CalendarPagerAdapter(date);
+                    } else {
+                        calendarPagerAdapter = new CalendarPagerAdapter(date);
                     }
                 }
 

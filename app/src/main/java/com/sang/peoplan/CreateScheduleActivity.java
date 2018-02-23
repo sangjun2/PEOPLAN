@@ -280,9 +280,25 @@ public class CreateScheduleActivity extends AppCompatActivity {
 
                 if(isExistAllData(startTime, endTime)) {
                     //db 등록
-                    SimpleDateFormat dateFormat = new SimpleDateFormat("(yyyy.MM.dd HH:mm)");
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm");
                     Toast.makeText(getApplicationContext(), dateFormat.format(startTime.toDate()) + ", " + dateFormat.format(endTime.toDate()), Toast.LENGTH_SHORT).show();
                     intentAlarm.putExtra("eventTitle", eventTitle.getText().toString());
+
+                    Repeat repeat = new Repeat();
+                    if(repeatConfirm.getText().toString().equals("없음")) {
+
+                    } else if(repeatConfirm.getText().toString().equals("매일")) {
+                        repeat.setNumber(1);
+                    } else if(repeatConfirm.getText().toString().equals("매주")) {
+                        repeat.setOneWeek(true);
+                    } else if(repeatConfirm.getText().toString().equals("매월")) {
+                        repeat.setMonth(true);
+                    } else if(repeatConfirm.getText().toString().equals("매년")) {
+                        repeat.setYear(true);
+                    }
+
+                    Event event = new Event(eventTitle.getText().toString(), dateFormat.format(startTime.toDate()), dateFormat.format(endTime.toDate()), repeat, false);
+
                     Intent intent1 = new Intent(CreateScheduleActivity.this, AlarmActivity.class);
                     startActivity(intent1);
                 }
