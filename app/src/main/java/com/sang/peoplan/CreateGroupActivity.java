@@ -1,14 +1,23 @@
 package com.sang.peoplan;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
+import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import org.joda.time.DateTime;
 
 
 public class CreateGroupActivity extends AppCompatActivity {
+    LinearLayout categoryView;
+    TextView categoryConfirm;
+    final int REQUESTCODE_CATEGORY = 500;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,6 +30,27 @@ public class CreateGroupActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        categoryView = findViewById(R.id.category_view);
+        categoryConfirm = findViewById(R.id.category_confirm);
+        categoryView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(CreateGroupActivity.this, SetGroupCategoryActivity.class);
+                startActivityForResult(intent, REQUESTCODE_CATEGORY);
+                overridePendingTransition(R.anim.anim_slide_in_right, R.anim.anim_slide_out_left);
+            }
+        });
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode == REQUESTCODE_CATEGORY){
+            if(resultCode == Activity.RESULT_OK){
+                String repeat = data.getStringExtra("category");
+                categoryConfirm.setText(repeat);
+            }
+        }
     }
 
     @Override

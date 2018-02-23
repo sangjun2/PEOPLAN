@@ -49,6 +49,11 @@ public class MainActivity extends AppCompatActivity {
                         fragmentTransaction.replace(R.id.frame, GroupFragment.newInstance());
                         fragmentTransaction.commit();
                         return true;
+                    case R.id.navigation_businesscard:
+                        fragmentTransaction = fragmentManager.beginTransaction();
+                        fragmentTransaction.replace(R.id.frame, BusinessCardFragment.newInstance());
+                        fragmentTransaction.commit();
+                        return true;
                 }
                 return false;
             }
