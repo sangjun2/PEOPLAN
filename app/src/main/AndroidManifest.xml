@@ -38,8 +38,8 @@
         <receiver android:name=".AlarmReceiver" />
 
         <activity android:name=".AlarmActivity" />
-        <activity android:name=".CreateBusinessCardActivity" />
-        <activity android:name=".SetGroupCategoryActivity"></activity>
+        <activity android:name=".SetGroupCategoryActivity" />
+        <activity android:name=".CreateBusinessCardDialog"></activity>
     </application>
 
 </manifest>

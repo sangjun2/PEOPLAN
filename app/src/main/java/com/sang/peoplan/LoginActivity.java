@@ -76,9 +76,9 @@ public class LoginActivity extends AppCompatActivity {
         UserManagement.requestMe(new MeResponseCallback() {
             @Override
             public void onFailure(ErrorResult errorResult) {
-                String message = "failed to get user info. msg=" + errorResult;
-                Logger.d(message);
-                Log.d("KAKAOTAG==", "onFailure");
+                    String message = "failed to get user info. msg=" + errorResult;
+                    Logger.d(message);
+                    Log.d("KAKAOTAG==", "onFailure");
 
                 ErrorCode result = ErrorCode.valueOf(errorResult.getErrorCode());
                 if (result == ErrorCode.CLIENT_ERROR_CODE) {
