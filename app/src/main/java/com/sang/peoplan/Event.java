@@ -2,6 +2,8 @@ package com.sang.peoplan;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.Date;
+
 /**
  * Created by Sangjun on 2018-02-22.
  */
@@ -10,9 +12,9 @@ public class Event {
     @SerializedName("name")
     public String name;
     @SerializedName("start")
-    public String start;
+    public Date start;
     @SerializedName("end")
-    public String end;
+    public Date end;
     @SerializedName("repeat")
     public Repeat repeat;
     @SerializedName("alarm")
@@ -21,7 +23,7 @@ public class Event {
     public Event() {
     }
 
-    public Event(String name, String start, String end, Repeat repeat, boolean alarm) {
+    public Event(String name, Date start, Date end, Repeat repeat, boolean alarm) {
         this.name = name;
         this.start = start;
         this.end = end;
@@ -37,19 +39,19 @@ public class Event {
         this.name = name;
     }
 
-    public String getStart() {
+    public Date getStart() {
         return start;
     }
 
-    public void setStart(String start) {
+    public void setStart(Date start) {
         this.start = start;
     }
 
-    public String getEnd() {
+    public Date getEnd() {
         return end;
     }
 
-    public void setEnd(String end) {
+    public void setEnd(Date end) {
         this.end = end;
     }
 
