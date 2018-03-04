@@ -1,19 +1,11 @@
 package com.sang.peoplan;
 
-import android.Manifest;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.AsyncTask;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.telephony.TelephonyManager;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.kakao.auth.ErrorCode;
 import com.kakao.auth.ISessionCallback;
@@ -25,17 +17,7 @@ import com.kakao.usermgmt.response.model.UserProfile;
 import com.kakao.util.exception.KakaoException;
 import com.kakao.util.helper.log.Logger;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.HashMap;
 import java.util.List;
 
 import retrofit2.Call;
@@ -170,6 +152,15 @@ public class LoginActivity extends AppCompatActivity {
                     return false;
                 } else if(response.code() == 200) {
                     if(response.body().size() == 1) {
+                        /*
+                        Call<List<Event>> callCalendar = service.getUserEvents(uid[0]);
+                        Response<List<Event>> calendars = callCalendar.execute();
+                        if(calendars.code() == 200) {
+                            for(int i = 0; i < calendars.body().size(); i++) {
+                                Log.d("item", calendars.body().get(i).name);
+                            }
+                        }
+*/
                         return true;
                     }
                     return false;

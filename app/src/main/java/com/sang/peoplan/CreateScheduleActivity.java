@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.support.annotation.Nullable;
 import android.media.MediaPlayer;
 import android.provider.MediaStore;
@@ -38,6 +39,10 @@ import java.net.URLEncoder;
 import java.util.Date;
 
 import java.text.SimpleDateFormat;
+
+import retrofit2.Call;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class CreateScheduleActivity extends AppCompatActivity {
     Switch isByDay;
@@ -297,15 +302,54 @@ public class CreateScheduleActivity extends AppCompatActivity {
                         repeat.setYear(true);
                     }
 
-                    Event event = new Event(eventTitle.getText().toString(), dateFormat.format(startTime.toDate()), dateFormat.format(endTime.toDate()), repeat, false);
+                    Event event = new Event(eventTitle.getText().toString(), startTime.toDate(), endTime.toDate(), repeat, false);
 
-                    Intent intent1 = new Intent(CreateScheduleActivity.this, AlarmActivity.class);
-                    startActivity(intent1);
+                    CreateEventAsyncTask task = new CreateEventAsyncTask();
+                    task.execute(event);
                 }
             }
         });
 
 
+    }
+
+    public class CreateEventAsyncTask extends AsyncTask<Event, Void, Boolean> {
+        Retrofit retrofit;
+        APIService service;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+            retrofit = new Retrofit.Builder()
+                    .baseUrl(GlobalApplication.SERVER_URL)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
+
+            service = retrofit.create(APIService.class);
+        }
+
+        @Override
+        protected void onPostExecute(Boolean isSuccessed) {
+            super.onPostExecute(isSuccessed);
+            if(isSuccessed) {
+                finish();
+            }
+        }
+
+        @Override
+        protected Boolean doInBackground(Event... events) {
+            Call<Event> event = service.createEvent(String.valueOf(LoginActivity.USER_PROFILE.getId()), events[0]);
+            try {
+                if(event.execute().code() == 200) {
+                    return true;
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return false;
+        }
     }
 
     private String getDateToString(TextView text, int type) {

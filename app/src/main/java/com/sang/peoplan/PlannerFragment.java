@@ -8,6 +8,7 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -47,6 +48,7 @@ public class PlannerFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        Toast.makeText(getContext(), "START", Toast.LENGTH_SHORT).show();
     }
 
     @Override
