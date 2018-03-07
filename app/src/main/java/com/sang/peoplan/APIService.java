@@ -13,11 +13,14 @@ import retrofit2.http.Path;
  * Created by Sangjun on 2018-02-22.
  */
 
-public interface APIService {
+
+public interface APIService { // retrofit 사용을 위한 http api 인터페이스, get, post, put 등등
+
     @GET("/api/users") //모든 유저 데이터
     Call<List<User>> getUserList();
 
     @GET("/api/users/{user}") // 특정 유저 데이터
+
     Call<List<User>> getUser(@Path("user") String userUID);
 
     @POST("/api/users") // 유저 생성
