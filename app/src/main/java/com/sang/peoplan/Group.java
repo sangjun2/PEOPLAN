@@ -1,4 +1,6 @@
 package com.sang.peoplan;
+import com.google.gson.annotations.SerializedName;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -7,9 +9,12 @@ import java.util.ArrayList;
  */
 @SuppressWarnings("serial")
 public class Group implements Serializable {
-    private String groupId;
-    private String groupName;
-    private ArrayList<String> groupMember;
+    @SerializedName("groupId")
+    private String groupId; // 그룹 id, 어떻게 제작?
+    @SerializedName("groupName")
+    private String groupName; // 그룹 이름
+    @SerializedName("groupMember")
+    private ArrayList<String> groupMember; // 그룹 구성원
     //post, notice, event, category 생략
 
     public Group(String groupId, String groupName){
@@ -42,9 +47,9 @@ public class Group implements Serializable {
         this.groupId = GroupId;
     }
 
-    public void addMember(String uid){
-        if(!groupMember.contains(uid)){
-            groupMember.add(uid);
+    public void addMember(String kakaouid){
+        if(!groupMember.contains(kakaouid)){
+            groupMember.add(kakaouid);
         }
     }
 }

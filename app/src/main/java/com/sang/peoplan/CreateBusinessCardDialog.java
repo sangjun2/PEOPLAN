@@ -15,7 +15,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 
-public class CreateBusinessCardDialog extends Dialog {
+public class CreateBusinessCardDialog extends Dialog { // 명함 만들기
     public String day;
     public Context mContext;
     private Uri mImageCaptureUri;
@@ -46,7 +46,7 @@ public class CreateBusinessCardDialog extends Dialog {
         setContentView(R.layout.dialog_create_business_card);
         getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
 
-
+        // 자기 얼굴 고르기
         myPicture = findViewById(R.id.my_picture);
         myPicture.setOnClickListener(new View.OnClickListener() {
             @Override
