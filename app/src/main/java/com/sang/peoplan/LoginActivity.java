@@ -115,6 +115,7 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+
     public class GetUserAsyncTask extends AsyncTask<String, Void, Boolean> {
         Retrofit retrofit; // 라이브러리, REST API 통신을 위함, 개꿀임
         APIService service;
@@ -145,6 +146,7 @@ public class LoginActivity extends AppCompatActivity {
                 finish();
             }
         }
+
 
         @Override
         protected Boolean doInBackground(String... uid) {
