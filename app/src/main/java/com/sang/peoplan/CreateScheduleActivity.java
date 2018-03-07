@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.support.annotation.Nullable;
 import android.media.MediaPlayer;
 import android.provider.MediaStore;
@@ -38,13 +39,15 @@ import java.net.URLEncoder;
 import java.util.Date;
 
 import java.text.SimpleDateFormat;
+import retrofit2.Call;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class CreateScheduleActivity extends AppCompatActivity { // 일정 추가 액티비티
     Switch isByDay; // 요일별 선택
     Switch isAllDay; // 하루종일 선택
     AutofitEdittext eventTitle; // 이벤트 제목
     Button selectGroupButton; // 그룹 선택
-
     LinearLayout timeGroup; // 시간 설정위한 레이아웃
 
     LinearLayout eventStart; // 시작 시간 설정 위한 레이아웃
@@ -303,10 +306,10 @@ public class CreateScheduleActivity extends AppCompatActivity { // 일정 추가
                         repeat.setYear(true);
                     }
 
-                    Event event = new Event(eventTitle.getText().toString(), dateFormat.format(startTime.toDate()), dateFormat.format(endTime.toDate()), repeat, false);
+                    Event event = new Event(eventTitle.getText().toString(), startTime.toDate(), endTime.toDate(), repeat, false);
 
-                    Intent intent1 = new Intent(CreateScheduleActivity.this, AlarmActivity.class);
-                    startActivity(intent1);
+                    CreateEventAsyncTask task = new CreateEventAsyncTask();
+                    task.execute(event);
                 }
             }
         });
@@ -314,7 +317,48 @@ public class CreateScheduleActivity extends AppCompatActivity { // 일정 추가
 
     }
 
+
     // Date 형식 데이터 String 으로 변환
+    public class CreateEventAsyncTask extends AsyncTask<Event, Void, Boolean> {
+        Retrofit retrofit;
+        APIService service;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+            retrofit = new Retrofit.Builder()
+                    .baseUrl(GlobalApplication.SERVER_URL)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
+
+            service = retrofit.create(APIService.class);
+        }
+
+        @Override
+        protected void onPostExecute(Boolean isSuccessed) {
+            super.onPostExecute(isSuccessed);
+            if(isSuccessed) {
+                finish();
+            }
+        }
+
+        @Override
+        protected Boolean doInBackground(Event... events) {
+            Call<Event> event = service.createEvent(String.valueOf(LoginActivity.USER_PROFILE.getId()), events[0]);
+            try {
+                if(event.execute().code() == 200) {
+                    return true;
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return false;
+        }
+    }
+
+
     private String getDateToString(TextView text, int type) {
         String[] texts = text.getText().toString().split(" ");
         String[] dates = texts[0].split("\\.");
