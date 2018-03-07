@@ -15,7 +15,7 @@ import android.widget.TextView;
 /**
  * Created by sanginLee on 2018-01-10.
  */
-
+// dialog : 알림창
 public class DayScheduleDialog extends Dialog {
     public String day;
     public Context mContext;
@@ -43,12 +43,13 @@ public class DayScheduleDialog extends Dialog {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // 일정추가 물음
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dialog_day_schedule);
         getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
 
         TextView dayText = findViewById(R.id.dialog_day_text);
-        FloatingActionButton fab = findViewById(R.id.dialog_floating_bt);
+        FloatingActionButton fab = findViewById(R.id.dialog_floating_bt); // 추가
 
         dayText.setText(this.day);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -57,7 +58,7 @@ public class DayScheduleDialog extends Dialog {
                 dismiss();
                 Activity activity = (Activity) mContext;
 
-                Intent intent = new Intent(getContext(), CreateScheduleActivity.class);
+                Intent intent = new Intent(getContext(), CreateScheduleActivity.class); // 스케줄 추가 액티비티 실행
                 intent.putExtra("day", day);
                 getContext().startActivity(intent);
                 activity.overridePendingTransition(R.anim.anim_slide_in_bottom, R.anim.anim_noanim);

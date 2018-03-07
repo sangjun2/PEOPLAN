@@ -39,10 +39,11 @@ public class GroupFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_group, container, false);
 
-        Toolbar toolbar = view.findViewById(R.id.group_toolbar);
+        Toolbar toolbar = view.findViewById(R.id.group_toolbar); //??
         TextView title = view.findViewById(R.id.toolbar_title);
         title.setText("그룹");
 
+        //??
         AppCompatActivity activity = (AppCompatActivity) getActivity();
         activity.setSupportActionBar(toolbar);
 
