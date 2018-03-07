@@ -39,34 +39,32 @@ import java.net.URLEncoder;
 import java.util.Date;
 
 import java.text.SimpleDateFormat;
-
 import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class CreateScheduleActivity extends AppCompatActivity {
-    Switch isByDay;
-    Switch isAllDay;
-    AutofitEdittext eventTitle;
-    Button selectGroupButton;
+public class CreateScheduleActivity extends AppCompatActivity { // 일정 추가 액티비티
+    Switch isByDay; // 요일별 선택
+    Switch isAllDay; // 하루종일 선택
+    AutofitEdittext eventTitle; // 이벤트 제목
+    Button selectGroupButton; // 그룹 선택
+    LinearLayout timeGroup; // 시간 설정위한 레이아웃
 
-    LinearLayout timeGroup;
+    LinearLayout eventStart; // 시작 시간 설정 위한 레이아웃
+    LinearLayout eventEnd; // 종료 시간 설정 위한 레이아웃
+    LinearLayout repeatView; // 반복 횟수 설정 위한 레이아웃
+    LinearLayout alarmSelect; // 알람 설정 위한 레이아웃
+    EditText eventContent; // 일정 내용
+    Button confirm; // 저장 버튼
+    TextView repeatConfirm; // 반복 정도
 
-    LinearLayout eventStart;
-    LinearLayout eventEnd;
-    LinearLayout repeatView;
-    LinearLayout alarmSelect;
-    EditText eventContent;
-    Button confirm;
-    TextView repeatConfirm;
+    TextView eventStartText; // 시작 일정 선택을 위함
+    TextView eventEndText; // 종료 일정 선택을 위함
 
-    TextView eventStartText;
-    TextView eventEndText;
+    DayPicker eventStartNumberPicker; // 일정 시작 날짜 선택
+    DayPicker eventEndNumberPicker; // 일정 종료 날짜 선택
 
-    DayPicker eventStartNumberPicker;
-    DayPicker eventEndNumberPicker;
-
-    WeekdaysGroup weekdaysGroup;
+    WeekdaysGroup weekdaysGroup; // 요일별 선택시 어떤 요일들을 선택할지 위한 레이아웃
 
     final int REQUESTCODE_GROUP = 100;
     final int REQUESTCODE_REPEAT = 200;
@@ -170,6 +168,7 @@ public class CreateScheduleActivity extends AppCompatActivity {
             }
         });
 
+        // 하루 종일 이란 의미를 다시 확인 필요
         isAllDay.setChecked(true);
         isAllDay.setOnCheckedChangeListener(new Switch.OnCheckedChangeListener(){
             @Override
@@ -194,13 +193,14 @@ public class CreateScheduleActivity extends AppCompatActivity {
             }
         });
 
+        // 그룹 선택 시 반응, 코딩~~
         selectGroupButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
             }
         });
 
+        // 시작 요일 설정
         eventStartText.setText(day);
         eventStart.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -218,6 +218,7 @@ public class CreateScheduleActivity extends AppCompatActivity {
             }
         });
 
+        // 종료 요일 설정
         eventEndText.setText(day);
         eventEnd.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -235,6 +236,7 @@ public class CreateScheduleActivity extends AppCompatActivity {
             }
         });
 
+        // 주기 설정
         repeatView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -247,6 +249,7 @@ public class CreateScheduleActivity extends AppCompatActivity {
             }
         });
 
+        // 알람 설정
         alarmSelect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -255,6 +258,7 @@ public class CreateScheduleActivity extends AppCompatActivity {
             }
         });
 
+        // 추가 버튼 설정
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -313,6 +317,8 @@ public class CreateScheduleActivity extends AppCompatActivity {
 
     }
 
+
+    // Date 형식 데이터 String 으로 변환
     public class CreateEventAsyncTask extends AsyncTask<Event, Void, Boolean> {
         Retrofit retrofit;
         APIService service;
@@ -351,6 +357,7 @@ public class CreateScheduleActivity extends AppCompatActivity {
             return false;
         }
     }
+
 
     private String getDateToString(TextView text, int type) {
         String[] texts = text.getText().toString().split(" ");

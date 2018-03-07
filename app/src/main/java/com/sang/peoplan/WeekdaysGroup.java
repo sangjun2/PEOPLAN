@@ -16,7 +16,7 @@ import com.nex3z.togglebuttongroup.button.CircularToggle;
  * Created by Sangjun on 2018-02-06.
  */
 
-public class WeekdaysGroup extends LinearLayout {
+public class WeekdaysGroup extends LinearLayout { // 요일별 선택시 어떤 요일들을 선택할지 위한 레이아웃
     MultiSelectToggleGroup group;
     CircularToggle sunToggle;
     CircularToggle monToggle;

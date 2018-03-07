@@ -12,7 +12,7 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class SetGroupCategoryActivity extends AppCompatActivity {
+public class SetGroupCategoryActivity extends AppCompatActivity { // 그룹 카테고리 선택
     RadioGroup radioGroup;
     Button confirm;
     RadioButton radioButton;
