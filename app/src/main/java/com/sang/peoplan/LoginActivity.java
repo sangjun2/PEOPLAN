@@ -109,6 +109,7 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+
     public class GetUserAsyncTask extends AsyncTask<String, Void, Boolean> {
         Retrofit retrofit;
         APIService service;
@@ -139,6 +140,7 @@ public class LoginActivity extends AppCompatActivity {
                 finish();
             }
         }
+
 
         @Override
         protected Boolean doInBackground(String... uid) {
