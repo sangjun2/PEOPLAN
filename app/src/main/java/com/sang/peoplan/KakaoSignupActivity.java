@@ -47,7 +47,8 @@ import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class KakaoSignupActivity extends AppCompatActivity {
+public class KakaoSignupActivity extends AppCompatActivity { // DB에 유저정보 저장
+
     UserProfile userProfile;
     ImageView userImage;
     AutofitEdittext userName;
@@ -65,6 +66,7 @@ public class KakaoSignupActivity extends AppCompatActivity {
         setContentView(R.layout.activity_kakao_signup);
         mContext = this;
 
+        // 카카오 연동된 유저 정보
         userProfile = SplashActivity.USER_PROFILE;
 
         Toolbar toolbar = findViewById(R.id.kakao_toolbar);
@@ -89,6 +91,7 @@ public class KakaoSignupActivity extends AppCompatActivity {
                 .setPermissions(Manifest.permission.READ_PHONE_STATE)
                 .check();
 
+        // 디자인 정보랑 코드 정보랑 매칭증
         userImage = findViewById(R.id.user_image);
         userName = findViewById(R.id.user_name);
         userEmail = findViewById(R.id.user_email);
@@ -97,12 +100,13 @@ public class KakaoSignupActivity extends AppCompatActivity {
         confirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                User user = new User();
+                User user = new User(); // 어플에서 사용할 유저 클래스,
                 user.setKakaoUID(String.valueOf(userProfile.getId()));
                 user.setName(userName.getText().toString());
                 user.setTel(userTel.getText().toString());
                 user.setEmail(userEmail.getText().toString());
 
+                // DB에 유저 정보 전달
                 CreateUserAsyncTask task = new CreateUserAsyncTask();
                 task.execute(user);
             }
@@ -111,12 +115,14 @@ public class KakaoSignupActivity extends AppCompatActivity {
         if(userProfile.getProfileImagePath() != null) {
             Picasso.with(this).load(userProfile.getProfileImagePath()).into(userImage);
         }
+        // ??
         userName.setText(userProfile.getNickname());
         userName.setSelection(userName.getText().toString().length());
         userEmail.setText(userProfile.getEmail());
     }
 
     public String getPhoneNumber() {
+        // 휴대폰 번호 획득
         TelephonyManager telephony = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
         String phoneNumber ="";
 
@@ -131,6 +137,7 @@ public class KakaoSignupActivity extends AppCompatActivity {
         return phoneNumber;
     }
 
+    // DB에 user 객체 추가
     public class CreateUserAsyncTask extends AsyncTask<User, Void, Boolean> {
         Retrofit retrofit;
         APIService service;
@@ -159,9 +166,10 @@ public class KakaoSignupActivity extends AppCompatActivity {
 
         @Override
         protected Boolean doInBackground(User... users) {
+            // 유저 정보 추가
             Call<User> user = service.createUser(users[0]);
             try {
-                if(user.execute().code() == 200) {
+                if(user.execute().code() == 200) { // 추가 성공
                     return true;
                 }
             } catch (IOException e) {
@@ -172,6 +180,7 @@ public class KakaoSignupActivity extends AppCompatActivity {
         }
     }
 
+    // ?? 왜?
     public class ConnectASyncTask extends AsyncTask<HashMap<String, User>, Void, String> {
         URL url;
         HttpURLConnection urlConnection;
@@ -254,7 +263,7 @@ public class KakaoSignupActivity extends AppCompatActivity {
             return null;
         }
     }
-
+    // ?? 왜?
     private void setJsonData(JSONObject jsonObject, String name, String data) {
         try {
             if(data == null) {

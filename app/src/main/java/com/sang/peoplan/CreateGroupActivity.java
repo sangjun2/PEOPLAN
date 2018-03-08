@@ -14,7 +14,7 @@ import android.widget.TextView;
 import org.joda.time.DateTime;
 
 
-public class CreateGroupActivity extends AppCompatActivity {
+public class CreateGroupActivity extends AppCompatActivity { // 그룹 추가
     LinearLayout categoryView;
     TextView categoryConfirm;
     final int REQUESTCODE_CATEGORY = 500;
@@ -30,6 +30,7 @@ public class CreateGroupActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        // 그룹 카테고리 설정
         categoryView = findViewById(R.id.category_view);
         categoryConfirm = findViewById(R.id.category_confirm);
         categoryView.setOnClickListener(new View.OnClickListener() {

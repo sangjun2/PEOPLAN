@@ -15,7 +15,7 @@ import android.widget.TextView;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-public class GroupDetailFragment extends Fragment {
+public class GroupDetailFragment extends Fragment { // 그룹 상세 정보 액티비티, 미 구현
     TextView groupName;
     public GroupDetailFragment() {
         // Required empty public constructor

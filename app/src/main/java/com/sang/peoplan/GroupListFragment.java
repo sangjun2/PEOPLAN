@@ -14,7 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 
-public class GroupListFragment extends Fragment {
+public class GroupListFragment extends Fragment { // 그룹 리스트 프래그먼트
     public GroupListFragment() {
         // Required empty public constructor
     }
@@ -33,6 +33,7 @@ public class GroupListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        // 리사이클러뷰로 그룹 리스트 출력, 세로 방향
         View view = inflater.inflate(R.layout.fragment_group_list, container, false);
         RecyclerView recyclerView = view.findViewById(R.id.group_recyclerview);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
@@ -49,12 +50,12 @@ public class GroupListFragment extends Fragment {
             View view;
             mContext = parent.getContext();
 
-            switch (viewType) {
+            switch (viewType) { // ?? viewType이 어떤식으로 잡히는 지 ?..
                 case 0:
                     view = LayoutInflater.from(mContext).inflate(R.layout.create_group_item_view, parent, false);
                     view.setOnClickListener(new View.OnClickListener() {
                         @Override
-                        public void onClick(View view) {
+                        public void onClick(View view) { // 그룹 생성
                             Intent intent = new Intent(getContext(), CreateGroupActivity.class);
                             startActivity(intent);
                             getActivity().overridePendingTransition(R.anim.anim_slide_in_bottom, R.anim.anim_noanim);

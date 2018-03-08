@@ -14,7 +14,7 @@ import com.kakao.auth.KakaoSDK;
  * Created by Sangjun on 2018-01-17.
  */
 
-public class GlobalApplication extends Application {
+public class GlobalApplication extends Application { // Application 상속 받은 놈이 먼저 실행됨
     private static volatile GlobalApplication instance = null;
     public static final String SERVER_URL = "http://13.125.218.127:9000";
 
@@ -29,7 +29,7 @@ public class GlobalApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
-        instance = this;
-        KakaoSDK.init(new KakaoSDKAdapter());
+        instance = this; // ??
+        KakaoSDK.init(new KakaoSDKAdapter()); // 카카오 연동을 위한 설정
     }
 }
