@@ -39,7 +39,9 @@ import java.net.URLEncoder;
 import java.util.Date;
 
 import java.text.SimpleDateFormat;
+import java.util.List;
 import retrofit2.Call;
+import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -90,6 +92,14 @@ public class CreateScheduleActivity extends AppCompatActivity { // 일정 추가
     private static int minute = 24;
 
     private ToggleButton _toggleSun, _toggleMon, _toggleTue, _toggleWed, _toggleThu, _toggleFri, _toggleSat;
+
+    public static final int REPEAT_NONE = 0;
+    public static final int REPEAT_EVERYDAY = 1;
+    public static final int REPEAT_EVERYWEEK = 2;
+    public static final int REPEAT_EVERYTWOWEEK = 3;
+    public static final int REPEAT_EVERYMONTH = 4;
+    public static final int REPEAT_EVERYYEAR = 5;
+
 
 
     @Override
@@ -283,8 +293,8 @@ public class CreateScheduleActivity extends AppCompatActivity { // 일정 추가
                     startTime = startDate.toDateTime(new LocalTime(startHour, startMinute));
                     endTime = endDate.toDateTime(new LocalTime(endHour, endMinute));
                 } else {
-                    startTime = startDate.toDateTime(new LocalTime(0, 0));
-                    endTime = endDate.toDateTime(new LocalTime(23, 59));
+                    startTime = startDate.toDateTime(new LocalTime(0, 0, 0, 0));
+                    endTime = endDate.toDateTime(new LocalTime(23, 59, 59, 999));
                 }
 
                 if(isExistAllData(startTime, endTime)) {
@@ -293,20 +303,20 @@ public class CreateScheduleActivity extends AppCompatActivity { // 일정 추가
                     Toast.makeText(getApplicationContext(), dateFormat.format(startTime.toDate()) + ", " + dateFormat.format(endTime.toDate()), Toast.LENGTH_SHORT).show();
                     intentAlarm.putExtra("eventTitle", eventTitle.getText().toString());
 
-                    Repeat repeat = new Repeat();
+                    int repeat = REPEAT_NONE;
                     if(repeatConfirm.getText().toString().equals("없음")) {
 
                     } else if(repeatConfirm.getText().toString().equals("매일")) {
-                        repeat.setNumber(1);
+                        repeat = REPEAT_EVERYDAY;
                     } else if(repeatConfirm.getText().toString().equals("매주")) {
-                        repeat.setOneWeek(true);
+                        repeat = REPEAT_EVERYWEEK;
                     } else if(repeatConfirm.getText().toString().equals("매월")) {
-                        repeat.setMonth(true);
+                        repeat = REPEAT_EVERYMONTH;
                     } else if(repeatConfirm.getText().toString().equals("매년")) {
-                        repeat.setYear(true);
+                        repeat = REPEAT_EVERYYEAR;
                     }
 
-                    Event event = new Event(eventTitle.getText().toString(), startTime.toDate(), endTime.toDate(), repeat, false);
+                    Event event = new Event(eventTitle.getText().toString(), new Date(startTime.getMillis()), new Date(endTime.getMillis()), repeat, false);
 
                     CreateEventAsyncTask task = new CreateEventAsyncTask();
                     task.execute(event);
@@ -345,9 +355,21 @@ public class CreateScheduleActivity extends AppCompatActivity { // 일정 추가
 
         @Override
         protected Boolean doInBackground(Event... events) {
-            Call<Event> event = service.createEvent(String.valueOf(LoginActivity.USER_PROFILE.getId()), events[0]);
+            Call<Event> event = service.createEvent(String.valueOf(SplashActivity.USER_PROFILE.getId()), events[0]);
             try {
                 if(event.execute().code() == 200) {
+                    Call<List<Event>> callCalendar = service.getUserEvents(String.valueOf(SplashActivity.USER_PROFILE.getId()));
+                    Response<List<Event>> calendars = callCalendar.execute();
+                    if(calendars.code() == 200) {
+                        for(int i = 0; i < calendars.body().size(); i++) {
+                            Event e = calendars.body().get(i);
+                            if(SplashActivity.EVENT_LIST.containsKey(e._id)) {
+                                continue;
+                            } else {
+                                SplashActivity.EVENT_LIST.put(e._id, e);
+                            }
+                        }
+                    }
                     return true;
                 }
             } catch (IOException e) {
