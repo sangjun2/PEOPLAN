@@ -65,7 +65,7 @@ public class KakaoSignupActivity extends AppCompatActivity {
         setContentView(R.layout.activity_kakao_signup);
         mContext = this;
 
-        userProfile = LoginActivity.USER_PROFILE;
+        userProfile = SplashActivity.USER_PROFILE;
 
         Toolbar toolbar = findViewById(R.id.kakao_toolbar);
         TextView toolbarTitle = findViewById(R.id.confirm_toolbar_title);

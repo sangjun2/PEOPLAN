@@ -17,9 +17,14 @@ import android.widget.LinearLayout;
 import android.widget.NumberPicker;
 import android.widget.TextView;
 
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -337,6 +342,41 @@ public class PlannerView extends ConstraintLayout {
                     viewHolder.dateText.setTextColor(Color.parseColor("#ffffff"));
                     isExistToday = true;
                 }
+
+                for(Map.Entry<String, Event> entry : SplashActivity.EVENT_LIST.entrySet()) {
+                    Event event = entry.getValue();
+                    int repeat = event.getRepeat();
+
+                    DateTime start = new DateTime(event.getStart().getTime() - 1000 * 60 * 60 * 9);
+                    DateTime end = new DateTime(event.getEnd().getTime() - 1000 * 60 * 60 * 9);
+
+                    View item = LayoutInflater.from(mContext).inflate(R.layout.plan_item, null, false);
+                    TextView itemText = item.findViewById(R.id.plan_item_text);
+
+                    //int period = (int) ((end.toLocalDate().toDate().getTime() - start.toLocalDate().toDate().getTime()) / (24 * 60 * 60 * 1000)); // 날짜 사이 구간
+
+                    if(this.calendar.toDate().getTime() >= start.toDate().getTime() && this.calendar.toDate().getTime() <= end.toDate().getTime()) {
+                        itemText.setText(event.getName());
+                        viewHolder.dateLayout.addView(item);
+                        viewHolder.events.add(event);
+                    } else {
+                        if(repeat == CreateScheduleActivity.REPEAT_EVERYDAY) {
+                            if(this.calendar.toDate().getTime() > start.toLocalDate().toDate().getTime()) {
+                                itemText.setText(event.getName());
+                                viewHolder.dateLayout.addView(item);
+                            }
+                        } else if(repeat == CreateScheduleActivity.REPEAT_EVERYWEEK) {
+
+                        } else if(repeat == CreateScheduleActivity.REPEAT_EVERYTWOWEEK) {
+
+                        } else if(repeat == CreateScheduleActivity.REPEAT_EVERYMONTH) {
+
+                        } else if(repeat == CreateScheduleActivity.REPEAT_EVERYYEAR) {
+
+                        }
+                    }
+                }
+
                 this.calendar = this.calendar.plusDays(1);
             }
         }
@@ -349,11 +389,16 @@ public class PlannerView extends ConstraintLayout {
         public class ViewHolder extends RecyclerView.ViewHolder {
             TextView dateText;
             LocalDate localDate;
+            LinearLayout dateLayout;
+            List<Event> events;
 
             public ViewHolder(View itemView) {
                 super(itemView);
 
                 dateText = itemView.findViewById(R.id.planner_item_day);
+                dateLayout = itemView.findViewById(R.id.planner_item_layout);
+
+                events = new ArrayList<>();
             }
 
             public void setLocalDate(LocalDate localDate) {

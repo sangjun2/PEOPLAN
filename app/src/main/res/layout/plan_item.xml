@@ -2,13 +2,17 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@color/colorPrimary"
     android:padding="2dp">
 
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:id="@+id/plan_item_text"
         android:textSize="12sp"
+        android:textAlignment="center"
+        android:maxLines="1"
+        android:ellipsize="end"
         android:textColor="#ffffff"/>
 
 </LinearLayout>
