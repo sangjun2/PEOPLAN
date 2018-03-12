@@ -170,6 +170,7 @@ public class KakaoSignupActivity extends AppCompatActivity { // DB에 유저정�
             Call<User> user = service.createUser(users[0]);
             try {
                 if(user.execute().code() == 200) { // 추가 성공
+                    SplashActivity.USER_TEL = users[0].getTel();
                     return true;
                 }
             } catch (IOException e) {
