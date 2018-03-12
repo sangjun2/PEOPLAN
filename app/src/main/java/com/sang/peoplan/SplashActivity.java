@@ -36,6 +36,8 @@ public class SplashActivity extends AppCompatActivity {
 
     private LoginButton loginButton;
 
+    public static String USER_TEL = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -165,6 +167,7 @@ public class SplashActivity extends AppCompatActivity {
                     return false;
                 } else if(response.code() == 200) {
                     if(response.body().size() == 1) {
+                        USER_TEL = response.body().get(0).getTel();
                         Call<List<Event>> callCalendar = service.getUserEvents(uid[0]);
                         Response<List<Event>> calendars = callCalendar.execute();
                         if(calendars.code() == 200) {
