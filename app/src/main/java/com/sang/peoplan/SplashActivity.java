@@ -170,6 +170,8 @@ public class SplashActivity extends AppCompatActivity {
                         if(calendars.code() == 200) {
                             for(int i = 0; i < calendars.body().size(); i++) {
                                 Event e = calendars.body().get(i);
+                                e.getStart().setTime(e.getStart().getTime() - 1000 * 60 * 60 * 9);
+                                e.getEnd().setTime(e.getEnd().getTime()  - 1000 * 60 * 60 * 9);
                                 EVENT_LIST.put(e._id, e);
                             }
                         }
