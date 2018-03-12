@@ -23,6 +23,7 @@ import org.joda.time.LocalDate;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -53,6 +54,8 @@ public class PlannerView extends ConstraintLayout {
 
     LocalDate date;
 
+    HashMap<String, ArrayList<Event>> hashMap;
+
     private DayScheduleDialog mDayScheduleDialog;
 
 
@@ -78,6 +81,8 @@ public class PlannerView extends ConstraintLayout {
 
         final View view = inflater.inflate(R.layout.planner_view, this, false);
         addView(view);
+
+        hashMap = new HashMap<>();
 
         if(this.date != null) {
             if(isExistToday(this.date)) {
@@ -301,6 +306,8 @@ public class PlannerView extends ConstraintLayout {
                 @Override
                 public void onClick(View view) {
                     DayScheduleDialog dialog = new DayScheduleDialog(context);
+                    SimpleDateFormat format = new SimpleDateFormat("MMdd");
+                    dialog.myEvent = hashMap.get(format.format(viewHolder.getLocalDate().toDate()));
                     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd");
                     String date = dateFormat.format(viewHolder.getLocalDate().toDate());
                     dialog.setDay(date);
@@ -347,18 +354,21 @@ public class PlannerView extends ConstraintLayout {
                     Event event = entry.getValue();
                     int repeat = event.getRepeat();
 
-                    DateTime start = new DateTime(event.getStart().getTime() - 1000 * 60 * 60 * 9);
-                    DateTime end = new DateTime(event.getEnd().getTime() - 1000 * 60 * 60 * 9);
+                    DateTime start = new DateTime(event.getStart().getTime());
+                    DateTime end = new DateTime(event.getEnd().getTime());
 
                     View item = LayoutInflater.from(mContext).inflate(R.layout.plan_item, null, false);
                     TextView itemText = item.findViewById(R.id.plan_item_text);
 
                     //int period = (int) ((end.toLocalDate().toDate().getTime() - start.toLocalDate().toDate().getTime()) / (24 * 60 * 60 * 1000)); // 날짜 사이 구간
 
+                    SimpleDateFormat format = new SimpleDateFormat("MMdd");
+                    hashMap.put(format.format(this.calendar.toDate()), new ArrayList<Event>());
+
                     if(this.calendar.toDate().getTime() >= start.toDate().getTime() && this.calendar.toDate().getTime() <= end.toDate().getTime()) {
                         itemText.setText(event.getName());
                         viewHolder.dateLayout.addView(item);
-                        viewHolder.events.add(event);
+                        hashMap.get(format.format(this.calendar.toDate())).add(event);
                     } else {
                         if(repeat == CreateScheduleActivity.REPEAT_EVERYDAY) {
                             if(this.calendar.toDate().getTime() > start.toLocalDate().toDate().getTime()) {
@@ -374,6 +384,7 @@ public class PlannerView extends ConstraintLayout {
                         } else if(repeat == CreateScheduleActivity.REPEAT_EVERYYEAR) {
 
                         }
+
                     }
                 }
 
@@ -390,7 +401,6 @@ public class PlannerView extends ConstraintLayout {
             TextView dateText;
             LocalDate localDate;
             LinearLayout dateLayout;
-            List<Event> events;
 
             public ViewHolder(View itemView) {
                 super(itemView);
@@ -398,7 +408,7 @@ public class PlannerView extends ConstraintLayout {
                 dateText = itemView.findViewById(R.id.planner_item_day);
                 dateLayout = itemView.findViewById(R.id.planner_item_layout);
 
-                events = new ArrayList<>();
+
             }
 
             public void setLocalDate(LocalDate localDate) {

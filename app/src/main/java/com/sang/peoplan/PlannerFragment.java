@@ -42,7 +42,7 @@ public class PlannerFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_planner, container, false);
 
         // 달력 구성
-        PlannerView plannerView = view.findViewById(R.id.planner);
+        plannerView = view.findViewById(R.id.planner);
         plannerView.initView(new LocalDate());
 
         return view;
