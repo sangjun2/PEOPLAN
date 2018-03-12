@@ -21,7 +21,7 @@ import java.net.URL;
  */
 
 public class User {
-    @SerializedName("kakaoid")
+    @SerializedName("id")
     public String kakaoUID;
     @SerializedName("name")
     public String name;

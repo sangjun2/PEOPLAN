@@ -11,11 +11,13 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 public class GroupFragment extends Fragment {
     FragmentManager fragmentManager;
     FragmentTransaction fragmentTransaction;
+    Button toolbar_notification_bt; // 그룹 알림 버튼
 
     public GroupFragment() {
         // Required empty public constructor
@@ -39,9 +41,11 @@ public class GroupFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_group, container, false);
 
-        Toolbar toolbar = view.findViewById(R.id.group_toolbar); //??
+        Toolbar toolbar = view.findViewById(R.id.group_toolbar); //화면 상위 모습
         TextView title = view.findViewById(R.id.toolbar_title);
         title.setText("그룹");
+
+        toolbar_notification_bt = view.findViewById(R.id.toolbar_notification_bt); // 그룹 알림 버튼
 
         //??
         AppCompatActivity activity = (AppCompatActivity) getActivity();

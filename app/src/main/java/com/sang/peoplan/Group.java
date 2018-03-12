@@ -1,4 +1,6 @@
 package com.sang.peoplan;
+import com.google.gson.annotations.SerializedName;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -7,44 +9,63 @@ import java.util.ArrayList;
  */
 @SuppressWarnings("serial")
 public class Group implements Serializable {
-    private String groupId;
-    private String groupName;
-    private ArrayList<String> groupMember;
-    //post, notice, event, category 생략
+    @SerializedName("administrator")
+    private String administrator; // 관리자 ID
+    @SerializedName("name")
+    private String name; // 그룹 이름
+    @SerializedName("category")
+    private String category; //그룹 카테고리
+    @SerializedName("members")
+    private ArrayList<String> members; // 그룹 구성원
 
-    public Group(String groupId, String groupName){
-        this.groupId = groupId;
-        this.groupName = groupName;
-        groupMember = new ArrayList<>();
+
+    //post, notice 나중으로
+
+    public Group(String administrator, String name, String category) {
+        this.administrator = administrator;
+        this.name = name;
+        this.category = category;
+        this.members = new ArrayList<>();
+        // 관리자를 구성원으로 추가
+        addMember(administrator);
     }
 
-    public String getGroupName() {
-        return groupName;
+    public String getAdministrator() {
+        return administrator;
     }
 
-    public void setGroupName(String groupName) {
-        this.groupName = groupName;
+    public void setAdministrator(String administrator) {
+        this.administrator = administrator;
     }
 
-    public ArrayList<String> getGroupMember() {
-        return groupMember;
+    public String getName() {
+        return name;
     }
 
-    public void setGroupMember(ArrayList<String> groupMember) {
-        this.groupMember = groupMember;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getGroupId() {
-        return groupId;
+    public String getCategory() {
+        return category;
     }
 
-    public void setSetGroupId(String GroupId) {
-        this.groupId = GroupId;
+    public void setCategory(String category) {
+        this.category = category;
     }
 
-    public void addMember(String uid){
-        if(!groupMember.contains(uid)){
-            groupMember.add(uid);
+    public ArrayList<String> getMembers() {
+        return members;
+    }
+
+    public void setMembers(ArrayList<String> members) {
+        this.members = members;
+    }
+
+    public void addMember(String kakaouid){
+        if(!members.contains(kakaouid)){
+            members.add(kakaouid);
         }
     }
+
 }

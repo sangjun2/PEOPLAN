@@ -298,7 +298,7 @@ public class CreateScheduleActivity extends AppCompatActivity { // 일정 추가
                 }
 
                 if(isExistAllData(startTime, endTime)) {
-                    //db 등록
+
                     SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm");
                     Toast.makeText(getApplicationContext(), dateFormat.format(startTime.toDate()) + ", " + dateFormat.format(endTime.toDate()), Toast.LENGTH_SHORT).show();
                     intentAlarm.putExtra("eventTitle", eventTitle.getText().toString());
@@ -315,7 +315,7 @@ public class CreateScheduleActivity extends AppCompatActivity { // 일정 추가
                     } else if(repeatConfirm.getText().toString().equals("매년")) {
                         repeat = REPEAT_EVERYYEAR;
                     }
-
+                   //db 등록
                     Event event = new Event(eventTitle.getText().toString(), new Date(startTime.getMillis()), new Date(endTime.getMillis()), repeat, false);
 
                     CreateEventAsyncTask task = new CreateEventAsyncTask();
@@ -366,6 +366,8 @@ public class CreateScheduleActivity extends AppCompatActivity { // 일정 추가
                             if(SplashActivity.EVENT_LIST.containsKey(e._id)) {
                                 continue;
                             } else {
+                                e.getStart().setTime(e.getStart().getTime() - 1000 * 60 * 60 * 9);
+                                e.getEnd().setTime(e.getEnd().getTime()  - 1000 * 60 * 60 * 9);
                                 SplashActivity.EVENT_LIST.put(e._id, e);
                             }
                         }
@@ -495,8 +497,8 @@ public class CreateScheduleActivity extends AppCompatActivity { // 일정 추가
     public void onRegist()
     //알람 등록
     // 설정 시간 정보를 담은 객체를 hashcode를 생성하여 broadcast해 pendingintent를 사용한다.
-    // intent로 넘어가는 extras만이 업데이트됨
-    {
+        // intent로 넘어가는 extras만이 업데이트됨
+        {
         MediaPlayer mp = MediaPlayer.create(this, R.raw.impact_intermezzo);
 
         if(true){//날짜별 알람인 경우
