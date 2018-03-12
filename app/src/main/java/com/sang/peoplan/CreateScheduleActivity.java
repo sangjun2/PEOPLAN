@@ -366,6 +366,8 @@ public class CreateScheduleActivity extends AppCompatActivity { // 일정 추가
                             if(SplashActivity.EVENT_LIST.containsKey(e._id)) {
                                 continue;
                             } else {
+                                e.getStart().setTime(e.getStart().getTime() - 1000 * 60 * 60 * 9);
+                                e.getEnd().setTime(e.getEnd().getTime()  - 1000 * 60 * 60 * 9);
                                 SplashActivity.EVENT_LIST.put(e._id, e);
                             }
                         }

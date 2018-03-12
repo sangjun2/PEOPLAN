@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
@@ -78,7 +79,11 @@ public class DayScheduleDialog extends Dialog {
             }
         });
 
-        eventListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        if(myEvent == null) {
+            myEvent = new ArrayList<>();
+        }
+
+        eventListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayout.VERTICAL, false));
         adapter = new RecyclerViewAdapter(myEvent);
         eventListRecyclerView.setAdapter(adapter);
     }
