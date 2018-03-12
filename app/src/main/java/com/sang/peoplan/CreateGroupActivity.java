@@ -13,8 +13,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import org.joda.time.DateTime;
+
+import com.kakao.usermgmt.response.model.UserProfile;
 
 import java.io.IOException;
 
@@ -24,8 +26,10 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 
 public class CreateGroupActivity extends AppCompatActivity { // 그룹 추가
+    TextView category; // 선택된 카테고리 보이는 텍스트, 그룹 카테고리
     LinearLayout categoryView; // 카테고리 종류 띄우는 뷰
-    TextView categoryConfirm; // 선택된 카테고리 보이는 텍스트
+
+
 
     final int REQUESTCODE_CATEGORY = 500;
 
@@ -33,39 +37,52 @@ public class CreateGroupActivity extends AppCompatActivity { // 그룹 추가
      * 카테고리 설정은 끝
      * 그룹 이름 정하고, 확인 버튼 누르기
      * 확인 버튼 눌렀을 시, DB에 추가
-     * 2018.3.7 미구현 부분
-     * - 그룹 클래스 모델링
-     * - 카테고리 추가
+     * 2018.3.12 미구현 부분
+     * - 그룹 구성원 선택 및 정보 추가
+     * - 리사이클러뷰 활용****
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_group);
 
+        final UserProfile userProfile = SplashActivity.USER_PROFILE;
+
         Button confirm_toolbar_bt = findViewById(R.id.confirm_toolbar_bt); // 그룹 생성 버튼
         final EditText group_name = findViewById(R.id.group_name); // 그룹 이름 EditText
 
+        //화면 상위 확인 버튼
         Toolbar toolbar = findViewById(R.id.group_toolbar);
         TextView toolbarTitle = findViewById(R.id.confirm_toolbar_title);
 
         toolbarTitle.setText("그룹 만들기");
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        //
 
         // 생성 버튼 리스너 설정
         confirm_toolbar_bt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view){
-                // test 값
-                Group newGroup = new Group("test",group_name.getText().toString());
-                // DB에만 저장
-                CreateGroupAsyncTask task = new CreateGroupAsyncTask();
-                task.execute(newGroup);
+                // 생성 버튼 클릭시, 데이터 입력 확인
+                // 입력 받는 텍스트의 안전성 확인.. 쿼리문상
+                if( group_name.getText().toString().length() == 0 ){
+                    Toast.makeText(getApplicationContext(), "그룹 명을 입력해주세요.", Toast.LENGTH_SHORT).show();
+                }
+                else if( category.getText().toString().length() == 0 ){
+                    Toast.makeText(getApplicationContext(), "그룹 카테고리를 선택해주세요.", Toast.LENGTH_SHORT).show();
+                }else {
+                    // 그룹 멤버 데이터 추가
+                    Group newGroup = new Group(String.valueOf(userProfile.getId()), group_name.getText().toString(), category.getText().toString());
+                    // DB에만 저장
+                    CreateGroupAsyncTask task = new CreateGroupAsyncTask();
+                    task.execute(newGroup);
+                }
             }
         });
         // 그룹 카테고리 설정
         categoryView = findViewById(R.id.category_view);
-        categoryConfirm = findViewById(R.id.category_confirm);
+        category = findViewById(R.id.category_confirm);
         categoryView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -82,7 +99,7 @@ public class CreateGroupActivity extends AppCompatActivity { // 그룹 추가
         if(requestCode == REQUESTCODE_CATEGORY){
             if(resultCode == Activity.RESULT_OK){
                 String repeat = data.getStringExtra("category");
-                categoryConfirm.setText(repeat);
+                category.setText(repeat);
             }
         }
     }

@@ -44,7 +44,7 @@ public class GroupDetailFragment extends Fragment { // 그룹 상세 정보 액�
         groupName = view.findViewById(R.id.groupName);
         Group group = (Group)getArguments().get("group");
 
-        groupName.setText(group.getGroupName());
+        groupName.setText(group.getName());
 
         return view;
     }
