@@ -13,7 +13,7 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class SetEventRepeatActivity extends AppCompatActivity {
+public class SetEventRepeatActivity extends AppCompatActivity { // 주기 설정
     RadioGroup radioGroup;
     Button confirm;
     RadioButton radioButton;

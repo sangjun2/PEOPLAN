@@ -21,7 +21,7 @@
         android:orientation="vertical"
         app:layout_constraintTop_toBottomOf="@+id/group_toolbar">
         <com.victorminerva.widget.edittext.AutofitEdittext
-            android:id="@+id/gruop_name"
+            android:id="@+id/group_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="#ffffff"
