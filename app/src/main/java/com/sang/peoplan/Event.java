@@ -3,12 +3,15 @@ package com.sang.peoplan;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.Date;
+import java.util.TimeZone;
 
 /**
  * Created by Sangjun on 2018-02-22.
  */
 
 public class Event {
+    @SerializedName("_id")
+    public String _id;
     @SerializedName("name")
     public String name;
     @SerializedName("start")
@@ -16,19 +19,36 @@ public class Event {
     @SerializedName("end")
     public Date end;
     @SerializedName("repeat")
-    public Repeat repeat;
+    public int repeat;
     @SerializedName("alarm")
     public boolean alarm;
 
     public Event() {
     }
 
-    public Event(String name, Date start, Date end, Repeat repeat, boolean alarm) {
+    public Event(String name, Date start, Date end, int repeat, boolean alarm) {
         this.name = name;
         this.start = start;
         this.end = end;
         this.repeat = repeat;
         this.alarm = alarm;
+    }
+
+    public Event(String _id, String name, Date start, Date end, int repeat, boolean alarm) {
+        this._id = _id;
+        this.name = name;
+        this.start = start;
+        this.end = end;
+        this.repeat = repeat;
+        this.alarm = alarm;
+    }
+
+    public String get_id() {
+        return _id;
+    }
+
+    public void set_id(String _id) {
+        this._id = _id;
     }
 
     public String getName() {
@@ -55,11 +75,11 @@ public class Event {
         this.end = end;
     }
 
-    public Repeat getRepeats() {
+    public int getRepeat() {
         return repeat;
     }
 
-    public void setRepeats(Repeat repeats) {
+    public void setRepeat(int repeat) {
         this.repeat = repeat;
     }
 
