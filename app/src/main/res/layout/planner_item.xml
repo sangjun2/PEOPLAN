@@ -14,12 +14,11 @@
         android:layout_gravity="center"
         android:gravity="center_vertical"/>
 
-    <LinearLayout
+    <ListView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/planner_item_layout"
-        android:orientation="vertical">
+        android:id="@+id/planner_item_listview">
 
-    </LinearLayout>
+    </ListView>
 
 </LinearLayout>

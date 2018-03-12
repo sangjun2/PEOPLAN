@@ -12,8 +12,10 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.NumberPicker;
 import android.widget.TextView;
 
@@ -22,9 +24,7 @@ import org.joda.time.LocalDate;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 
@@ -83,6 +83,31 @@ public class PlannerView extends ConstraintLayout {
         addView(view);
 
         hashMap = new HashMap<>();
+        for(Map.Entry<String, Event> entry : SplashActivity.EVENT_LIST.entrySet()) {
+            Event event = entry.getValue();
+
+            DateTime start = new DateTime(event.getStart().getTime());
+            DateTime end = new DateTime(event.getEnd().getTime());
+
+            SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
+
+            int period = (int) ((end.toLocalDate().toDate().getTime() - start.toLocalDate().toDate().getTime()) / (24 * 60 * 60 * 1000)); // 날짜 사이 구간
+            if(period == 0) {
+                if(!hashMap.containsKey(format.format(start.toDate()))) {
+                    hashMap.put(format.format(start.toDate()), new ArrayList<Event>());
+                }
+                hashMap.get(format.format(start.toDate())).add(event);
+            } else {
+                for(int i = 0; i <= period; i++) {
+                    DateTime dateTime = start.plusDays(i);
+                    if(!hashMap.containsKey(format.format(dateTime.toDate()))) {
+                        hashMap.put(format.format(dateTime.toDate()), new ArrayList<Event>());
+                    }
+                    hashMap.get(format.format(dateTime.toDate())).add(event);
+                }
+            }
+        }
+
 
         if(this.date != null) {
             if(isExistToday(this.date)) {
@@ -307,7 +332,7 @@ public class PlannerView extends ConstraintLayout {
                 public void onClick(View view) {
                     DayScheduleDialog dialog = new DayScheduleDialog(context);
                     SimpleDateFormat format = new SimpleDateFormat("MMdd");
-                    dialog.myEvent = hashMap.get(format.format(viewHolder.getLocalDate().toDate()));
+                    dialog.myEvent = viewHolder.adapter.events;
                     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd");
                     String date = dateFormat.format(viewHolder.getLocalDate().toDate());
                     dialog.setDay(date);
@@ -350,43 +375,62 @@ public class PlannerView extends ConstraintLayout {
                     isExistToday = true;
                 }
 
-                for(Map.Entry<String, Event> entry : SplashActivity.EVENT_LIST.entrySet()) {
-                    Event event = entry.getValue();
-                    int repeat = event.getRepeat();
+                for(Map.Entry<String, ArrayList<Event>> entry : hashMap.entrySet()) {
+                    ArrayList<Event> events = entry.getValue();
 
-                    DateTime start = new DateTime(event.getStart().getTime());
-                    DateTime end = new DateTime(event.getEnd().getTime());
+                    for(int i = 0; i < events.size(); i++) {
+                        Event event = events.get(i);
+                        int repeat = event.getRepeat();
 
-                    View item = LayoutInflater.from(mContext).inflate(R.layout.plan_item, null, false);
-                    TextView itemText = item.findViewById(R.id.plan_item_text);
+                        DateTime start = new DateTime(event.getStart().getTime());
+                        DateTime end = new DateTime(event.getEnd().getTime());
 
-                    //int period = (int) ((end.toLocalDate().toDate().getTime() - start.toLocalDate().toDate().getTime()) / (24 * 60 * 60 * 1000)); // 날짜 사이 구간
+                        SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
+                        if(entry.getKey().equals(format.format(this.calendar.toDate()))) {
+                            viewHolder.adapter.events.add(event);
+                        } else {
+                            if(repeat != CreateScheduleActivity.REPEAT_NONE) {
+                                LocalDate currentDate = this.calendar;
+                                int year = Integer.parseInt(entry.getKey().substring(0, 4));
+                                int month = Integer.parseInt(entry.getKey().substring(4, 6));
+                                int day = Integer.parseInt(entry.getKey().substring(6, 8));
+                                LocalDate eventDate = new LocalDate(year, month, day);
+                                int period = (int) ((currentDate.toDate().getTime() - eventDate.toDate().getTime()) / (24 * 60 * 60 * 1000)); // 날짜 사이 구간
 
-                    SimpleDateFormat format = new SimpleDateFormat("MMdd");
-                    hashMap.put(format.format(this.calendar.toDate()), new ArrayList<Event>());
-
-                    if(this.calendar.toDate().getTime() >= start.toDate().getTime() && this.calendar.toDate().getTime() <= end.toDate().getTime()) {
-                        itemText.setText(event.getName());
-                        viewHolder.dateLayout.addView(item);
-                        hashMap.get(format.format(this.calendar.toDate())).add(event);
-                    } else {
-                        if(repeat == CreateScheduleActivity.REPEAT_EVERYDAY) {
-                            if(this.calendar.toDate().getTime() > start.toLocalDate().toDate().getTime()) {
-                                itemText.setText(event.getName());
-                                viewHolder.dateLayout.addView(item);
+                                switch (repeat) {
+                                    case CreateScheduleActivity.REPEAT_EVERYDAY:
+                                        if(this.calendar.toDate().getTime() >= start.toDate().getTime() && this.calendar.toDate().getTime() <= end.toDate().getTime()) {
+                                            viewHolder.adapter.events.add(event);
+                                        }
+                                        break;
+                                    case CreateScheduleActivity.REPEAT_EVERYWEEK:
+                                        if(period > 0 && period % 7 == 0) {
+                                            viewHolder.adapter.events.add(event);
+                                        }
+                                        break;
+                                    case CreateScheduleActivity.REPEAT_EVERYTWOWEEK:
+                                        if(period > 0 && period % 14 == 0) {
+                                            viewHolder.adapter.events.add(event);
+                                        }
+                                        break;
+                                    case CreateScheduleActivity.REPEAT_EVERYMONTH:
+                                        if(period > 0 && currentDate.getDayOfMonth() == eventDate.getDayOfMonth()) {
+                                            viewHolder.adapter.events.add(event);
+                                        }
+                                        break;
+                                    case CreateScheduleActivity.REPEAT_EVERYYEAR:
+                                        if(period > 0 && currentDate.getMonthOfYear() == eventDate.getMonthOfYear() && currentDate.getDayOfMonth() == eventDate.getDayOfMonth()) {
+                                            viewHolder.adapter.events.add(event);
+                                        }
+                                        break;
+                                }
                             }
-                        } else if(repeat == CreateScheduleActivity.REPEAT_EVERYWEEK) {
-
-                        } else if(repeat == CreateScheduleActivity.REPEAT_EVERYTWOWEEK) {
-
-                        } else if(repeat == CreateScheduleActivity.REPEAT_EVERYMONTH) {
-
-                        } else if(repeat == CreateScheduleActivity.REPEAT_EVERYYEAR) {
-
                         }
-
                     }
                 }
+
+                viewHolder.adapter.notifyDataSetChanged();
+
 
                 this.calendar = this.calendar.plusDays(1);
             }
@@ -400,15 +444,16 @@ public class PlannerView extends ConstraintLayout {
         public class ViewHolder extends RecyclerView.ViewHolder {
             TextView dateText;
             LocalDate localDate;
-            LinearLayout dateLayout;
+            ListView dateListView;
+            DateListViewAdapter adapter;
 
             public ViewHolder(View itemView) {
                 super(itemView);
 
                 dateText = itemView.findViewById(R.id.planner_item_day);
-                dateLayout = itemView.findViewById(R.id.planner_item_layout);
-
-
+                dateListView = itemView.findViewById(R.id.planner_item_listview);
+                adapter = new DateListViewAdapter();
+                dateListView.setAdapter(adapter);
             }
 
             public void setLocalDate(LocalDate localDate) {
@@ -417,6 +462,40 @@ public class PlannerView extends ConstraintLayout {
 
             public LocalDate getLocalDate() {
                 return this.localDate;
+            }
+        }
+
+        public class DateListViewAdapter extends BaseAdapter {
+            ArrayList<Event> events;
+
+            public DateListViewAdapter() {
+                this.events = new ArrayList<>();
+            }
+
+            @Override
+            public int getCount() {
+                return this.events.size();
+            }
+
+            @Override
+            public Object getItem(int i) {
+                return this.events.get(i);
+            }
+
+            @Override
+            public long getItemId(int i) {
+                return i;
+            }
+
+            @Override
+            public View getView(int i, View view, ViewGroup viewGroup) {
+                View item = LayoutInflater.from(mContext).inflate(R.layout.plan_item, null, false);
+                TextView itemText = item.findViewById(R.id.plan_item_text);
+
+                Event event = this.events.get(i);
+                itemText.setText(event.getName());
+
+                return item;
             }
         }
     }

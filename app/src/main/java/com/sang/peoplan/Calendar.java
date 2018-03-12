@@ -7,25 +7,25 @@ import com.google.gson.annotations.SerializedName;
  */
 
 public class Calendar {
-    @SerializedName("kakaoid")
-    public String kakaoid;
+    @SerializedName("id")
+    public String id;
     @SerializedName("events")
     public Event[] events;
 
     public Calendar() {
     }
 
-    public Calendar(String kakaoid, Event[] events) {
-        this.kakaoid = kakaoid;
+    public Calendar(String id, Event[] events) {
+        this.id = id;
         this.events = events;
     }
 
-    public String getKakaoid() {
-        return kakaoid;
+    public String getId() {
+        return id;
     }
 
-    public void setKakaoid(String kakaoid) {
-        this.kakaoid = kakaoid;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public Event[] getEvents() {
