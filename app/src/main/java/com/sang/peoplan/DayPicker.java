@@ -96,6 +96,7 @@ public class DayPicker extends LinearLayout {
             public void onValueChange(NumberPicker numberPicker, int i, int i1) {
                 if(getId() == R.id.event_start_daypicker) {
                     createScheduleActivity.setEventStartText();
+                    createScheduleActivity.syncEventEndText();
                 } else if(getId() == R.id.event_end_daypicker) {
                     createScheduleActivity.setEventEndText();
                 }
@@ -136,6 +137,7 @@ public class DayPicker extends LinearLayout {
             public void onValueChange(NumberPicker numberPicker, int i, int i1) {
                 if(getId() == R.id.event_start_daypicker) {
                     createScheduleActivity.setEventStartText();
+                    createScheduleActivity.syncEventEndText();
                 } else if(getId() == R.id.event_end_daypicker) {
                     createScheduleActivity.setEventEndText();
                 }
@@ -148,9 +150,18 @@ public class DayPicker extends LinearLayout {
         hourPicker.setEnabled(false);
         hourPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
             @Override
-            public void onValueChange(NumberPicker numberPicker, int i, int i1) {
+            public void onValueChange(NumberPicker numberPicker, int i, int i1) { // i : old val, i1 : new val
+                if(i == 12 && i1 == 1) {
+                    if(typePicker.getValue() == 0) {
+                        typePicker.setValue(1);
+                    } else if(typePicker.getValue() == 1) {
+                        typePicker.setValue(0);
+                    }
+                }
+
                 if(getId() == R.id.event_start_daypicker) {
                     createScheduleActivity.setEventStartText();
+                    createScheduleActivity.syncEventEndText();
                 } else if(getId() == R.id.event_end_daypicker) {
                     createScheduleActivity.setEventEndText();
                 }
@@ -171,6 +182,7 @@ public class DayPicker extends LinearLayout {
             public void onValueChange(NumberPicker numberPicker, int i, int i1) {
                 if(getId() == R.id.event_start_daypicker) {
                     createScheduleActivity.setEventStartText();
+                    createScheduleActivity.syncEventEndText();
                 } else if(getId() == R.id.event_end_daypicker) {
                     createScheduleActivity.setEventEndText();
                 }
