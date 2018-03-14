@@ -3,25 +3,18 @@ package com.sang.peoplan;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
-import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.support.annotation.Nullable;
 import android.media.MediaPlayer;
-import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.NumberPicker;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,9 +26,6 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
 import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLEncoder;
 import java.util.Date;
 
 import java.text.SimpleDateFormat;
@@ -49,7 +39,7 @@ public class CreateScheduleActivity extends AppCompatActivity { // 일정 추가
     Switch isByDay; // 요일별 선택
     Switch isAllDay; // 하루종일 선택
     AutofitEdittext eventTitle; // 이벤트 제목
-    Button selectGroupButton; // 그룹 선택
+    LinearLayout selectGroup; // 그룹 선택
     LinearLayout timeGroup; // 시간 설정위한 레이아웃
 
     LinearLayout eventStart; // 시작 시간 설정 위한 레이아웃
@@ -128,7 +118,7 @@ public class CreateScheduleActivity extends AppCompatActivity { // 일정 추가
         isByDay = findViewById(R.id.is_byday);
         isAllDay = findViewById(R.id.is_allday);
         eventTitle = findViewById(R.id.eventTitle);
-        selectGroupButton = findViewById(R.id.selectGroupButton);
+        selectGroup = findViewById(R.id.select_group_view);
         eventStart = findViewById(R.id.eventStart);
         eventEnd = findViewById(R.id.eventEnd);
         repeatView = findViewById(R.id.repeatView);
@@ -204,7 +194,7 @@ public class CreateScheduleActivity extends AppCompatActivity { // 일정 추가
         });
 
         // 그룹 선택 시 반응, 코딩~~
-        selectGroupButton.setOnClickListener(new View.OnClickListener() {
+        selectGroup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
             }
@@ -468,6 +458,23 @@ public class CreateScheduleActivity extends AppCompatActivity { // 일정 추가
         }
 
         eventStartText.setText(buf + "");
+    }
+
+    public void syncEventEndText() {
+        StringBuffer buf = new StringBuffer();
+        LocalDate date = eventStartNumberPicker.getPickerDate();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy.MM.dd");
+        buf.append(simpleDateFormat.format(date.toDate()));
+
+        if(!isAllDay.isChecked()) {
+            int type = eventStartNumberPicker.typePicker.getValue();
+            int hour = eventStartNumberPicker.hourPicker.getValue() + 1;
+            int minute = eventStartNumberPicker.minutePicker.getValue();
+
+            buf.append(" " + eventStartNumberPicker.typePicker.getDisplayedValues()[type] + " " + hour + ":" + eventStartNumberPicker.minutePicker.getDisplayedValues()[minute]);
+        }
+
+        eventEndText.setText(buf + "");
     }
 
     public void setEventEndText() {

@@ -12,16 +12,19 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.NumberPicker;
+import android.widget.Scroller;
 import android.widget.TextView;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
+import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -108,20 +111,27 @@ public class PlannerView extends ConstraintLayout {
             }
         }
 
+        todayButton = view.findViewById(R.id.calendar_today_bt);
+        todayButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                date = new LocalDate();
+                viewPager.setCurrentItem(findIndex());
+                setCalendarSelectLayout();
+            }
+        });
+
 
         if(this.date != null) {
-            if(isExistToday(this.date)) {
-                this.isExistToday = true;
-            }
             yearText = view.findViewById(R.id.calendar_year_text);
             monthText = view.findViewById(R.id.calendar_month_text);
 
             viewPager = view.findViewById(R.id.calendar_viewpager);
             viewPager.setAdapter(new CalendarPagerAdapter(this.date));
-            viewPager.setCurrentItem(1);
-            viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-                CalendarPagerAdapter calendarPagerAdapter;
+            viewPager.setCurrentItem(findIndex());
+            setCalendarSelectLayout();
 
+            viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
                 @Override
                 public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
@@ -129,38 +139,18 @@ public class PlannerView extends ConstraintLayout {
 
                 @Override
                 public void onPageSelected(int position) {
-                    if(position == 0) {
+                    if(position < findIndex()) {
                         date = date.minusMonths(1);
-                        calendarPagerAdapter = null;
-                        calendarPagerAdapter = new CalendarPagerAdapter(date);
-                    } else if(position == 2) {
+                    } else if(position > findIndex()) {
                         date = date.plusMonths(1);
-                        calendarPagerAdapter = null;
-                        calendarPagerAdapter = new CalendarPagerAdapter(date);
-                    } else {
-                        calendarPagerAdapter = new CalendarPagerAdapter(date);
                     }
                 }
 
                 @Override
                 public void onPageScrollStateChanged(int state) {
                     if(state == ViewPager.SCROLL_STATE_IDLE) {
-                        isExistToday = false;
-
-                        viewPager.setAdapter(calendarPagerAdapter);
-                        viewPager.setCurrentItem(1);
-                        yearText.setText(date.year().getAsText());
-                        monthText.setText(String.valueOf(date.monthOfYear().get()));
-
-                        if(isExistToday(date)) {
-                            isExistToday = true;
-                        }
-
-                        if(!isExistToday) {
-                            todayButton.setVisibility(View.VISIBLE);
-                        } else {
-                            todayButton.setVisibility(View.GONE);
-                        }
+                        viewPager.setCurrentItem(findIndex());
+                        setCalendarSelectLayout();
                     }
                 }
             });
@@ -172,6 +162,7 @@ public class PlannerView extends ConstraintLayout {
 
                 }
             });
+
 
             notificationButton = view.findViewById(R.id.calendar_notification_bt);
 
@@ -226,47 +217,39 @@ public class PlannerView extends ConstraintLayout {
             previousButton.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    initView(localDate.minusMonths(1));
+                    date = date.minusMonths(1);
+                    viewPager.setCurrentItem(findIndex());
+                    setCalendarSelectLayout();
                 }
             });
             nextButton = view.findViewById(R.id.calendar_next_bt);
             nextButton.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    initView(localDate.plusMonths(1));
+                    date = date.plusMonths(1);
+                    viewPager.setCurrentItem(findIndex());
+                    setCalendarSelectLayout();
                 }
             });
-
-            todayButton = view.findViewById(R.id.calendar_today_bt);
-            todayButton.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    initView(new LocalDate());
-                }
-            });
-
-            yearText.setText(localDate.year().getAsText());
-            monthText.setText(String.valueOf(localDate.monthOfYear().get()));
-
-            if(!this.isExistToday) {
-                todayButton.setVisibility(View.VISIBLE);
-            }
         }
 
     }
 
+
     public class CalendarPagerAdapter extends PagerAdapter {
-        LocalDate[] localDates;
         int size;
+        int maxYear = 2099;
+        int minYear = 2000;
+
+        LocalDate minDate;
+        LocalDate date;
 
         public CalendarPagerAdapter(LocalDate localDate) {
-            this.size = 3;
-            LocalDate date = localDate.withDayOfMonth(1);
-            localDates = new LocalDate[this.size];
-            localDates[0] = date.minusMonths(1);
-            localDates[1] = date;
-            localDates[2] = date.plusMonths(1);
+            minDate = new LocalDate(2000, 1, 1);
+            this.size = (maxYear - minYear + 1) * 12;
+            this.date = localDate.withDayOfMonth(1);
         }
+
 
 
         @Override
@@ -275,7 +258,7 @@ public class PlannerView extends ConstraintLayout {
 
             RecyclerView recyclerView = view.findViewById(R.id.calendar_recyclerview);
             recyclerView.setLayoutManager(new GridLayoutManager(context, 7, LinearLayoutManager.VERTICAL, false));
-            recyclerView.setAdapter(new CalendarRecyclerViewAdapter(localDates[position]));
+            recyclerView.setAdapter(new CalendarRecyclerViewAdapter(minDate.plusMonths(position)));
             container.addView(view);
             return view;
         }
@@ -505,5 +488,22 @@ public class PlannerView extends ConstraintLayout {
         int[] dates = date.getValues();
 
         return todays[0] == dates[0] && todays[1] == dates[1] && todays[2] == dates[2];
+    }
+
+    private int findIndex() {
+        return ((this.date.getYear() - 2000) * 12) + this.date.getMonthOfYear() - 1;
+    }
+
+    private void setCalendarSelectLayout() {
+        yearText.setText(date.year().getAsText());
+        monthText.setText(String.valueOf(date.monthOfYear().get()));
+
+        isExistToday = isExistToday(date);
+
+        if(!isExistToday) {
+            todayButton.setVisibility(View.VISIBLE);
+        } else {
+            todayButton.setVisibility(View.GONE);
+        }
     }
 }
