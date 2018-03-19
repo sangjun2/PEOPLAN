@@ -7,6 +7,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.kakao.auth.ErrorCode;
 import com.kakao.auth.ISessionCallback;
@@ -38,12 +40,16 @@ public class SplashActivity extends AppCompatActivity {
 
     public static String USER_TEL = null;
 
+    ProgressBar progressBar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
         loginButton = findViewById(R.id.login_bt);
+
+        progressBar = findViewById(R.id.splash_progressbar);
 
         EVENT_LIST = new HashMap<>();
         mContext = this;
@@ -80,6 +86,8 @@ public class SplashActivity extends AppCompatActivity {
 
         @Override
         public void onSessionOpenFailed(KakaoException exception) {
+
+
             if(exception != null) {
                 Logger.e(exception);
             }
@@ -124,7 +132,7 @@ public class SplashActivity extends AppCompatActivity {
         });
     }
 
-    public class GetUserAsyncTask extends AsyncTask<String, Void, Boolean> {
+    public class GetUserAsyncTask extends AsyncTask<String, Void, Integer> {
         Retrofit retrofit;
         APIService service;
 
@@ -138,33 +146,40 @@ public class SplashActivity extends AppCompatActivity {
                     .build();
 
             service = retrofit.create(APIService.class);
+
+            progressBar.setVisibility(View.VISIBLE);
         }
 
         @Override
-        protected void onPostExecute(Boolean isExist) {
-            super.onPostExecute(isExist);
+        protected void onPostExecute(Integer responseCode) {
+            super.onPostExecute(responseCode);
 
-            if(isExist) {
+            progressBar.setVisibility(View.GONE);
+
+            if(responseCode == 200) {
                 Intent intent = new Intent(SplashActivity.this, MainActivity.class);
                 startActivity(intent);
                 finish();
-            } else {
+            } else if(responseCode == 404) {
                 Intent intent = new Intent(SplashActivity.this, KakaoSignupActivity.class);
                 startActivity(intent);
+                finish();
+            } else {
+                Toast.makeText(mContext, "서버 점검 중...", Toast.LENGTH_SHORT).show();
                 finish();
             }
         }
 
         @Override
-        protected Boolean doInBackground(String... uid) {
+        protected Integer doInBackground(String... uid) {
             Call<List<User>> users = service.getUser(uid[0]);
 
             try {
                 Response<List<User>> response = users.execute();
                 if(response.code() == 404) {
-                    return false;
+                    return 404;
                 } else if(response.code() == 500) {
-                    return false;
+                    return 500;
                 } else if(response.code() == 200) {
                     if(response.body().size() == 1) {
                         USER_TEL = response.body().get(0).getTel();
@@ -178,15 +193,15 @@ public class SplashActivity extends AppCompatActivity {
                                 EVENT_LIST.put(e._id, e);
                             }
                         }
-                        return true;
+                        return 200; // 정상 응답
                     }
-                    return false;
+                    return 500;
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             }
 
-            return false;
+            return -1; // 서버 꺼져 있을때 -1
         }
     }
 }
