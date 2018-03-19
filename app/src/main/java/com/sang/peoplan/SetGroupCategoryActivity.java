@@ -34,7 +34,7 @@ public class SetGroupCategoryActivity extends AppCompatActivity { // 그룹 카�
             @Override
             public void onClick(View view) {
                 radioButton = findViewById(radioGroup.getCheckedRadioButtonId());
-                Toast.makeText(SetGroupCategoryActivity.this, radioButton.getText(), Toast.LENGTH_SHORT).show();
+                //Toast.makeText(SetGroupCategoryActivity.this, radioButton.getText(), Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent();
                 intent.putExtra("category", radioButton.getText());
                 setResult(Activity.RESULT_OK, intent);

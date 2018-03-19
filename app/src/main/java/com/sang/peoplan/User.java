@@ -21,14 +21,15 @@ import java.net.URL;
  */
 
 public class User {
+
     @SerializedName("kakaoid")
     public String kakaoUID;
     @SerializedName("name")
-    public String name;
+    private String name;
     @SerializedName("tel")
-    public String tel;
+    private String tel;
     @SerializedName("email")
-    public String email;
+    private String email;
 
     public User() {
         this.kakaoUID = null;
