@@ -134,10 +134,12 @@ public class CreateBusinessCardDialog extends Dialog { // 명함 만들기
 
         @Override
         protected void onPostExecute(Boolean isSuccessed) {
-            super.onPostExecute(isSuccessed);
+
             if(isSuccessed) {
-                Toast.makeText(getContext(), "저장완료", Toast.LENGTH_SHORT);
+                Toast.makeText(getContext(), "명함이 추가되었습니다.", Toast.LENGTH_SHORT).show();
             }
+            super.onPostExecute(isSuccessed);
+            dismiss();
         }
 
         @Override

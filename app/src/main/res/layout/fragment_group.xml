@@ -8,7 +8,7 @@
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-      
+
         <include
             android:id="@+id/group_toolbar"
             layout="@layout/toolbar"
@@ -19,18 +19,17 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <FrameLayout
-            android:id="@+id/group_frame"
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/group_recyclerview"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:background="@drawable/border"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/group_toolbar">
 
-        </FrameLayout>
+        </android.support.v7.widget.RecyclerView>
 
 
     </android.support.constraint.ConstraintLayout>
