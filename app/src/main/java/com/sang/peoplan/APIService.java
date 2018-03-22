@@ -36,4 +36,7 @@ public interface APIService { // retrofit 사용을 위한 http api 인터페이
 
     @POST("/api/groups") // 그룹 생성
     Call<Group> createGroup(@Body Group group);
+
+    @GET("/api/groups/user/{user}") // 속한 그룹 찾기
+    Call<List<Group>> getGroups(@Path("user") String userUID);
 }
