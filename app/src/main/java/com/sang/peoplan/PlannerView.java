@@ -314,7 +314,6 @@ public class PlannerView extends ConstraintLayout {
                 @Override
                 public void onClick(View view) {
                     DayScheduleDialog dialog = new DayScheduleDialog(context);
-                    SimpleDateFormat format = new SimpleDateFormat("MMdd");
                     dialog.myEvent = viewHolder.adapter.events;
                     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd");
                     String date = dateFormat.format(viewHolder.getLocalDate().toDate());
@@ -351,7 +350,14 @@ public class PlannerView extends ConstraintLayout {
             } else { // 현재달
                 viewHolder.setLocalDate(this.calendar);
                 viewHolder.dateText.setText(this.calendar.dayOfMonth().getAsText());
-                viewHolder.dateText.setTextColor(Color.parseColor("#000000"));
+                if(this.calendar.getDayOfWeek() == 6) { // 토요일
+                    viewHolder.dateText.setTextColor(Color.BLUE);
+                } else if(this.calendar.getDayOfWeek() == 7) { // 일요일
+                    viewHolder.dateText.setTextColor(Color.RED);
+                } else {
+                    viewHolder.dateText.setTextColor(Color.parseColor("#000000"));
+
+                }
                 if (isExistToday(this.calendar)) {
                     viewHolder.dateText.setBackgroundResource(R.drawable.ic_highlight_24dp);
                     viewHolder.dateText.setTextColor(Color.parseColor("#ffffff"));
