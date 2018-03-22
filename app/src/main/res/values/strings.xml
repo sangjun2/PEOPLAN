@@ -1,11 +1,11 @@
 <resources>
     <string name="app_name">PEOPLAN</string>
 
-    <string name="title_planner">Planner</string>
-    <string name="title_group">Group</string>
-    <string name="title_timeline">TImeline</string>
-    <string name="title_businesscard">BusinessCard</string>
-    <string name="title_account">Account</string>
+    <string name="title_planner">플래너</string>
+    <string name="title_group">그룹</string>
+    <string name="title_timeline">타임 라인</string>
+    <string name="title_businesscard">명함</string>
+    <string name="title_account">내 계정</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
