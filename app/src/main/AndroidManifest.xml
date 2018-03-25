@@ -21,8 +21,7 @@
             android:name="com.kakao.sdk.AppKey"
             android:value="@string/kakao_app_key" />
 
-        <activity
-            android:name=".SplashActivity">
+        <activity android:name=".SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -37,7 +36,11 @@
 
         <activity android:name=".AlarmActivity" />
         <activity android:name=".SetGroupCategoryActivity" />
-        <activity android:name=".CreateBusinessCardDialog"></activity>
+        <activity android:name=".CreateBusinessCardDialog" />
+        <activity
+            android:name=".GroupDetailActivity"
+            android:label="@string/title_activity_group_detail"
+            android:theme="@style/AppTheme"></activity>
     </application>
 
 </manifest>
