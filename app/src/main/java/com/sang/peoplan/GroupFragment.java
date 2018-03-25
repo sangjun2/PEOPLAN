@@ -142,7 +142,7 @@ public class GroupFragment extends Fragment {
             View view;
             mContext = parent.getContext();
 
-            switch (viewType) { // ?? viewType이 어떤식으로 잡히는 지 ?..
+            switch (viewType) { // ?? viewType이 어떤식으로 잡히는 지 ?.. => getItemViewType method
                 case 0:
                     view = LayoutInflater.from(mContext).inflate(R.layout.create_group_item_view, parent, false);
                     view.setOnClickListener(new View.OnClickListener() {
@@ -156,17 +156,17 @@ public class GroupFragment extends Fragment {
                     return new CreateViewHolder(view);
                 case 1:
                     view = LayoutInflater.from(mContext).inflate(R.layout.group_list_item_view, parent, false);
+                    final ItemViewHolder viewHolder = new ItemViewHolder(view);
                     view.setOnClickListener(new View.OnClickListener() {
                         @Override
-                        public void onClick(View view) {
-                            FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                            fragmentTransaction.setCustomAnimations(R.anim.anim_slide_in_right, R.anim.anim_noanim);
-                            fragmentTransaction.replace(R.id.frame, GroupDetailFragment.newInstance());
-                            fragmentTransaction.commit();
+                        public void onClick(View v) {
+                            Intent intent = new Intent(getContext(), GroupDetailActivity.class);
+                            intent.putExtra("Group", viewHolder.group);
+                            startActivity(intent);
+                            getActivity().overridePendingTransition(R.anim.anim_slide_in_right, R.anim.anim_slide_out_left);
                         }
                     });
-                    return new ItemViewHolder(view);
+                    return viewHolder;
             }
 
             return null;
@@ -186,7 +186,8 @@ public class GroupFragment extends Fragment {
         public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
             if(position != 0) {
                 ItemViewHolder itemViewHolder = (ItemViewHolder) holder;
-                itemViewHolder.bind(groups.get(position - 1).getName());
+                itemViewHolder.group = groups.get(position - 1);
+                itemViewHolder.bind();
             }
         }
 
@@ -197,15 +198,17 @@ public class GroupFragment extends Fragment {
         }
 
         public class ItemViewHolder extends RecyclerView.ViewHolder {
+            Group group;
             TextView title;
 
             public ItemViewHolder(View itemView) {
                 super(itemView);
+                group = null;
                 title = itemView.findViewById(R.id.group_title);
             }
 
-            public void bind(String title) {
-                this.title.setText(title);
+            public void bind() {
+                this.title.setText(group.getName());
             }
         }
     }
