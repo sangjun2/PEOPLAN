@@ -12,14 +12,23 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.DecelerateInterpolator;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.NumberPicker;
+import android.widget.Scroller;
 import android.widget.TextView;
 
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
+import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 
 /**
@@ -48,6 +57,8 @@ public class PlannerView extends ConstraintLayout {
 
     LocalDate date;
 
+    HashMap<String, ArrayList<Event>> hashMap;
+
     private DayScheduleDialog mDayScheduleDialog;
 
 
@@ -74,19 +85,53 @@ public class PlannerView extends ConstraintLayout {
         final View view = inflater.inflate(R.layout.planner_view, this, false);
         addView(view);
 
-        if(this.date != null) {
-            if(isExistToday(this.date)) {
-                this.isExistToday = true;
+        hashMap = new HashMap<>();
+        for(Map.Entry<String, Event> entry : SplashActivity.EVENT_LIST.entrySet()) {
+            Event event = entry.getValue();
+
+            DateTime start = new DateTime(event.getStart().getTime());
+            DateTime end = new DateTime(event.getEnd().getTime());
+
+            SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
+
+            int period = (int) ((end.toLocalDate().toDate().getTime() - start.toLocalDate().toDate().getTime()) / (24 * 60 * 60 * 1000)); // 날짜 사이 구간
+            if(period == 0) {
+                if(!hashMap.containsKey(format.format(start.toDate()))) {
+                    hashMap.put(format.format(start.toDate()), new ArrayList<Event>());
+                }
+                hashMap.get(format.format(start.toDate())).add(event);
+            } else {
+                for(int i = 0; i <= period; i++) {
+                    DateTime dateTime = start.plusDays(i);
+                    if(!hashMap.containsKey(format.format(dateTime.toDate()))) {
+                        hashMap.put(format.format(dateTime.toDate()), new ArrayList<Event>());
+                    }
+                    hashMap.get(format.format(dateTime.toDate())).add(event);
+                }
             }
+        }
+
+        todayButton = view.findViewById(R.id.calendar_today_bt);
+        todayButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                date = new LocalDate();
+                viewPager.setCurrentItem(findIndex());
+                setCalendarSelectLayout();
+            }
+        });
+
+
+        if(this.date != null) {
             yearText = view.findViewById(R.id.calendar_year_text);
             monthText = view.findViewById(R.id.calendar_month_text);
 
             viewPager = view.findViewById(R.id.calendar_viewpager);
             viewPager.setAdapter(new CalendarPagerAdapter(this.date));
-            viewPager.setCurrentItem(1);
-            viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-                CalendarPagerAdapter calendarPagerAdapter;
+            viewPager.setCurrentItem(findIndex());
+            setCalendarSelectLayout();
 
+            viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
                 @Override
                 public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
@@ -94,38 +139,18 @@ public class PlannerView extends ConstraintLayout {
 
                 @Override
                 public void onPageSelected(int position) {
-                    if(position == 0) {
+                    if(position < findIndex()) {
                         date = date.minusMonths(1);
-                        calendarPagerAdapter = null;
-                        calendarPagerAdapter = new CalendarPagerAdapter(date);
-                    } else if(position == 2) {
+                    } else if(position > findIndex()) {
                         date = date.plusMonths(1);
-                        calendarPagerAdapter = null;
-                        calendarPagerAdapter = new CalendarPagerAdapter(date);
-                    } else {
-                        calendarPagerAdapter = new CalendarPagerAdapter(date);
                     }
                 }
 
                 @Override
                 public void onPageScrollStateChanged(int state) {
                     if(state == ViewPager.SCROLL_STATE_IDLE) {
-                        isExistToday = false;
-
-                        viewPager.setAdapter(calendarPagerAdapter);
-                        viewPager.setCurrentItem(1);
-                        yearText.setText(date.year().getAsText());
-                        monthText.setText(String.valueOf(date.monthOfYear().get()));
-
-                        if(isExistToday(date)) {
-                            isExistToday = true;
-                        }
-
-                        if(!isExistToday) {
-                            todayButton.setVisibility(View.VISIBLE);
-                        } else {
-                            todayButton.setVisibility(View.GONE);
-                        }
+                        viewPager.setCurrentItem(findIndex());
+                        setCalendarSelectLayout();
                     }
                 }
             });
@@ -137,6 +162,7 @@ public class PlannerView extends ConstraintLayout {
 
                 }
             });
+
 
             notificationButton = view.findViewById(R.id.calendar_notification_bt);
 
@@ -191,47 +217,39 @@ public class PlannerView extends ConstraintLayout {
             previousButton.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    initView(localDate.minusMonths(1));
+                    date = date.minusMonths(1);
+                    viewPager.setCurrentItem(findIndex());
+                    setCalendarSelectLayout();
                 }
             });
             nextButton = view.findViewById(R.id.calendar_next_bt);
             nextButton.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    initView(localDate.plusMonths(1));
+                    date = date.plusMonths(1);
+                    viewPager.setCurrentItem(findIndex());
+                    setCalendarSelectLayout();
                 }
             });
-
-            todayButton = view.findViewById(R.id.calendar_today_bt);
-            todayButton.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    initView(new LocalDate());
-                }
-            });
-
-            yearText.setText(localDate.year().getAsText());
-            monthText.setText(String.valueOf(localDate.monthOfYear().get()));
-
-            if(!this.isExistToday) {
-                todayButton.setVisibility(View.VISIBLE);
-            }
         }
 
     }
 
+
     public class CalendarPagerAdapter extends PagerAdapter {
-        LocalDate[] localDates;
         int size;
+        int maxYear = 2099;
+        int minYear = 2000;
+
+        LocalDate minDate;
+        LocalDate date;
 
         public CalendarPagerAdapter(LocalDate localDate) {
-            this.size = 3;
-            LocalDate date = localDate.withDayOfMonth(1);
-            localDates = new LocalDate[this.size];
-            localDates[0] = date.minusMonths(1);
-            localDates[1] = date;
-            localDates[2] = date.plusMonths(1);
+            minDate = new LocalDate(2000, 1, 1);
+            this.size = (maxYear - minYear + 1) * 12;
+            this.date = localDate.withDayOfMonth(1);
         }
+
 
 
         @Override
@@ -240,7 +258,7 @@ public class PlannerView extends ConstraintLayout {
 
             RecyclerView recyclerView = view.findViewById(R.id.calendar_recyclerview);
             recyclerView.setLayoutManager(new GridLayoutManager(context, 7, LinearLayoutManager.VERTICAL, false));
-            recyclerView.setAdapter(new CalendarRecyclerViewAdapter(localDates[position]));
+            recyclerView.setAdapter(new CalendarRecyclerViewAdapter(minDate.plusMonths(position)));
             container.addView(view);
             return view;
         }
@@ -296,6 +314,7 @@ public class PlannerView extends ConstraintLayout {
                 @Override
                 public void onClick(View view) {
                     DayScheduleDialog dialog = new DayScheduleDialog(context);
+                    dialog.myEvent = viewHolder.adapter.events;
                     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd");
                     String date = dateFormat.format(viewHolder.getLocalDate().toDate());
                     dialog.setDay(date);
@@ -331,12 +350,77 @@ public class PlannerView extends ConstraintLayout {
             } else { // 현재달
                 viewHolder.setLocalDate(this.calendar);
                 viewHolder.dateText.setText(this.calendar.dayOfMonth().getAsText());
-                viewHolder.dateText.setTextColor(Color.parseColor("#000000"));
+                if(this.calendar.getDayOfWeek() == 6) { // 토요일
+                    viewHolder.dateText.setTextColor(Color.BLUE);
+                } else if(this.calendar.getDayOfWeek() == 7) { // 일요일
+                    viewHolder.dateText.setTextColor(Color.RED);
+                } else {
+                    viewHolder.dateText.setTextColor(Color.parseColor("#000000"));
+
+                }
                 if (isExistToday(this.calendar)) {
                     viewHolder.dateText.setBackgroundResource(R.drawable.ic_highlight_24dp);
                     viewHolder.dateText.setTextColor(Color.parseColor("#ffffff"));
                     isExistToday = true;
                 }
+
+                for(Map.Entry<String, ArrayList<Event>> entry : hashMap.entrySet()) {
+                    ArrayList<Event> events = entry.getValue();
+
+                    for(int i = 0; i < events.size(); i++) {
+                        Event event = events.get(i);
+                        int repeat = event.getRepeat();
+
+                        DateTime start = new DateTime(event.getStart().getTime());
+                        DateTime end = new DateTime(event.getEnd().getTime());
+
+                        SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
+                        if(entry.getKey().equals(format.format(this.calendar.toDate()))) {
+                            viewHolder.adapter.events.add(event);
+                        } else {
+                            if(repeat != CreateScheduleActivity.REPEAT_NONE) {
+                                LocalDate currentDate = this.calendar;
+                                int year = Integer.parseInt(entry.getKey().substring(0, 4));
+                                int month = Integer.parseInt(entry.getKey().substring(4, 6));
+                                int day = Integer.parseInt(entry.getKey().substring(6, 8));
+                                LocalDate eventDate = new LocalDate(year, month, day);
+                                int period = (int) ((currentDate.toDate().getTime() - eventDate.toDate().getTime()) / (24 * 60 * 60 * 1000)); // 날짜 사이 구간
+
+                                switch (repeat) {
+                                    case CreateScheduleActivity.REPEAT_EVERYDAY:
+                                        if(this.calendar.toDate().getTime() >= start.toDate().getTime() && this.calendar.toDate().getTime() <= end.toDate().getTime()) {
+                                            viewHolder.adapter.events.add(event);
+                                        }
+                                        break;
+                                    case CreateScheduleActivity.REPEAT_EVERYWEEK:
+                                        if(period > 0 && period % 7 == 0) {
+                                            viewHolder.adapter.events.add(event);
+                                        }
+                                        break;
+                                    case CreateScheduleActivity.REPEAT_EVERYTWOWEEK:
+                                        if(period > 0 && period % 14 == 0) {
+                                            viewHolder.adapter.events.add(event);
+                                        }
+                                        break;
+                                    case CreateScheduleActivity.REPEAT_EVERYMONTH:
+                                        if(period > 0 && currentDate.getDayOfMonth() == eventDate.getDayOfMonth()) {
+                                            viewHolder.adapter.events.add(event);
+                                        }
+                                        break;
+                                    case CreateScheduleActivity.REPEAT_EVERYYEAR:
+                                        if(period > 0 && currentDate.getMonthOfYear() == eventDate.getMonthOfYear() && currentDate.getDayOfMonth() == eventDate.getDayOfMonth()) {
+                                            viewHolder.adapter.events.add(event);
+                                        }
+                                        break;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                viewHolder.adapter.notifyDataSetChanged();
+
+
                 this.calendar = this.calendar.plusDays(1);
             }
         }
@@ -349,11 +433,16 @@ public class PlannerView extends ConstraintLayout {
         public class ViewHolder extends RecyclerView.ViewHolder {
             TextView dateText;
             LocalDate localDate;
+            ListView dateListView;
+            DateListViewAdapter adapter;
 
             public ViewHolder(View itemView) {
                 super(itemView);
 
                 dateText = itemView.findViewById(R.id.planner_item_day);
+                dateListView = itemView.findViewById(R.id.planner_item_listview);
+                adapter = new DateListViewAdapter();
+                dateListView.setAdapter(adapter);
             }
 
             public void setLocalDate(LocalDate localDate) {
@@ -364,6 +453,40 @@ public class PlannerView extends ConstraintLayout {
                 return this.localDate;
             }
         }
+
+        public class DateListViewAdapter extends BaseAdapter {
+            ArrayList<Event> events;
+
+            public DateListViewAdapter() {
+                this.events = new ArrayList<>();
+            }
+
+            @Override
+            public int getCount() {
+                return this.events.size();
+            }
+
+            @Override
+            public Object getItem(int i) {
+                return this.events.get(i);
+            }
+
+            @Override
+            public long getItemId(int i) {
+                return i;
+            }
+
+            @Override
+            public View getView(int i, View view, ViewGroup viewGroup) {
+                View item = LayoutInflater.from(mContext).inflate(R.layout.plan_item, null, false);
+                TextView itemText = item.findViewById(R.id.plan_item_text);
+
+                Event event = this.events.get(i);
+                itemText.setText(event.getName());
+
+                return item;
+            }
+        }
     }
 
     private boolean isExistToday(LocalDate date) {
@@ -371,5 +494,22 @@ public class PlannerView extends ConstraintLayout {
         int[] dates = date.getValues();
 
         return todays[0] == dates[0] && todays[1] == dates[1] && todays[2] == dates[2];
+    }
+
+    private int findIndex() {
+        return ((this.date.getYear() - 2000) * 12) + this.date.getMonthOfYear() - 1;
+    }
+
+    private void setCalendarSelectLayout() {
+        yearText.setText(date.year().getAsText());
+        monthText.setText(String.valueOf(date.monthOfYear().get()));
+
+        isExistToday = isExistToday(date);
+
+        if(!isExistToday) {
+            todayButton.setVisibility(View.VISIBLE);
+        } else {
+            todayButton.setVisibility(View.GONE);
+        }
     }
 }

@@ -117,6 +117,7 @@ public class BusinessCardFragment extends Fragment {
                 }
         }
     }
+
     private void storeCropImage(Bitmap bitmap, String filePath){
         String dirPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "SmartWheel";
         File directory_SmartWheel = new File(dirPath);

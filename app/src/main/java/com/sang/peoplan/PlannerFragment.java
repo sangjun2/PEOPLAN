@@ -17,6 +17,8 @@ import org.joda.time.LocalTime;
 import java.util.Calendar;
 
 public class PlannerFragment extends Fragment {
+    PlannerView plannerView;
+
     public PlannerFragment() {
         // Required empty public constructor
     }
@@ -38,8 +40,9 @@ public class PlannerFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_planner, container, false);
+
         // 달력 구성
-        PlannerView plannerView = view.findViewById(R.id.planner);
+        plannerView = view.findViewById(R.id.planner);
         plannerView.initView(new LocalDate());
 
         return view;
@@ -48,7 +51,12 @@ public class PlannerFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        Toast.makeText(getContext(), "START", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        plannerView.initView(new LocalDate());
     }
 
     @Override

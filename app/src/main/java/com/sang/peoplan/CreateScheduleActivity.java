@@ -3,25 +3,18 @@ package com.sang.peoplan;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
-import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.support.annotation.Nullable;
 import android.media.MediaPlayer;
-import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.NumberPicker;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,13 +26,12 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
 import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLEncoder;
 import java.util.Date;
 
 import java.text.SimpleDateFormat;
+import java.util.List;
 import retrofit2.Call;
+import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -47,7 +39,7 @@ public class CreateScheduleActivity extends AppCompatActivity { // 일정 추가
     Switch isByDay; // 요일별 선택
     Switch isAllDay; // 하루종일 선택
     AutofitEdittext eventTitle; // 이벤트 제목
-    Button selectGroupButton; // 그룹 선택
+    LinearLayout selectGroup; // 그룹 선택
     LinearLayout timeGroup; // 시간 설정위한 레이아웃
 
     LinearLayout eventStart; // 시작 시간 설정 위한 레이아웃
@@ -91,6 +83,14 @@ public class CreateScheduleActivity extends AppCompatActivity { // 일정 추가
 
     private ToggleButton _toggleSun, _toggleMon, _toggleTue, _toggleWed, _toggleThu, _toggleFri, _toggleSat;
 
+    public static final int REPEAT_NONE = 0;
+    public static final int REPEAT_EVERYDAY = 1;
+    public static final int REPEAT_EVERYWEEK = 2;
+    public static final int REPEAT_EVERYTWOWEEK = 3;
+    public static final int REPEAT_EVERYMONTH = 4;
+    public static final int REPEAT_EVERYYEAR = 5;
+
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -118,7 +118,7 @@ public class CreateScheduleActivity extends AppCompatActivity { // 일정 추가
         isByDay = findViewById(R.id.is_byday);
         isAllDay = findViewById(R.id.is_allday);
         eventTitle = findViewById(R.id.eventTitle);
-        selectGroupButton = findViewById(R.id.selectGroupButton);
+        selectGroup = findViewById(R.id.select_group_view);
         eventStart = findViewById(R.id.eventStart);
         eventEnd = findViewById(R.id.eventEnd);
         repeatView = findViewById(R.id.repeatView);
@@ -194,7 +194,7 @@ public class CreateScheduleActivity extends AppCompatActivity { // 일정 추가
         });
 
         // 그룹 선택 시 반응, 코딩~~
-        selectGroupButton.setOnClickListener(new View.OnClickListener() {
+        selectGroup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
             }
@@ -283,30 +283,30 @@ public class CreateScheduleActivity extends AppCompatActivity { // 일정 추가
                     startTime = startDate.toDateTime(new LocalTime(startHour, startMinute));
                     endTime = endDate.toDateTime(new LocalTime(endHour, endMinute));
                 } else {
-                    startTime = startDate.toDateTime(new LocalTime(0, 0));
-                    endTime = endDate.toDateTime(new LocalTime(23, 59));
+                    startTime = startDate.toDateTime(new LocalTime(0, 0, 0, 0));
+                    endTime = endDate.toDateTime(new LocalTime(23, 59, 59, 999));
                 }
 
                 if(isExistAllData(startTime, endTime)) {
-                    //db 등록
+
                     SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm");
                     Toast.makeText(getApplicationContext(), dateFormat.format(startTime.toDate()) + ", " + dateFormat.format(endTime.toDate()), Toast.LENGTH_SHORT).show();
                     intentAlarm.putExtra("eventTitle", eventTitle.getText().toString());
 
-                    Repeat repeat = new Repeat();
+                    int repeat = REPEAT_NONE;
                     if(repeatConfirm.getText().toString().equals("없음")) {
 
                     } else if(repeatConfirm.getText().toString().equals("매일")) {
-                        repeat.setNumber(1);
+                        repeat = REPEAT_EVERYDAY;
                     } else if(repeatConfirm.getText().toString().equals("매주")) {
-                        repeat.setOneWeek(true);
+                        repeat = REPEAT_EVERYWEEK;
                     } else if(repeatConfirm.getText().toString().equals("매월")) {
-                        repeat.setMonth(true);
+                        repeat = REPEAT_EVERYMONTH;
                     } else if(repeatConfirm.getText().toString().equals("매년")) {
-                        repeat.setYear(true);
+                        repeat = REPEAT_EVERYYEAR;
                     }
-
-                    Event event = new Event(eventTitle.getText().toString(), startTime.toDate(), endTime.toDate(), repeat, false);
+                   //db 등록
+                    Event event = new Event(eventTitle.getText().toString(), new Date(startTime.getMillis()), new Date(endTime.getMillis()), repeat, false);
 
                     CreateEventAsyncTask task = new CreateEventAsyncTask();
                     task.execute(event);
@@ -345,9 +345,23 @@ public class CreateScheduleActivity extends AppCompatActivity { // 일정 추가
 
         @Override
         protected Boolean doInBackground(Event... events) {
-            Call<Event> event = service.createEvent(String.valueOf(LoginActivity.USER_PROFILE.getId()), events[0]);
+            Call<Event> event = service.createEvent(String.valueOf(SplashActivity.USER_PROFILE.getId()), events[0]);
             try {
                 if(event.execute().code() == 200) {
+                    Call<List<Event>> callCalendar = service.getUserEvents(String.valueOf(SplashActivity.USER_PROFILE.getId()));
+                    Response<List<Event>> calendars = callCalendar.execute();
+                    if(calendars.code() == 200) {
+                        for(int i = 0; i < calendars.body().size(); i++) {
+                            Event e = calendars.body().get(i);
+                            if(SplashActivity.EVENT_LIST.containsKey(e._id)) {
+                                continue;
+                            } else {
+                                e.getStart().setTime(e.getStart().getTime() - 1000 * 60 * 60 * 9);
+                                e.getEnd().setTime(e.getEnd().getTime()  - 1000 * 60 * 60 * 9);
+                                SplashActivity.EVENT_LIST.put(e._id, e);
+                            }
+                        }
+                    }
                     return true;
                 }
             } catch (IOException e) {
@@ -446,6 +460,23 @@ public class CreateScheduleActivity extends AppCompatActivity { // 일정 추가
         eventStartText.setText(buf + "");
     }
 
+    public void syncEventEndText() {
+        StringBuffer buf = new StringBuffer();
+        LocalDate date = eventStartNumberPicker.getPickerDate();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy.MM.dd");
+        buf.append(simpleDateFormat.format(date.toDate()));
+
+        if(!isAllDay.isChecked()) {
+            int type = eventStartNumberPicker.typePicker.getValue();
+            int hour = eventStartNumberPicker.hourPicker.getValue() + 1;
+            int minute = eventStartNumberPicker.minutePicker.getValue();
+
+            buf.append(" " + eventStartNumberPicker.typePicker.getDisplayedValues()[type] + " " + hour + ":" + eventStartNumberPicker.minutePicker.getDisplayedValues()[minute]);
+        }
+
+        eventEndText.setText(buf + "");
+    }
+
     public void setEventEndText() {
         StringBuffer buf = new StringBuffer();
         LocalDate date = eventEndNumberPicker.getPickerDate();
@@ -473,8 +504,8 @@ public class CreateScheduleActivity extends AppCompatActivity { // 일정 추가
     public void onRegist()
     //알람 등록
     // 설정 시간 정보를 담은 객체를 hashcode를 생성하여 broadcast해 pendingintent를 사용한다.
-    // intent로 넘어가는 extras만이 업데이트됨
-    {
+        // intent로 넘어가는 extras만이 업데이트됨
+        {
         MediaPlayer mp = MediaPlayer.create(this, R.raw.impact_intermezzo);
 
         if(true){//날짜별 알람인 경우

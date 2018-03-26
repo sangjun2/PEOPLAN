@@ -20,7 +20,6 @@ public interface APIService { // retrofit 사용을 위한 http api 인터페이
     Call<List<User>> getUserList();
 
     @GET("/api/users/{user}") // 특정 유저 데이터
-
     Call<List<User>> getUser(@Path("user") String userUID);
 
     @POST("/api/users") // 유저 생성
@@ -31,4 +30,13 @@ public interface APIService { // retrofit 사용을 위한 http api 인터페이
 
     @PUT("/api/calendars/user/{user}/event")
     Call<Event> createEvent(@Path("user") String userUID, @Body Event event);
+
+    @PUT("/api/users/{user}/businesscards")
+    Call<BusinessCard> createBusinessCard(@Path("user") String userUID, @Body BusinessCard businessCard);
+
+    @POST("/api/groups") // 그룹 생성
+    Call<Group> createGroup(@Body Group group);
+
+    @GET("/api/groups/user/{user}") // 속한 그룹 찾기
+    Call<List<Group>> getGroups(@Path("user") String userUID);
 }

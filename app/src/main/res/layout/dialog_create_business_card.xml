@@ -15,6 +15,7 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -23,8 +24,8 @@
         <ImageView
             android:id="@+id/my_picture"
             app:srcCompat="@drawable/ic_add_circle_outline_black_24dp"
-            android:layout_width="120dp"
-            android:layout_height="160dp"
+            android:layout_width="140dp"
+            android:layout_height="200dp"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             />
@@ -58,24 +59,42 @@
                         android:text="소    속:" />
 
                     <EditText
+                        android:id="@+id/departmant"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="3" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:padding="1dp"
+                        android:text="Name:" />
+
+                    <EditText
+                        android:id="@+id/name"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="3" />
                 </LinearLayout>
 
                 <TextView
+                    android:id="@+id/phone_number"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="1dp"
-                    android:text="Name: 이 상 인" />
+                    android:text="Phone: 010-3171-3293"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"/>
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="1dp"
-                    android:text="Phone: 010-3171-3293" />
-
-                <TextView
+                    android:id="@+id/email_address"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="1dp"
@@ -94,6 +113,7 @@
                         android:text="주    소:" />
 
                     <EditText
+                        android:id="@+id/address"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="3" />

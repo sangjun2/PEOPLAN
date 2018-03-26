@@ -67,7 +67,7 @@ public class KakaoSignupActivity extends AppCompatActivity { // DB에 유저정�
         mContext = this;
 
         // 카카오 연동된 유저 정보
-        userProfile = LoginActivity.USER_PROFILE;
+        userProfile = SplashActivity.USER_PROFILE;
 
         Toolbar toolbar = findViewById(R.id.kakao_toolbar);
         TextView toolbarTitle = findViewById(R.id.confirm_toolbar_title);
@@ -170,6 +170,7 @@ public class KakaoSignupActivity extends AppCompatActivity { // DB에 유저정�
             Call<User> user = service.createUser(users[0]);
             try {
                 if(user.execute().code() == 200) { // 추가 성공
+                    SplashActivity.USER_TEL = users[0].getTel();
                     return true;
                 }
             } catch (IOException e) {
