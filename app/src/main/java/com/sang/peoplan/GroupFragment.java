@@ -1,5 +1,6 @@
 package com.sang.peoplan;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -47,14 +48,19 @@ public class GroupFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         groups = new ArrayList<>();
-        GetGroupsAsyncTask task = new GetGroupsAsyncTask();
-        task.execute(String.valueOf(SplashActivity.USER_PROFILE.getId()));
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+
+
+        // 그룹 내용 동기화 //
+        GetGroupsAsyncTask task = new GetGroupsAsyncTask();
+        task.execute(String.valueOf(SplashActivity.USER_PROFILE.getId()));
+        // 화면 구성
         View view = inflater.inflate(R.layout.fragment_group, container, false);
 
         Toolbar toolbar = view.findViewById(R.id.group_toolbar); //화면 상위 모습
@@ -73,6 +79,21 @@ public class GroupFragment extends Fragment {
         recyclerView.setAdapter(adapter);
 
         return view;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == 1){ // 그룹만들기 버튼 클릭시 requestCode 1 로 날라감
+            if(resultCode == Activity.RESULT_OK){  // createGroupActivity에서 추가 성공시, 리프레쉬
+                final FragmentTransaction ft = getFragmentManager().beginTransaction();
+                ft.detach(this);
+                ft.attach(this);
+                ft.commit();
+            }
+            if(resultCode == Activity.RESULT_CANCELED){ // createGroupActivity에서 추가 실패시, 물론 실패시 구현 안됨
+            }
+        }
     }
 
     @Override
@@ -118,7 +139,8 @@ public class GroupFragment extends Fragment {
                 if(response.code() == 200) { // 데이터 받아옴
                     List<Group> groupList = response.body();
                     for(int i = 0; i < groupList.size(); i++) {
-                        groups.add(groupList.get(i));
+                        if(!groups.contains(groupList.get(i))) // 중복 처리
+                            groups.add(groupList.get(i));
                     }
                     return true;
                 }
@@ -142,7 +164,6 @@ public class GroupFragment extends Fragment {
         public GroupItemView.GroupItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             GroupItemView view;
             mContext = parent.getContext();
-
             view = new GroupItemView(mContext, parent);
 
             GroupItemView.GroupItemViewHolder viewHolder = view.viewHolder;
