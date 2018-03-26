@@ -1,13 +1,16 @@
 package com.sang.peoplan;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 
@@ -52,6 +55,9 @@ public class CreateGroupActivity extends AppCompatActivity { // 그룹 추가
      * 확인 버튼 눌렀을 시, DB에 추가
      * 2018.3.15 미구현 부분
      * - 친구 목록 외부에서 가져오기
+     * - 아이템 어떤 공간을 클릭하든 선택
+     * - 카테고리 뒤로 가기 활성화 OK
+     * - 공개/비공개 그룹 선택 사항
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,11 +74,18 @@ public class CreateGroupActivity extends AppCompatActivity { // 그룹 추가
         User f2 = new User("02","이상인","2-2","b");
         User f3 = new User("03","이상준","3-2","c");
         User f4 = new User("04","전철민","4-2","d");
-
+        User f5 = new User("05","정태표","1-2","a");
+        User f6 = new User("06","이상인","2-2","b");
+        User f7 = new User("07","이상준","3-2","c");
+        User f8 = new User("08","전철민","4-2","d");
         friends.add(f1);
         friends.add(f2);
         friends.add(f3);
         friends.add(f4);
+        friends.add(f5);
+        friends.add(f6);
+        friends.add(f7);
+        friends.add(f8);
 
         //화면 상위 확인 버튼
         Toolbar toolbar = findViewById(R.id.group_toolbar);
@@ -95,7 +108,7 @@ public class CreateGroupActivity extends AppCompatActivity { // 그룹 추가
                 if( group_name.getText().toString().length() == 0 ){
                     Toast.makeText(getApplicationContext(), "그룹 명을 입력해주세요.", Toast.LENGTH_SHORT).show();
                 }
-                else if( category.getText().toString().length() == 0 ){
+                else if( category.getText().toString().equals("없음")){ // 카테로리 미선택 예외처리
                     Toast.makeText(getApplicationContext(), "그룹 카테고리를 선택해주세요.", Toast.LENGTH_SHORT).show();
                 }else {
                     // 그룹 멤버 데이터 추가
@@ -150,7 +163,6 @@ public class CreateGroupActivity extends AppCompatActivity { // 그룹 추가
                 onBackPressed();
                 return true;
         }
-
         return false;
     }
 
@@ -188,6 +200,8 @@ public class CreateGroupActivity extends AppCompatActivity { // 그룹 추가
         protected void onPostExecute(Boolean isSuccessed) {
             super.onPostExecute(isSuccessed);
             if(isSuccessed) {
+                Intent returnIntent = new Intent();
+                setResult(Activity.RESULT_OK,returnIntent);
                 finish();
             }
         }
@@ -218,7 +232,7 @@ public class CreateGroupActivity extends AppCompatActivity { // 그룹 추가
 
         // 새로운 뷰 홀더 생성
         @Override
-        public ItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        public ItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) { // xml 상에서 커스텀 된 레이아웃 사용 /?!!!
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.group_friendlist_item, parent, false);
             return new ItemViewHolder(view);
         }
