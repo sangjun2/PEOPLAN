@@ -3,7 +3,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/PEOPLAN.iml" filepath="$PROJECT_DIR$/PEOPLAN.iml" />
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://C:\Users\태표\git\PEOPLAN\PEOPLAN.iml" filepath="C:\Users\태표\git\PEOPLAN\PEOPLAN.iml" />
+      <module fileurl="file://C:\Users\태표\git\PEOPLAN\app\app.iml" filepath="C:\Users\태표\git\PEOPLAN\app\app.iml" />
     </modules>
   </component>
 </project>

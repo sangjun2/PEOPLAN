@@ -7,20 +7,30 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
+
+import org.joda.time.LocalDate;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.ArrayList;
 
 public class BusinessCardFragment extends Fragment {
-    ImageView createBusinessCardView;
+
     private Uri mImageCaptureUri;
     private static final int PICK_FROM_ALBUM = 1;
     private static final int CROP_FROM_IMAGE = 2;
@@ -28,6 +38,15 @@ public class BusinessCardFragment extends Fragment {
     private String absolutePath;
 
     CreateBusinessCardDialog dialog;
+
+    View myBusinessCardsView;
+    ViewPager myBusinessCardsViewPager;
+
+    TextView department;
+    TextView name;
+    TextView tel;
+    TextView email;
+    TextView address;
 
     public BusinessCardFragment() {
         // Required empty public constructor
@@ -50,18 +69,33 @@ public class BusinessCardFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_business_card, container, false);
-        createBusinessCardView = view.findViewById(R.id.create_businesscard_view);
-        createBusinessCardView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-//                Intent intent = new Intent(getActivity().getApplicationContext(), CreateBusinessCardActivity.class);
-//                startActivity(intent);
-                dialog = new CreateBusinessCardDialog(getContext());
-                dialog.setTitle("명함 만들기");
 
-                dialog.show();
-            }
-        });
+        ArrayList<BusinessCard> myBusinessCards = SplashActivity.BUSINESSCARD_LIST;
+
+        myBusinessCardsViewPager = view.findViewById(R.id.my_businesscard_view);
+//        myBusinessCardsView = view.findViewById(R.id.my_businesscard);
+//        department = myBusinessCardsView.findViewById(R.id.department);
+//        name = myBusinessCardsView.findViewById(R.id.name);
+//        tel = myBusinessCardsView.findViewById(R.id.tel);
+//        email = myBusinessCardsView.findViewById(R.id.email_address);
+//        address = myBusinessCardsView.findViewById(R.id.address);
+
+
+
+
+        if(myBusinessCards.size() != 0){
+
+//            myBusinessCardsView.setVisibility(View.VISIBLE);
+            myBusinessCardsViewPager.setVisibility(View.VISIBLE);
+            myBusinessCardsViewPager.setAdapter(new BusinessCardPagerAdapter(myBusinessCards));
+
+//            department.setText(department.getText().toString() + myBusinessCards.get(0).getDepartment());
+//            name.setText(name.getText().toString() + myBusinessCards.get(0).getName());
+//            tel.setText(tel.getText().toString() + myBusinessCards.get(0).getTel());
+//            email.setText(email.getText().toString() + SplashActivity.USER_PROFILE.getEmail());
+//            address.setText(address.getText().toString() + "아직");
+        }
+
         return view;
     }
 
@@ -139,6 +173,72 @@ public class BusinessCardFragment extends Fragment {
             out.close();
         }catch(Exception e){
             e.printStackTrace();
+        }
+    }
+
+    public class BusinessCardPagerAdapter extends PagerAdapter {
+        ArrayList<BusinessCard> myBusinessCards;
+
+
+        public BusinessCardPagerAdapter(ArrayList<BusinessCard> myBusinessCards) {
+            this.myBusinessCards = myBusinessCards;
+        }
+
+
+
+        @Override
+        public Object instantiateItem(ViewGroup container, int position) {
+            if(position == myBusinessCards.size()){
+                View view = LayoutInflater.from(getContext()).inflate(R.layout.fragment_business_card, null);
+                ImageView createView = view.findViewById(R.id.create_businesscard_view);
+                createView.setMaxHeight(60);
+                createView.setVisibility(View.VISIBLE);
+                createView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+//                Intent intent = new Intent(getActivity().getApplicationContext(), CreateBusinessCardActivity.class);
+//                startActivity(intent);
+                        dialog = new CreateBusinessCardDialog(getContext());
+                        dialog.setTitle("명함 만들기");
+
+                        dialog.show();
+                    }
+                });
+                container.addView(createView);
+                return createView;
+            }
+            View view = LayoutInflater.from(getContext()).inflate(R.layout.business_card_item, null);
+            TextView department = view.findViewById(R.id.department);
+            TextView name = view.findViewById(R.id.name);
+            TextView tel = view.findViewById(R.id.tel);
+            TextView email = view.findViewById(R.id.email_address);
+            TextView address = view.findViewById(R.id.address);
+
+            BusinessCard b = myBusinessCards.get(position);
+
+            department.setText(department.getText().toString() + b.getDepartment());
+            name.setText(name.getText().toString() + b.getName());
+            tel.setText(tel.getText().toString() + b.getTel());
+            email.setText(email.getText().toString() + SplashActivity.USER_PROFILE.getEmail());
+            address.setText(address.getText().toString() + "아직");
+
+            container.addView(view);
+            return view;
+        }
+
+        @Override
+        public void destroyItem(ViewGroup container, int position, Object object) {
+            container.removeView((ConstraintLayout) object);
+        }
+
+        @Override
+        public boolean isViewFromObject(View view, Object object) {
+            return view == object;
+        }
+
+        @Override
+        public int getCount() {
+            return this.myBusinessCards.size() + 1;
         }
     }
 }
