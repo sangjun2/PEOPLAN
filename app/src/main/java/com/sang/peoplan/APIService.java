@@ -31,8 +31,11 @@ public interface APIService { // retrofit 사용을 위한 http api 인터페이
     @PUT("/api/calendars/user/{user}/event")
     Call<Event> createEvent(@Path("user") String userUID, @Body Event event);
 
-    @PUT("/api/users/{user}/businesscards")
+    @PUT("/api/businesscards/user/{user}")
     Call<BusinessCard> createBusinessCard(@Path("user") String userUID, @Body BusinessCard businessCard);
+
+    @GET("/api/businesscards/user/{user}")
+    Call<List<BusinessCard>> getBusinessCards(@Path("user") String userUID);
 
     @POST("/api/groups") // 그룹 생성
     Call<Group> createGroup(@Body Group group);
