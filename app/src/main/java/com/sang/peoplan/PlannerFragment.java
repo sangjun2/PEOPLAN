@@ -51,13 +51,11 @@ public class PlannerFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        Toast.makeText(getContext(), "ATTACH", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        Toast.makeText(getContext(), "START", Toast.LENGTH_SHORT).show();
         plannerView.initView(new LocalDate());
     }
 

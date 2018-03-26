@@ -9,6 +9,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -67,7 +68,7 @@ public class GroupFragment extends Fragment {
         activity.setSupportActionBar(toolbar);
 
         RecyclerView recyclerView = view.findViewById(R.id.group_recyclerview);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2, LinearLayoutManager.VERTICAL, false));
         adapter = new GroupListAdapter();
         recyclerView.setAdapter(adapter);
 
@@ -129,7 +130,7 @@ public class GroupFragment extends Fragment {
         }
     }
 
-    public class GroupListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    public class GroupListAdapter extends RecyclerView.Adapter<GroupItemView.GroupItemViewHolder> {
         Context mContext;
         ArrayList<Group> groups;
 
@@ -138,78 +139,39 @@ public class GroupFragment extends Fragment {
         }
 
         @Override
-        public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View view;
+        public GroupItemView.GroupItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            GroupItemView view;
             mContext = parent.getContext();
 
-            switch (viewType) { // ?? viewType이 어떤식으로 잡히는 지 ?.. => getItemViewType method
-                case 0:
-                    view = LayoutInflater.from(mContext).inflate(R.layout.create_group_item_view, parent, false);
-                    view.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) { // 그룹 생성
-                            Intent intent = new Intent(getContext(), CreateGroupActivity.class);
-                            startActivity(intent);
-                            getActivity().overridePendingTransition(R.anim.anim_slide_in_bottom, R.anim.anim_noanim);
-                        }
-                    });
-                    return new CreateViewHolder(view);
-                case 1:
-                    view = LayoutInflater.from(mContext).inflate(R.layout.group_list_item_view, parent, false);
-                    final ItemViewHolder viewHolder = new ItemViewHolder(view);
-                    view.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Intent intent = new Intent(getContext(), GroupDetailActivity.class);
-                            intent.putExtra("Group", viewHolder.group);
-                            startActivity(intent);
-                            getActivity().overridePendingTransition(R.anim.anim_slide_in_right, R.anim.anim_slide_out_left);
-                        }
-                    });
-                    return viewHolder;
-            }
+            view = new GroupItemView(mContext, parent);
 
-            return null;
-        }
+            GroupItemView.GroupItemViewHolder viewHolder = view.viewHolder;
+            return viewHolder;
 
-        @Override
-        public int getItemViewType(int position) {
-            return position == 0 ? 0 : 1;
         }
 
         @Override
         public int getItemCount() {
-            return 1 + groups.size();
+            return groups.size();
         }
 
         @Override
-        public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-            if(position != 0) {
-                ItemViewHolder itemViewHolder = (ItemViewHolder) holder;
-                itemViewHolder.group = groups.get(position - 1);
-                itemViewHolder.bind();
-            }
-        }
+        public void onBindViewHolder(GroupItemView.GroupItemViewHolder holder, int position) {
+            final GroupItemView.GroupItemViewHolder itemViewHolder = holder;
+            itemViewHolder.group = groups.get(position);
+            itemViewHolder.bind();
 
-        public class CreateViewHolder extends RecyclerView.ViewHolder {
-            public CreateViewHolder(View itemView) {
-                super(itemView);
-            }
-        }
-
-        public class ItemViewHolder extends RecyclerView.ViewHolder {
-            Group group;
-            TextView title;
-
-            public ItemViewHolder(View itemView) {
-                super(itemView);
-                group = null;
-                title = itemView.findViewById(R.id.group_title);
-            }
-
-            public void bind() {
-                this.title.setText(group.getName());
-            }
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(getContext(), GroupDetailActivity.class);
+                    intent.putExtra("Group", itemViewHolder.group);
+                    startActivity(intent);
+                    getActivity().overridePendingTransition(R.anim.anim_slide_in_right, R.anim.anim_slide_out_left);
+                }
+            });
         }
     }
+
+
 }

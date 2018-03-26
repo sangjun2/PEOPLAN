@@ -113,8 +113,12 @@ public class GroupDetailActivity extends AppCompatActivity {
         public TabViewPagerAdapter() {
             tabItems = new ArrayList<>();
             tabItems.add(new TabItem("공지사항",  R.layout.group_notice));
+            tabItems.add(new TabItem("일정", R.layout.group_plan));
             tabItems.add(new TabItem("게시판", R.layout.group_board));
             tabItems.add(new TabItem("그룹원", R.layout.group_participants));
+            if(group.getAdministrator().equals(String.valueOf(SplashActivity.USER_PROFILE.getId()))) {
+                tabItems.add(new TabItem("설정", R.layout.group_setting));
+            }
         }
 
         @Override
