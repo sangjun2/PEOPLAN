@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -32,6 +33,7 @@ public class GroupFragment extends Fragment {
     Button toolbar_notification_bt; // 그룹 알림 버튼
     ArrayList<Group> groups;
     GroupListAdapter adapter;
+    FloatingActionButton floatingActionButton;
 
     public GroupFragment() {
         // Required empty public constructor
@@ -46,9 +48,9 @@ public class GroupFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        groups = new ArrayList<>();
-
+        // 그룹 내용 동기화 //
+        GetGroupsAsyncTask task = new GetGroupsAsyncTask();
+        task.execute(String.valueOf(SplashActivity.USER_PROFILE.getId()));
     }
 
     @Override
@@ -56,10 +58,6 @@ public class GroupFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 
-
-        // 그룹 내용 동기화 //
-        GetGroupsAsyncTask task = new GetGroupsAsyncTask();
-        task.execute(String.valueOf(SplashActivity.USER_PROFILE.getId()));
         // 화면 구성
         View view = inflater.inflate(R.layout.fragment_group, container, false);
 
@@ -72,6 +70,16 @@ public class GroupFragment extends Fragment {
         //??
         AppCompatActivity activity = (AppCompatActivity) getActivity();
         activity.setSupportActionBar(toolbar);
+
+        floatingActionButton = view.findViewById(R.id.group_floating_bt);
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getContext(), CreateGroupActivity.class);
+                startActivityForResult(intent,1);
+                getActivity().overridePendingTransition(R.anim.anim_slide_in_bottom, R.anim.anim_noanim);
+            }
+        });
 
         RecyclerView recyclerView = view.findViewById(R.id.group_recyclerview);
         recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2, LinearLayoutManager.VERTICAL, false));
@@ -86,10 +94,8 @@ public class GroupFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == 1){ // 그룹만들기 버튼 클릭시 requestCode 1 로 날라감
             if(resultCode == Activity.RESULT_OK){  // createGroupActivity에서 추가 성공시, 리프레쉬
-                final FragmentTransaction ft = getFragmentManager().beginTransaction();
-                ft.detach(this);
-                ft.attach(this);
-                ft.commit();
+                GetGroupsAsyncTask task = new GetGroupsAsyncTask();
+                task.execute(String.valueOf(SplashActivity.USER_PROFILE.getId()));
             }
             if(resultCode == Activity.RESULT_CANCELED){ // createGroupActivity에서 추가 실패시, 물론 실패시 구현 안됨
             }
@@ -113,6 +119,8 @@ public class GroupFragment extends Fragment {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+
+            groups = new ArrayList<>();
 
             retrofit = new Retrofit.Builder()
                     .baseUrl(GlobalApplication.SERVER_URL)
