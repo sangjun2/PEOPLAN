@@ -37,30 +37,35 @@
                 android:orientation="vertical"
                 android:gravity="center">
                 <TextView
+                    android:id="@+id/department"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="1dp"
-                    android:text="소속: 회사명/그룹명"/>
+                    android:text="소속: "/>
                 <TextView
+                    android:id="@+id/name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="1dp"
-                    android:text="Name: 이 상 인"/>
+                    android:text="Name: "/>
                 <TextView
+                    android:id="@+id/tel"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="1dp"
-                    android:text="Phone: 010-3171-3293"/>
+                    android:text="Tel: "/>
                 <TextView
+                    android:id="@+id/email_address"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="1dp"
-                    android:text="e-mail: leein3293@naver.com"/>
+                    android:text="e-mail: "/>
                 <TextView
+                    android:id="@+id/address"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="1dp"
-                    android:text="주소: 충청남도 홍성군 홍성읍 대교 4리 386-8번지"/>
+                    android:text="주소: "/>
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>

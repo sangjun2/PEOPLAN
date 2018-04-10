@@ -22,6 +22,7 @@ import com.kakao.util.exception.KakaoException;
 import com.kakao.util.helper.log.Logger;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -33,6 +34,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class SplashActivity extends AppCompatActivity {
     public static UserProfile USER_PROFILE;
     public static HashMap<String, Event> EVENT_LIST;
+    public static ArrayList<BusinessCard> BUSINESSCARD_LIST;
     private Context mContext;
     private SessionCallback callback;
 
@@ -52,6 +54,7 @@ public class SplashActivity extends AppCompatActivity {
         progressBar = findViewById(R.id.splash_progressbar);
 
         EVENT_LIST = new HashMap<>();
+        BUSINESSCARD_LIST = new ArrayList<>();
         mContext = this;
 
         callback = new SessionCallback();
@@ -185,6 +188,9 @@ public class SplashActivity extends AppCompatActivity {
                         USER_TEL = response.body().get(0).getTel();
                         Call<List<Event>> callCalendar = service.getUserEvents(uid[0]);
                         Response<List<Event>> calendars = callCalendar.execute();
+                        Call<List<BusinessCard>> callBusinessCards = service.getBusinessCards(uid[0]);
+                        Response<List<BusinessCard>> businessCards = callBusinessCards.execute();
+
                         if(calendars.code() == 200) {
                             for(int i = 0; i < calendars.body().size(); i++) {
                                 Event e = calendars.body().get(i);
@@ -193,6 +199,14 @@ public class SplashActivity extends AppCompatActivity {
                                 EVENT_LIST.put(e._id, e);
                             }
                         }
+
+                        if(businessCards.code() == 200){
+                            for(int i = 0; i < businessCards.body().size(); i++){
+                                BusinessCard b = businessCards.body().get(i);
+                                BUSINESSCARD_LIST.add(b);
+                            }
+                        }
+
                         return 200; // 정상 응답
                     }
                     return 500;
