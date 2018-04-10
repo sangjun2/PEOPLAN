@@ -37,6 +37,9 @@ public interface APIService { // retrofit 사용을 위한 http api 인터페이
     @GET("/api/businesscards/user/{user}")
     Call<List<BusinessCard>> getBusinessCards(@Path("user") String userUID);
 
+    @PUT("/api/businesscards/update/{id}")
+    Call<BusinessCard> updateBusinessCard(@Path("id") String id, @Body BusinessCard businessCard);
+
     @POST("/api/groups") // 그룹 생성
     Call<Group> createGroup(@Body Group group);
 
