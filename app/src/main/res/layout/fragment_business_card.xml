@@ -34,12 +34,11 @@
                 android:layout_height="180dp"
                 android:orientation="vertical"
                 android:gravity="center">
-                <ImageView
+                <!--ImageView
                     android:id="@+id/create_businesscard_view"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
-                    app:srcCompat="@drawable/ic_add_circle_outline_black_24dp"
-                    android:visibility="gone"/>
+                    app:srcCompat="@drawable/ic_add_circle_outline_black_24dp"/-->
                 <!--include
                     android:id="@+id/my_businesscard"
                     layout="@layout/business_card_item"
@@ -51,8 +50,7 @@
                     android:id="@+id/my_businesscard_view"
                     android:layout_width="match_parent"
                     android:layout_height="180dp"
-                    android:background="@drawable/border"
-                    android:visibility="gone">
+                    android:background="@drawable/border">
                 </android.support.v4.view.ViewPager>
             </LinearLayout>
 

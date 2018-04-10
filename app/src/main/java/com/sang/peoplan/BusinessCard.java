@@ -8,6 +8,8 @@ import com.google.gson.annotations.SerializedName;
  */
 
 public class BusinessCard {
+    @SerializedName("_id")
+    public String _id;
     @SerializedName("kakaoid")
     public String kakaoid;
     @SerializedName("name")
@@ -16,16 +18,27 @@ public class BusinessCard {
     public String department;
     @SerializedName("tel")
     public String tel;
+    @SerializedName("address")
+    public String address;
 
     public BusinessCard(){
 
     }
 
-    public BusinessCard(String kakaoid, String name, String department, String tel){
+    public BusinessCard(String kakaoid, String name, String department, String tel, String address){
         this.kakaoid = kakaoid;
         this.name = name;
         this.department = department;
         this.tel = tel;
+        this.address =  address;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public String getKakaoid() {
@@ -59,4 +72,11 @@ public class BusinessCard {
     public void setTel(String tel) {
         this.tel = tel;
     }
+    public String get_id() {
+        return _id;
+    }
+    public void set_id(String _id) {
+        this._id = _id;
+    }
+
 }
