@@ -12,6 +12,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -33,6 +34,7 @@ public class CreateBusinessCardDialog extends Dialog { // 명함 만들기
     private static final int PICK_FROM_ALBUM = 1;
     private static final int CROP_FROM_IMAGE = 2;
 
+
     private String absolutePath;
     ImageView myPicture;
     EditText name;
@@ -41,6 +43,43 @@ public class CreateBusinessCardDialog extends Dialog { // 명함 만들기
     TextView emailAddress;
     EditText address;
     Button confirm;
+
+    String nameText;
+    String departmentText;
+    String addressText;
+    Boolean modified;
+
+    public Boolean getModified() {
+        return modified;
+    }
+
+    public void setModified(Boolean modified) {
+        this.modified = modified;
+    }
+
+    public String getNameText() {
+        return nameText;
+    }
+
+    public void setNameText(String nameText) {
+        this.nameText = nameText;
+    }
+
+    public String getDepartmentText() {
+        return departmentText;
+    }
+
+    public void setDepartmentText(String departmentText) {
+        this.departmentText = departmentText;
+    }
+
+    public String getAddressText() {
+        return addressText;
+    }
+
+    public void setAddressText(String addressText) {
+        this.addressText = addressText;
+    }
 
     public CreateBusinessCardDialog(@NonNull Context context) {
         super(context);
@@ -80,6 +119,11 @@ public class CreateBusinessCardDialog extends Dialog { // 명함 만들기
                 ((Activity) mContext).startActivityForResult(intent, PICK_FROM_ALBUM);
             }
         });
+        if(modified){
+           department.setText(departmentText);
+           name.setText(nameText);
+           address.setText(addressText);
+        }
 
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -100,9 +144,14 @@ public class CreateBusinessCardDialog extends Dialog { // 명함 만들기
                     businessCard.setName(name.getText().toString());
                     businessCard.setDepartment(department.getText().toString());
                     businessCard.setTel(SplashActivity.USER_TEL);
+                    businessCard.setAddress(address.getText().toString());
 
                     CreateBusinessCardAsyncTask businessCardAsyncTask = new CreateBusinessCardAsyncTask();
+                    if(modified){
+                        businessCardAsyncTask.setModified(modified);
+                    }
                     businessCardAsyncTask.execute(businessCard);
+
                 }
             }
         });
@@ -119,6 +168,15 @@ public class CreateBusinessCardDialog extends Dialog { // 명함 만들기
     public class CreateBusinessCardAsyncTask extends AsyncTask<BusinessCard, Void, Boolean> {
         Retrofit retrofit;
         APIService service;
+        boolean modified;
+
+        public boolean isModified() {
+            return modified;
+        }
+
+        public void setModified(boolean modified) {
+            this.modified = modified;
+        }
 
         @Override
         protected void onPreExecute() {
@@ -134,25 +192,43 @@ public class CreateBusinessCardDialog extends Dialog { // 명함 만들기
 
         @Override
         protected void onPostExecute(Boolean isSuccessed) {
+            super.onPostExecute(isSuccessed);
 
             if(isSuccessed) {
                 Toast.makeText(getContext(), "명함이 추가되었습니다.", Toast.LENGTH_SHORT).show();
+                //프레그먼트에 직접 반응시킬 방법
             }
-            super.onPostExecute(isSuccessed);
             dismiss();
         }
 
         @Override
         protected Boolean doInBackground(BusinessCard... businessCards) {
             // 유저 정보 추가
-            Call<BusinessCard> businessCard = service.createBusinessCard(String.valueOf(SplashActivity.USER_PROFILE.getId()), businessCards[0]);
-            try {
-                if(businessCard.execute().code() == 200) { // 추가 성공
-                    return true;
+            Call<BusinessCard> businessCard;
+            if(!modified){
+                businessCard = service.createBusinessCard(String.valueOf(SplashActivity.USER_PROFILE.getId()), businessCards[0]);
+                try {
+                    if(businessCard.execute().code() == 200) { // 추가 성공
+                        SplashActivity.BUSINESSCARD_LIST.add(businessCards[0]);
+                        return true;
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
             }
+            else{
+                Log.d("id==", businessCards[0].get_id());
+                businessCard = service.updateBusinessCard(businessCards[0].get_id(), businessCards[0]);
+                try {
+                    if(businessCard.execute().code() == 200) { // 추가 성공
+                        //splash에서 수정하는 부분 필요
+                        return true;
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
 
             return false;
         }
