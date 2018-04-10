@@ -134,6 +134,7 @@ public class GroupFragment extends Fragment {
         protected void onPostExecute(Boolean aBoolean) {
             super.onPostExecute(aBoolean);
             if(aBoolean) {
+                SplashActivity.GROUP_LIST = groups;
                 adapter.groups = groups;
                 adapter.notifyDataSetChanged();
             }

@@ -1,7 +1,9 @@
 package com.sang.peoplan;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.AppBarLayout;
@@ -18,8 +20,11 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -30,6 +35,7 @@ public class GroupDetailActivity extends AppCompatActivity {
     NestedScrollView nestedScrollView;
     ViewPager viewPager;
     TabViewPagerAdapter tabViewPagerAdapter;
+    ImageView groupImage;
 
     Group group;
 
@@ -87,6 +93,8 @@ public class GroupDetailActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
+
+        groupImage = findViewById(R.id.group_image);
     }
 
     @Override
@@ -112,18 +120,18 @@ public class GroupDetailActivity extends AppCompatActivity {
 
         public TabViewPagerAdapter() {
             tabItems = new ArrayList<>();
-            tabItems.add(new TabItem("공지사항",  R.layout.group_notice));
-            tabItems.add(new TabItem("일정", R.layout.group_plan));
-            tabItems.add(new TabItem("게시판", R.layout.group_board));
-            tabItems.add(new TabItem("그룹원", R.layout.group_participants));
+            tabItems.add(new TabItem("공지사항",  new GroupNoticeView().initView()));
+            tabItems.add(new TabItem("일정", new GroupPlanView().initView()));
+            tabItems.add(new TabItem("게시판", new GroupBoardView().initView()));
+            tabItems.add(new TabItem("그룹원", new GroupParticipantsView().initView()));
             if(group.getAdministrator().equals(String.valueOf(SplashActivity.USER_PROFILE.getId()))) {
-                tabItems.add(new TabItem("설정", R.layout.group_setting));
+                tabItems.add(new TabItem("설정", new GroupSettingView().initView()));
             }
         }
 
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
-            View view = LayoutInflater.from(mContext).inflate(this.tabItems.get(position).getLayout(), null);
+            View view = tabItems.get(position).getView();
 
             container.addView(view);
             return view;
@@ -152,16 +160,16 @@ public class GroupDetailActivity extends AppCompatActivity {
 
     private class TabItem {
         public String title;
-        public int layout;
+        public View view;
 
         public TabItem() {
             this.title = null;
-            this.layout = -1;
+            this.view = null;
         }
 
-        public TabItem(String title, int layout) {
+        public TabItem(String title, View view) {
             this.title = title;
-            this.layout = layout;
+            this.view = view;
         }
 
         public String getTitle() {
@@ -172,12 +180,96 @@ public class GroupDetailActivity extends AppCompatActivity {
             this.title = title;
         }
 
-        public int getLayout() {
-            return layout;
+        public View getView() {
+            return view;
         }
 
-        public void setLayout(int layout) {
-            this.layout = layout;
+        public void setView(View view) {
+            this.view = view;
         }
     }
+
+    public class GroupNoticeView {
+        private int layout;
+
+        public GroupNoticeView() {
+            this.layout = R.layout.group_notice;
+        }
+
+        public View initView() {
+            View view = LayoutInflater.from(mContext).inflate(layout, null);
+
+            return view;
+        }
+    }
+
+    public class GroupPlanView {
+        private int layout;
+
+        public GroupPlanView() {
+            this.layout = R.layout.group_plan;
+        }
+
+        public View initView() {
+            View view = LayoutInflater.from(mContext).inflate(layout, null);
+
+            return view;
+        }
+    }
+
+    public class GroupBoardView {
+        private int layout;
+
+        public GroupBoardView() {
+            this.layout = R.layout.group_board;
+        }
+
+        public View initView() {
+            View view = LayoutInflater.from(mContext).inflate(layout, null);
+
+            return view;
+        }
+    }
+
+    public class GroupParticipantsView {
+        private int layout;
+
+        public GroupParticipantsView() {
+            this.layout = R.layout.group_participants;
+        }
+
+        public View initView() {
+            View view = LayoutInflater.from(mContext).inflate(layout, null);
+
+            return view;
+        }
+    }
+
+
+
+    public class GroupSettingView {
+        private int layout;
+
+        public GroupSettingView() {
+            this.layout = R.layout.group_setting;
+        }
+
+        public View initView() {
+            View view = LayoutInflater.from(mContext).inflate(layout, null);
+
+            LinearLayout groupPicture = view.findViewById(R.id.group_setting_picture);
+            groupPicture.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(GroupDetailActivity.this, SetImageActivity.class);
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.anim_slide_in_right, R.anim.anim_slide_out_left);
+                }
+            });
+
+            return view;
+        }
+    }
+
+
 }
