@@ -13,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +27,12 @@ import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+
+    /*
+     *
+     * - 공개그룹인지, 비공개그룹인지 알려주기
+     */
+
 
 public class GroupFragment extends Fragment {
     Button toolbar_notification_bt; // 그룹 알림 버튼
@@ -137,8 +144,8 @@ public class GroupFragment extends Fragment {
                 Response<List<Group>> response = group.execute();
                 if(response.code() == 200) { // 데이터 받아옴
                     List<Group> groupList = response.body();
+                    groups.clear();
                     for(int i = 0; i < groupList.size(); i++) {
-                        if(!groups.contains(groupList.get(i))) // 중복 처리
                             groups.add(groupList.get(i));
                     }
                     return true;

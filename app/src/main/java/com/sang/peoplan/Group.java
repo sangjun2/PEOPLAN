@@ -15,16 +15,19 @@ public class Group implements Serializable {
     private String name; // 그룹 이름
     @SerializedName("category")
     private String category; //그룹 카테고리
+    @SerializedName("state")
+    private boolean state; //그룹 상태
     @SerializedName("members")
     private ArrayList<String> members; // 그룹 구성원
 
 
     //post, notice 나중으로
 
-    public Group(String administrator, String name, String category) {
+    public Group(String administrator, String name, String category, boolean state) {
         this.administrator = administrator;
         this.name = name;
         this.category = category;
+        this.state = state;
         this.members = new ArrayList<>();
         // 관리자를 구성원으로 추가
         addMember(administrator);
@@ -52,6 +55,14 @@ public class Group implements Serializable {
 
     public void setCategory(String category) {
         this.category = category;
+    }
+
+    public boolean getState() {
+        return state;
+    }
+
+    public void setState(boolean state) {
+        this.state = state;
     }
 
     public ArrayList<String> getMembers() {

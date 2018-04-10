@@ -11,18 +11,22 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.Checkable;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,24 +44,23 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class CreateGroupActivity extends AppCompatActivity { // 그룹 추가
     TextView category; // 선택된 카테고리 보이는 텍스트, 그룹 카테고리
     LinearLayout categoryView; // 카테고리 종류 띄우는 뷰
+    Switch bPublic; // 공개.비공개 그룹 선택 뷰
     private RecyclerView friend_list_recycler_view; // 연락처 띄우는 뷰
     private RecyclerView.Adapter adapter; // 어댑터
     private RecyclerView.LayoutManager layoutManager; // 레이아웃 매니저
 
+    // ArrayList, 많은 양의 자료를 다루는 경우 이게 최선책인지 검토
     private ArrayList<User> friends; // test 값, 친구 목록
     private ArrayList<String> invitationList; // 친구 id
 
     final int REQUESTCODE_CATEGORY = 500;
 
     /*
-     * 카테고리 설정은 끝
-     * 그룹 이름 정하고, 확인 버튼 누르기
-     * 확인 버튼 눌렀을 시, DB에 추가
      * 2018.3.15 미구현 부분
      * - 친구 목록 외부에서 가져오기
-     * - 아이템 어떤 공간을 클릭하든 선택
-     * - 카테고리 뒤로 가기 활성화 OK
-     * - 공개/비공개 그룹 선택 사항
+     * - 아이템 어떤 공간을 클릭하든 선택 - OK
+     * - 카테고리 뒤로 가기 활성화 - OK
+     * - 공개/비공개 그룹 선택 사항 - OK
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,6 +97,9 @@ public class CreateGroupActivity extends AppCompatActivity { // 그룹 추가
         Button confirm_toolbar_bt = findViewById(R.id.confirm_toolbar_bt); // 그룹 생성 버튼
         final EditText group_name = findViewById(R.id.group_name); // 그룹 이름 EditText
 
+        bPublic = findViewById(R.id.bPublic);
+        final boolean isPublic = true;
+        final TextView groupState = findViewById(R.id.groupState);
 
         toolbarTitle.setText("그룹 만들기");
         setSupportActionBar(toolbar);
@@ -112,7 +118,12 @@ public class CreateGroupActivity extends AppCompatActivity { // 그룹 추가
                     Toast.makeText(getApplicationContext(), "그룹 카테고리를 선택해주세요.", Toast.LENGTH_SHORT).show();
                 }else {
                     // 그룹 멤버 데이터 추가
-                    Group newGroup = new Group(String.valueOf(userProfile.getId()), group_name.getText().toString(), category.getText().toString());
+                    Group newGroup;
+                    if(groupState.getText().equals("공개그룹"))
+                        newGroup = new Group(String.valueOf(userProfile.getId()), group_name.getText().toString(), category.getText().toString(), true);
+                    else
+                        newGroup = new Group(String.valueOf(userProfile.getId()), group_name.getText().toString(), category.getText().toString(), false);
+
                     addGroupMembers(newGroup);
                     // DB에만 저장
                     CreateGroupAsyncTask task = new CreateGroupAsyncTask();
@@ -120,6 +131,19 @@ public class CreateGroupActivity extends AppCompatActivity { // 그룹 추가
                 }
             }
         });
+        //공개 그룹 설정
+        bPublic.setOnCheckedChangeListener(new Switch.OnCheckedChangeListener(){
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if(b){ // 공개 그룹
+                    groupState.setText("공개그룹");
+                }
+                else{ // 비 공개 그룹
+                    groupState.setText("비공개그룹");
+                }
+            }
+        });
+
         // 그룹 카테고리 설정
         categoryView = findViewById(R.id.category_view);
         category = findViewById(R.id.category_confirm);
@@ -234,7 +258,11 @@ public class CreateGroupActivity extends AppCompatActivity { // 그룹 추가
         @Override
         public ItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) { // xml 상에서 커스텀 된 레이아웃 사용 /?!!!
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.group_friendlist_item, parent, false);
-            return new ItemViewHolder(view);
+            ItemViewHolder holder = new ItemViewHolder(view);
+            // 아이템 클릭시 반응
+            holder.itemView.setOnClickListener(holder);
+
+            return holder;
         }
 
         // View의 내용을 해당 포지션의 데이터로 바꿉니다.
@@ -242,6 +270,7 @@ public class CreateGroupActivity extends AppCompatActivity { // 그룹 추가
         public void onBindViewHolder(ItemViewHolder holder, int position) {
             // 일단 이름만 변경
             holder._name.setText(friendlist.get(position).getName());
+            holder._position = position;
 
         }
 
@@ -252,49 +281,42 @@ public class CreateGroupActivity extends AppCompatActivity { // 그룹 추가
 
         // 커스텀 뷰홀더, 이미지, 이름, 체크박스
         // 바인딩 완료
-        class ItemViewHolder extends RecyclerView.ViewHolder implements Checkable{
-            private int _position; // 리스트내의 뷰 인덱스
+        class ItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, CompoundButton.OnCheckedChangeListener{
             private ImageView _img;
             private TextView _name;
-            private CheckBox _choosed; // 임시로 ID
-            private boolean _isChecked; // 선택됬는가?
-
+            private CheckBox _choicecheckbox; // 임시로 ID
+            private int _position; // 위치
             public ItemViewHolder(View itemView){
                 super(itemView);
                 _img = itemView.findViewById(R.id.friend_item_img);
                 _name = itemView.findViewById(R.id.friend_item_name);
-                _choosed = itemView.findViewById(R.id.friend_choice_cb);
+                _choicecheckbox = itemView.findViewById(R.id.friend_choice_cb);
+                _choicecheckbox.setOnCheckedChangeListener(this);
+                _position = 0;
             }
 
             @Override
-            public void setChecked(boolean b) {
-                if( _isChecked != b ){
-                    _isChecked = b;
-                    makeInvitationList(_isChecked);
-                }else{
-                    makeInvitationList(_isChecked);
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                switch(compoundButton.getId()){
+                    case R.id.friend_choice_cb:
+                        if(b){
+                            _choicecheckbox.setChecked(true);
+                            invitationList.add(friendlist.get(_position).getKakaoUID()); // 초대목록에 선택된 유저 id 추가
+                        }else{
+                            _choicecheckbox.setChecked(false);
+                            invitationList.remove(friendlist.get(_position).getKakaoUID()); // 초대목록에 선택된 유저 id 삭제
+                        }
                 }
-            }
-            private void makeInvitationList(boolean b){
-                if(b){
-                    // 선택
-                    _choosed.setChecked(true);
-                    invitationList.add(friendlist.get(_position).getKakaoUID()); // 초대목록에 선택된 유저 id 추가
-                }else{
-                    // 선택해제
-                    _choosed.setChecked(false);
-                    //int removeItem = invitationList.indexOf(friendlist.get(_position).getKakaoUID());
-                    invitationList.remove(friendlist.get(_position).getKakaoUID()); // 초대목록에 선택된 유저 id 삭제
-                }
-            }
-            @Override
-            public boolean isChecked() {
-                return _isChecked;
+
             }
 
             @Override
-            public void toggle() {
-                setChecked(!_isChecked);
+            public void onClick(View view) {
+                if(_choicecheckbox.isChecked()){
+                    _choicecheckbox.setChecked(false);
+                }else{
+                    _choicecheckbox.setChecked(true);
+                }
             }
         }
     }
