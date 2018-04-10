@@ -5,7 +5,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:name=".GlobalApplication"
@@ -43,7 +43,8 @@
             android:name=".GroupDetailActivity"
             android:label="@string/title_activity_group_detail"
             android:theme="@style/AppTheme" />
-        <activity android:name=".SetImageActivity"></activity>
+        <activity android:name=".SetImageActivity" />
+        <activity android:name=".GroupDeleteOrLeave"></activity>
     </application>
 
 </manifest>
