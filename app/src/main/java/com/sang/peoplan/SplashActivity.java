@@ -35,6 +35,7 @@ public class SplashActivity extends AppCompatActivity {
     public static UserProfile USER_PROFILE;
     public static HashMap<String, Event> EVENT_LIST;
     public static ArrayList<BusinessCard> BUSINESSCARD_LIST;
+    public static ArrayList<Group> GROUP_LIST;
     private Context mContext;
     private SessionCallback callback;
 
@@ -55,6 +56,7 @@ public class SplashActivity extends AppCompatActivity {
 
         EVENT_LIST = new HashMap<>();
         BUSINESSCARD_LIST = new ArrayList<>();
+        GROUP_LIST = new ArrayList<>();
         mContext = this;
 
         callback = new SessionCallback();
