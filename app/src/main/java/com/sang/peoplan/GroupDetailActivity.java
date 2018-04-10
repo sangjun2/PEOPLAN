@@ -28,6 +28,10 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
+    /*
+     * - 그룹 삭제 부분
+     */
+
 public class GroupDetailActivity extends AppCompatActivity {
     AppBarLayout appBarLayout;
     CollapsingToolbarLayout toolbarLayout;
