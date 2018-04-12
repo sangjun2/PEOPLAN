@@ -40,6 +40,9 @@ public interface APIService { // retrofit 사용을 위한 http api 인터페이
     @PUT("/api/businesscards/update/{id}")
     Call<BusinessCard> updateBusinessCard(@Path("id") String id, @Body BusinessCard businessCard);
 
+    @PUT("/api/businesscards/remove/{id}")
+    Call<BusinessCard> removeBusinessCard(@Path("id") String id);
+
     @POST("/api/groups") // 그룹 생성
     Call<Group> createGroup(@Body Group group);
 
