@@ -5,8 +5,10 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.*;
 import android.os.AsyncTask;
 import android.media.MediaPlayer;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -35,17 +37,20 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class CreateScheduleActivity extends AppCompatActivity { // 일정 추가 액티비티
+public class CreateScheduleActivity extends AppCompatActivity implements ColorPickerDialog.OnFragmentInteractionListener { // 일정 추가 액티비티
     Switch isByDay; // 요일별 선택
     Switch isAllDay; // 하루종일 선택
     AutofitEdittext eventTitle; // 이벤트 제목
-    LinearLayout selectGroup; // 그룹 선택
     LinearLayout timeGroup; // 시간 설정위한 레이아웃
 
     LinearLayout eventStart; // 시작 시간 설정 위한 레이아웃
     LinearLayout eventEnd; // 종료 시간 설정 위한 레이아웃
     LinearLayout repeatView; // 반복 횟수 설정 위한 레이아웃
     LinearLayout alarmSelect; // 알람 설정 위한 레이아웃
+
+    LinearLayout colorPickView;
+    HeightSquareImageView colorImageView;
+
     EditText eventContent; // 일정 내용
     Button confirm; // 저장 버튼
     TextView repeatConfirm; // 반복 정도
@@ -57,6 +62,8 @@ public class CreateScheduleActivity extends AppCompatActivity { // 일정 추가
     DayPicker eventEndNumberPicker; // 일정 종료 날짜 선택
 
     WeekdaysGroup weekdaysGroup; // 요일별 선택시 어떤 요일들을 선택할지 위한 레이아웃
+
+    public String colorCode = ColorPickerDialog.DEFAULT_COLOR_CODE;
 
     final int REQUESTCODE_GROUP = 100;
     final int REQUESTCODE_REPEAT = 200;
@@ -90,7 +97,7 @@ public class CreateScheduleActivity extends AppCompatActivity { // 일정 추가
     public static final int REPEAT_EVERYMONTH = 4;
     public static final int REPEAT_EVERYYEAR = 5;
 
-
+    Context mContext;
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -106,6 +113,7 @@ public class CreateScheduleActivity extends AppCompatActivity { // 일정 추가
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_schedule);
+        mContext = this;
 
         Toolbar toolbar = findViewById(R.id.schedule_toolbar);
         TextView toolbarTitle = findViewById(R.id.confirm_toolbar_title);
@@ -118,12 +126,11 @@ public class CreateScheduleActivity extends AppCompatActivity { // 일정 추가
         isByDay = findViewById(R.id.is_byday);
         isAllDay = findViewById(R.id.is_allday);
         eventTitle = findViewById(R.id.eventTitle);
-        selectGroup = findViewById(R.id.select_group_view);
         eventStart = findViewById(R.id.eventStart);
         eventEnd = findViewById(R.id.eventEnd);
         repeatView = findViewById(R.id.repeatView);
         alarmSelect = findViewById(R.id.alarmSelect);
-        eventContent = findViewById(R.id.eventContent);
+        eventContent = findViewById(R.id.event_content);
         confirm = findViewById(R.id.confirm_toolbar_bt);
         repeatConfirm = findViewById(R.id.repeatConfirm);
 
@@ -150,6 +157,19 @@ public class CreateScheduleActivity extends AppCompatActivity { // 일정 추가
         _toggleFri = (ToggleButton) findViewById(R.id.toggle_fri);
         _toggleSat = (ToggleButton) findViewById(R.id.toggle_sat);
 
+        colorPickView = findViewById(R.id.color_pick_view);
+        colorPickView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ColorPickerDialog dialog = ColorPickerDialog.newInstance();
+                dialog.createScheduleActivity = ((CreateScheduleActivity) mContext);
+
+                FragmentManager fragmentManager = ((AppCompatActivity) mContext).getSupportFragmentManager();
+                dialog.show(fragmentManager, "DIALOG");
+            }
+        });
+
+        colorImageView = findViewById(R.id.color_pick_imageview);
 
 
         isByDay.setOnCheckedChangeListener(new Switch.OnCheckedChangeListener(){
@@ -190,13 +210,6 @@ public class CreateScheduleActivity extends AppCompatActivity { // 일정 추가
                         eventEndText.setText(day + " " + "오후 " + String.valueOf(hour + 1 - 12) + ":00");
                     }
                 }
-            }
-        });
-
-        // 그룹 선택 시 반응, 코딩~~
-        selectGroup.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
             }
         });
 
@@ -306,7 +319,13 @@ public class CreateScheduleActivity extends AppCompatActivity { // 일정 추가
                         repeat = REPEAT_EVERYYEAR;
                     }
                    //db 등록
-                    Event event = new Event(eventTitle.getText().toString(), new Date(startTime.getMillis()), new Date(endTime.getMillis()), repeat, false);
+                    String content;
+                    if(eventContent.getText().toString().equals("")) {
+                        content = "없음";
+                    } else {
+                        content = eventContent.getText().toString();
+                    }
+                    Event event = new Event(eventTitle.getText().toString(), new Date(startTime.getMillis()), new Date(endTime.getMillis()), repeat, false, colorCode, content);
 
                     CreateEventAsyncTask task = new CreateEventAsyncTask();
                     task.execute(event);
@@ -317,6 +336,11 @@ public class CreateScheduleActivity extends AppCompatActivity { // 일정 추가
 
     }
 
+    @Override
+    public void onFragmentInteraction(String code) {
+        colorImageView.setBackgroundColor(android.graphics.Color.parseColor("#" + code));
+        colorCode = code;
+    }
 
     // Date 형식 데이터 String 으로 변환
     public class CreateEventAsyncTask extends AsyncTask<Event, Void, Boolean> {

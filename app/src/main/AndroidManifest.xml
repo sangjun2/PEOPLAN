@@ -43,6 +43,7 @@
             android:label="@string/title_activity_group_detail"
             android:theme="@style/AppTheme" />
         <activity android:name=".SetImageActivity" />
+        <activity android:name=".SetGroupActivity"></activity>
         <activity android:name=".CreateBusinessCardActivity"
             android:screenOrientation="landscape"></activity>
         <activity android:name=".GroupDeleteOrLeave"></activity>

@@ -9,16 +9,16 @@ import android.util.AttributeSet;
  * Created by Sangjun on 2018-03-26.
  */
 
-public class SquareImageView extends AppCompatImageView {
-    public SquareImageView(Context context) {
+public class WidthSquareImageView extends AppCompatImageView {
+    public WidthSquareImageView(Context context) {
         super(context);
     }
 
-    public SquareImageView(Context context, @Nullable AttributeSet attrs) {
+    public WidthSquareImageView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public SquareImageView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public WidthSquareImageView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 
