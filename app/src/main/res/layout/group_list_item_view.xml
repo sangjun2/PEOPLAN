@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     android:padding="4dp">
 
-    <com.sang.peoplan.SquareImageView
+    <com.sang.peoplan.WidthSquareImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/group_item_image"

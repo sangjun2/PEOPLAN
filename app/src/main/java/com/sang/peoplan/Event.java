@@ -1,7 +1,11 @@
 package com.sang.peoplan;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.TimeZone;
 
@@ -9,7 +13,7 @@ import java.util.TimeZone;
  * Created by Sangjun on 2018-02-22.
  */
 
-public class Event {
+public class Event implements Serializable {
     @SerializedName("_id")
     public String _id;
     @SerializedName("name")
@@ -22,25 +26,33 @@ public class Event {
     public int repeat;
     @SerializedName("alarm")
     public boolean alarm;
+    @SerializedName("color")
+    public String color;
+    @SerializedName("content")
+    public String content;
 
     public Event() {
     }
 
-    public Event(String name, Date start, Date end, int repeat, boolean alarm) {
+    public Event(String name, Date start, Date end, int repeat, boolean alarm, String color, String content) {
         this.name = name;
         this.start = start;
         this.end = end;
         this.repeat = repeat;
         this.alarm = alarm;
+        this.color = color;
+        this.content = content;
     }
 
-    public Event(String _id, String name, Date start, Date end, int repeat, boolean alarm) {
+    public Event(String _id, String name, Date start, Date end, int repeat, boolean alarm, String color, String content) {
         this._id = _id;
         this.name = name;
         this.start = start;
         this.end = end;
         this.repeat = repeat;
         this.alarm = alarm;
+        this.color = color;
+        this.content = content;
     }
 
     public String get_id() {
@@ -89,5 +101,21 @@ public class Event {
 
     public void setAlarm(boolean alarm) {
         this.alarm = alarm;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
     }
 }

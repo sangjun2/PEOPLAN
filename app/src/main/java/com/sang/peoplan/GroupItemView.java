@@ -1,9 +1,7 @@
 package com.sang.peoplan;
 
 import android.content.Context;
-import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
-import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -17,7 +15,7 @@ import android.widget.TextView;
  */
 
 public class GroupItemView extends ConstraintLayout {
-    public SquareImageView imageView;
+    public WidthSquareImageView imageView;
     public LinearLayout textLayout;
     public GroupItemViewHolder viewHolder;
     ViewGroup viewGroup;
