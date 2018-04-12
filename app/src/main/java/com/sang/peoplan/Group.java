@@ -9,6 +9,8 @@ import java.util.ArrayList;
  */
 @SuppressWarnings("serial")
 public class Group implements Serializable {
+    @SerializedName("_id")
+    private String _id;
     @SerializedName("administrator")
     private String administrator; // 관리자 ID
     @SerializedName("name")
@@ -32,6 +34,10 @@ public class Group implements Serializable {
         // 관리자를 구성원으로 추가
         addMember(administrator);
     }
+
+    public String get_id() {return _id;}
+
+    public void set_id(String _id) {this._id = _id;}
 
     public String getAdministrator() {
         return administrator;

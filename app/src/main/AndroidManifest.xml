@@ -45,6 +45,7 @@
         <activity android:name=".SetImageActivity" />
         <activity android:name=".CreateBusinessCardActivity"
             android:screenOrientation="landscape"></activity>
+        <activity android:name=".GroupDeleteOrLeave"></activity>
     </application>
 
 </manifest>

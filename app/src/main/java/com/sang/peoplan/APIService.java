@@ -48,4 +48,9 @@ public interface APIService { // retrofit 사용을 위한 http api 인터페이
 
     @GET("/api/groups/user/{user}") // 속한 그룹 찾기
     Call<List<Group>> getGroups(@Path("user") String userUID);
+
+    // 4.10 화요일 여기까지, DB 처리만 해주면 삭제 탈퇴 가능
+    @PUT("/api/groups/{group_id}") // 그룹 삭제
+
+    @PUT("/api/groups/") // 그룹 탈퇴
 }
