@@ -36,6 +36,8 @@ public class BusinessCardFragment extends Fragment {
     private Uri mImageCaptureUri;
     private static final int PICK_FROM_ALBUM = 1;
     private static final int CROP_FROM_IMAGE = 2;
+    private static final int CREATE_BUSINESSCARD = 3;
+    private static final int MODIFY_BUSINESSCARD = 4;
 
     private String absolutePath;
 
@@ -49,6 +51,8 @@ public class BusinessCardFragment extends Fragment {
     TextView tel;
     TextView email;
     TextView address;
+
+    BusinessCardPagerAdapter pagerAdapter;
 
     public BusinessCardFragment() {
         // Required empty public constructor
@@ -73,9 +77,10 @@ public class BusinessCardFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_business_card, container, false);
 
         ArrayList<BusinessCard> myBusinessCards = SplashActivity.BUSINESSCARD_LIST;
+        pagerAdapter = new BusinessCardPagerAdapter(myBusinessCards);
 
         myBusinessCardsViewPager = view.findViewById(R.id.my_businesscard_view);
-        myBusinessCardsViewPager.setAdapter(new BusinessCardPagerAdapter(myBusinessCards));
+        myBusinessCardsViewPager.setAdapter(pagerAdapter);
 
         return view;
     }
@@ -110,11 +115,8 @@ public class BusinessCardFragment extends Fragment {
                 intent.putExtra("return-data", true);
                 startActivityForResult(intent, CROP_FROM_IMAGE);
                 break;
-            case CROP_FROM_IMAGE:
-                if(resultCode != Activity.RESULT_OK){
-                    return;
-                }
 
+            case CROP_FROM_IMAGE:
                 final Bundle extras = data.getExtras();
                 String filePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/SmartWheel/" + System.currentTimeMillis() + ".jpg";
                 if(extras != null){
@@ -125,11 +127,24 @@ public class BusinessCardFragment extends Fragment {
                     absolutePath = filePath;
                     break;
                 }
-
                 File f = new File(mImageCaptureUri.getPath());
                 if(f.exists()){
                     f.delete();
                 }
+            case MODIFY_BUSINESSCARD:
+                if(!data.getBooleanExtra("remove", false)){
+                    int index = data.getIntExtra("index", 0);
+                    BusinessCard b = SplashActivity.BUSINESSCARD_LIST.get(index);
+                    b.setAddress(data.getStringExtra("address"));
+                    b.setDepartment(data.getStringExtra("department"));
+                    b.setName(data.getStringExtra("name"));
+                    SplashActivity.BUSINESSCARD_LIST.set(index, b);
+                }
+                pagerAdapter.notifyDataSetChanged();
+                break;
+            case CREATE_BUSINESSCARD:
+                pagerAdapter.notifyDataSetChanged();
+                break;
         }
     }
 
@@ -182,17 +197,21 @@ public class BusinessCardFragment extends Fragment {
                 createView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        dialog = new CreateBusinessCardDialog(getContext());
-                        dialog.setTitle("명함 만들기");
-                        dialog.setModified(false);
-                        dialog.show();
-                        dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                            @Override
-                            public void onDismiss(DialogInterface dialogInterface) {
-                                notifyDataSetChanged();
-
-                            }
-                        });
+//                        dialog = new CreateBusinessCardDialog(getContext());
+//                        dialog.setTitle("명함 만들기");
+//                        dialog.setModified(false);
+//                        dialog.show();
+//                        dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+//                            @Override
+//                            public void onDismiss(DialogInterface dialogInterface) {
+//                                notifyDataSetChanged();
+//
+//                            }
+//                        });
+                        Intent intent = new Intent(getActivity(), CreateBusinessCardActivity.class);
+                        intent.putExtra("modified", false);
+                        intent.putExtra("index", position);
+                        startActivityForResult(intent, CREATE_BUSINESSCARD);
                     }
                 });
                 //removeView
@@ -200,7 +219,7 @@ public class BusinessCardFragment extends Fragment {
                 return createView;
             }
             else{
-                TextView department = view.findViewById(R.id.department);
+                final TextView department = view.findViewById(R.id.department);
                 TextView name = view.findViewById(R.id.name);
                 TextView tel = view.findViewById(R.id.tel);
                 TextView email = view.findViewById(R.id.email_address);
@@ -212,19 +231,26 @@ public class BusinessCardFragment extends Fragment {
                 businessCardSetting.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        dialog = new CreateBusinessCardDialog(getContext());
-                        dialog.setTitle("명함 수정");
-                        dialog.setNameText(b.getName());
-                        dialog.setDepartmentText(b.getDepartment());
-                        dialog.setAddressText(b.getAddress());
-                        dialog.setModified(true);
-                        dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                            @Override
-                            public void onDismiss(DialogInterface dialogInterface) {
-                                notifyDataSetChanged();
-                            }
-                        });
-                        dialog.show();
+//                        dialog = new CreateBusinessCardDialog(getContext());
+//                        dialog.setTitle("명함 수정");
+//                        dialog.setNameText(b.getName());
+//                        dialog.setDepartmentText(b.getDepartment());
+//                        dialog.setAddressText(b.getAddress());
+//                        dialog.setModified(true);
+//                        dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+//                            @Override
+//                            public void onDismiss(DialogInterface dialogInterface) {
+//                                notifyDataSetChanged();
+//                            }
+//                        });
+//                        dialog.show();
+                        Intent intent = new Intent(getActivity(), CreateBusinessCardActivity.class);
+                        intent.putExtra("modified", true);
+                        intent.putExtra("index", position);
+                        intent.putExtra("department", b.getDepartment());
+                        intent.putExtra("name", b.getName());
+                        intent.putExtra("address", b.getAddress());
+                        startActivityForResult(intent, MODIFY_BUSINESSCARD);
                     }
                 });
 
