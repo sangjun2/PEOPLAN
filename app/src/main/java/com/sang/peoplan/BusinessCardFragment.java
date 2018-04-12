@@ -2,6 +2,7 @@ package com.sang.peoplan;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -21,6 +22,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.joda.time.LocalDate;
 
@@ -34,6 +36,8 @@ public class BusinessCardFragment extends Fragment {
     private Uri mImageCaptureUri;
     private static final int PICK_FROM_ALBUM = 1;
     private static final int CROP_FROM_IMAGE = 2;
+    private static final int CREATE_BUSINESSCARD = 3;
+    private static final int MODIFY_BUSINESSCARD = 4;
 
     private String absolutePath;
 
@@ -47,6 +51,8 @@ public class BusinessCardFragment extends Fragment {
     TextView tel;
     TextView email;
     TextView address;
+
+    BusinessCardPagerAdapter pagerAdapter;
 
     public BusinessCardFragment() {
         // Required empty public constructor
@@ -71,30 +77,10 @@ public class BusinessCardFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_business_card, container, false);
 
         ArrayList<BusinessCard> myBusinessCards = SplashActivity.BUSINESSCARD_LIST;
+        pagerAdapter = new BusinessCardPagerAdapter(myBusinessCards);
 
         myBusinessCardsViewPager = view.findViewById(R.id.my_businesscard_view);
-//        myBusinessCardsView = view.findViewById(R.id.my_businesscard);
-//        department = myBusinessCardsView.findViewById(R.id.department);
-//        name = myBusinessCardsView.findViewById(R.id.name);
-//        tel = myBusinessCardsView.findViewById(R.id.tel);
-//        email = myBusinessCardsView.findViewById(R.id.email_address);
-//        address = myBusinessCardsView.findViewById(R.id.address);
-
-
-
-
-        if(myBusinessCards.size() != 0){
-
-//            myBusinessCardsView.setVisibility(View.VISIBLE);
-            myBusinessCardsViewPager.setVisibility(View.VISIBLE);
-            myBusinessCardsViewPager.setAdapter(new BusinessCardPagerAdapter(myBusinessCards));
-
-//            department.setText(department.getText().toString() + myBusinessCards.get(0).getDepartment());
-//            name.setText(name.getText().toString() + myBusinessCards.get(0).getName());
-//            tel.setText(tel.getText().toString() + myBusinessCards.get(0).getTel());
-//            email.setText(email.getText().toString() + SplashActivity.USER_PROFILE.getEmail());
-//            address.setText(address.getText().toString() + "아직");
-        }
+        myBusinessCardsViewPager.setAdapter(pagerAdapter);
 
         return view;
     }
@@ -129,11 +115,8 @@ public class BusinessCardFragment extends Fragment {
                 intent.putExtra("return-data", true);
                 startActivityForResult(intent, CROP_FROM_IMAGE);
                 break;
-            case CROP_FROM_IMAGE:
-                if(resultCode != Activity.RESULT_OK){
-                    return;
-                }
 
+            case CROP_FROM_IMAGE:
                 final Bundle extras = data.getExtras();
                 String filePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/SmartWheel/" + System.currentTimeMillis() + ".jpg";
                 if(extras != null){
@@ -144,11 +127,24 @@ public class BusinessCardFragment extends Fragment {
                     absolutePath = filePath;
                     break;
                 }
-
                 File f = new File(mImageCaptureUri.getPath());
                 if(f.exists()){
                     f.delete();
                 }
+            case MODIFY_BUSINESSCARD:
+                if(!data.getBooleanExtra("remove", false)){
+                    int index = data.getIntExtra("index", 0);
+                    BusinessCard b = SplashActivity.BUSINESSCARD_LIST.get(index);
+                    b.setAddress(data.getStringExtra("address"));
+                    b.setDepartment(data.getStringExtra("department"));
+                    b.setName(data.getStringExtra("name"));
+                    SplashActivity.BUSINESSCARD_LIST.set(index, b);
+                }
+                pagerAdapter.notifyDataSetChanged();
+                break;
+            case CREATE_BUSINESSCARD:
+                pagerAdapter.notifyDataSetChanged();
+                break;
         }
     }
 
@@ -184,51 +180,101 @@ public class BusinessCardFragment extends Fragment {
             this.myBusinessCards = myBusinessCards;
         }
 
-
+        @Override
+        public int getItemPosition(Object object) {
+            return POSITION_NONE;
+        }
 
         @Override
-        public Object instantiateItem(ViewGroup container, int position) {
+        public Object instantiateItem(final ViewGroup container, final int position) {
+            View view = LayoutInflater.from(getContext()).inflate(R.layout.business_card_item, null);
             if(position == myBusinessCards.size()){
-                View view = LayoutInflater.from(getContext()).inflate(R.layout.fragment_business_card, null);
-                ImageView createView = view.findViewById(R.id.create_businesscard_view);
+
+                ImageView createView = new ImageView(getContext());
+                createView.setImageResource(R.drawable.ic_add_circle_outline_black_24dp);
+
                 createView.setMaxHeight(60);
-                createView.setVisibility(View.VISIBLE);
                 createView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-//                Intent intent = new Intent(getActivity().getApplicationContext(), CreateBusinessCardActivity.class);
-//                startActivity(intent);
-                        dialog = new CreateBusinessCardDialog(getContext());
-                        dialog.setTitle("명함 만들기");
-
-                        dialog.show();
+//                        dialog = new CreateBusinessCardDialog(getContext());
+//                        dialog.setTitle("명함 만들기");
+//                        dialog.setModified(false);
+//                        dialog.show();
+//                        dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+//                            @Override
+//                            public void onDismiss(DialogInterface dialogInterface) {
+//                                notifyDataSetChanged();
+//
+//                            }
+//                        });
+                        Intent intent = new Intent(getActivity(), CreateBusinessCardActivity.class);
+                        intent.putExtra("modified", false);
+                        intent.putExtra("index", position);
+                        startActivityForResult(intent, CREATE_BUSINESSCARD);
                     }
                 });
+                //removeView
                 container.addView(createView);
                 return createView;
             }
-            View view = LayoutInflater.from(getContext()).inflate(R.layout.business_card_item, null);
-            TextView department = view.findViewById(R.id.department);
-            TextView name = view.findViewById(R.id.name);
-            TextView tel = view.findViewById(R.id.tel);
-            TextView email = view.findViewById(R.id.email_address);
-            TextView address = view.findViewById(R.id.address);
+            else{
+                final TextView department = view.findViewById(R.id.department);
+                TextView name = view.findViewById(R.id.name);
+                TextView tel = view.findViewById(R.id.tel);
+                TextView email = view.findViewById(R.id.email_address);
+                TextView address = view.findViewById(R.id.address);
 
-            BusinessCard b = myBusinessCards.get(position);
+                ImageView businessCardSetting = view.findViewById(R.id.businesscard_setting);
 
-            department.setText(department.getText().toString() + b.getDepartment());
-            name.setText(name.getText().toString() + b.getName());
-            tel.setText(tel.getText().toString() + b.getTel());
-            email.setText(email.getText().toString() + SplashActivity.USER_PROFILE.getEmail());
-            address.setText(address.getText().toString() + "아직");
+                final BusinessCard b = myBusinessCards.get(position);
+                businessCardSetting.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+//                        dialog = new CreateBusinessCardDialog(getContext());
+//                        dialog.setTitle("명함 수정");
+//                        dialog.setNameText(b.getName());
+//                        dialog.setDepartmentText(b.getDepartment());
+//                        dialog.setAddressText(b.getAddress());
+//                        dialog.setModified(true);
+//                        dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+//                            @Override
+//                            public void onDismiss(DialogInterface dialogInterface) {
+//                                notifyDataSetChanged();
+//                            }
+//                        });
+//                        dialog.show();
+                        Intent intent = new Intent(getActivity(), CreateBusinessCardActivity.class);
+                        intent.putExtra("modified", true);
+                        intent.putExtra("index", position);
+                        intent.putExtra("department", b.getDepartment());
+                        intent.putExtra("name", b.getName());
+                        intent.putExtra("address", b.getAddress());
+                        startActivityForResult(intent, MODIFY_BUSINESSCARD);
+                    }
+                });
 
-            container.addView(view);
-            return view;
+                department.setText(department.getText().toString() + b.getDepartment());
+                name.setText(name.getText().toString() + b.getName());
+                tel.setText(tel.getText().toString() + b.getTel());
+                email.setText(email.getText().toString() + SplashActivity.USER_PROFILE.getEmail());
+                address.setText(address.getText().toString() + b.getAddress());
+
+                container.addView(view);
+                return view;
+            }
+
         }
 
         @Override
         public void destroyItem(ViewGroup container, int position, Object object) {
-            container.removeView((ConstraintLayout) object);
+//            if(position == myBusinessCards.size()){
+//                container.removeView((ImageView) object);
+//            }
+//            else{
+//                container.removeView((ConstraintLayout) object);
+//            }
+            container.removeView((View) object);
         }
 
         @Override
@@ -241,4 +287,6 @@ public class BusinessCardFragment extends Fragment {
             return this.myBusinessCards.size() + 1;
         }
     }
+
+
 }

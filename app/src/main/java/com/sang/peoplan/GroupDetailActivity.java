@@ -1,11 +1,8 @@
 package com.sang.peoplan;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -23,8 +20,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -44,6 +39,8 @@ public class GroupDetailActivity extends AppCompatActivity {
     Group group;
 
     Context mContext;
+    final static int REQUEST_DELETE_GROUP = 100;
+    final static int REQUEST_LEAVE_GROUP = 200;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,6 +116,19 @@ public class GroupDetailActivity extends AppCompatActivity {
         overridePendingTransition(R.anim.anim_slide_in_left, R.anim.anim_slide_out_right);
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == 1){ // 그룹 삭제나 탈퇴시
+            if(resultCode == RESULT_OK){  // 삭제나 탈퇴 성공시
+                finish();
+            }
+            if(resultCode == RESULT_CANCELED){ // createGroupActivity에서 추가 실패시, 물론 실패시 구현 안됨
+            }
+        }
+    }
+
+
     public class TabViewPagerAdapter extends PagerAdapter {
         private ArrayList<TabItem> tabItems;
 
@@ -128,9 +138,7 @@ public class GroupDetailActivity extends AppCompatActivity {
             tabItems.add(new TabItem("일정", new GroupPlanView().initView()));
             tabItems.add(new TabItem("게시판", new GroupBoardView().initView()));
             tabItems.add(new TabItem("그룹원", new GroupParticipantsView().initView()));
-            if(group.getAdministrator().equals(String.valueOf(SplashActivity.USER_PROFILE.getId()))) {
-                tabItems.add(new TabItem("설정", new GroupSettingView().initView()));
-            }
+            tabItems.add(new TabItem("설정", new GroupSettingView().initView()));
         }
 
         @Override
@@ -250,7 +258,6 @@ public class GroupDetailActivity extends AppCompatActivity {
     }
 
 
-
     public class GroupSettingView {
         private int layout;
 
@@ -261,6 +268,7 @@ public class GroupDetailActivity extends AppCompatActivity {
         public View initView() {
             View view = LayoutInflater.from(mContext).inflate(layout, null);
 
+            // 그룹 이미지 선택
             LinearLayout groupPicture = view.findViewById(R.id.group_setting_picture);
             groupPicture.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -271,6 +279,36 @@ public class GroupDetailActivity extends AppCompatActivity {
                 }
             });
 
+            // 그룹 삭제
+            LinearLayout groupDelete = view.findViewById(R.id.group_delete);
+            groupDelete.setOnClickListener(new View.OnClickListener(){
+                @Override
+                public void onClick(View view) {
+                    // 클릭시 admin 맞은지 재확인
+                    // 클릭시 삭제 여부 확인 후
+                    // 삭제 -> 쓰레드로 서버에게 삭제 메세지 전달
+                    Intent intent = new Intent(GroupDetailActivity.this, GroupDeleteOrLeave.class);
+                    intent.putExtra("Group", group);
+                    intent.putExtra("WhatToDo", REQUEST_DELETE_GROUP);
+                    startActivityForResult(intent, 1);
+                    overridePendingTransition(R.anim.anim_slide_in_right, R.anim.anim_slide_out_left);
+                }
+            });
+
+            // 그룹 탈퇴
+            LinearLayout groupLeave = view.findViewById(R.id.group_leave);
+            groupLeave.setOnClickListener(new View.OnClickListener(){
+                @Override
+                public void onClick(View view) {
+                    // 팝업창으로 삭제 여부 확인
+                    Intent intent = new Intent(GroupDetailActivity.this, GroupDeleteOrLeave.class);
+                    intent.putExtra("Group", group);
+                    intent.putExtra("WhatToDo", REQUEST_LEAVE_GROUP);
+                    startActivityForResult(intent, 1);
+                    overridePendingTransition(R.anim.anim_slide_in_right, R.anim.anim_slide_out_left);
+
+                }
+            });
             return view;
         }
     }

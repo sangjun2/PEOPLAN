@@ -56,11 +56,7 @@ public class CreateGroupActivity extends AppCompatActivity { // 그룹 추가
     final int REQUESTCODE_CATEGORY = 500;
 
     /*
-     * 2018.3.15 미구현 부분
      * - 친구 목록 외부에서 가져오기
-     * - 아이템 어떤 공간을 클릭하든 선택 - OK
-     * - 카테고리 뒤로 가기 활성화 - OK
-     * - 공개/비공개 그룹 선택 사항 - OK
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {

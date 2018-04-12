@@ -37,9 +37,20 @@ public interface APIService { // retrofit 사용을 위한 http api 인터페이
     @GET("/api/businesscards/user/{user}")
     Call<List<BusinessCard>> getBusinessCards(@Path("user") String userUID);
 
+    @PUT("/api/businesscards/update/{id}")
+    Call<BusinessCard> updateBusinessCard(@Path("id") String id, @Body BusinessCard businessCard);
+
+    @PUT("/api/businesscards/remove/{id}")
+    Call<BusinessCard> removeBusinessCard(@Path("id") String id);
+
     @POST("/api/groups") // 그룹 생성
     Call<Group> createGroup(@Body Group group);
 
     @GET("/api/groups/user/{user}") // 속한 그룹 찾기
     Call<List<Group>> getGroups(@Path("user") String userUID);
+
+    // 4.10 화요일 여기까지, DB 처리만 해주면 삭제 탈퇴 가능
+    @PUT("/api/groups/{group_id}") // 그룹 삭제
+
+    @PUT("/api/groups/") // 그룹 탈퇴
 }
