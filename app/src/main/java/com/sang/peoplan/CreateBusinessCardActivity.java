@@ -1,7 +1,9 @@
 package com.sang.peoplan;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -109,8 +111,30 @@ public class CreateBusinessCardActivity extends AppCompatActivity {
         remove.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                RemoveBusinessCardAsyncTask removeBusinessCardAsyncTask = new RemoveBusinessCardAsyncTask();
-                removeBusinessCardAsyncTask.execute(businessCard);
+                final AlertDialog.Builder alertDialog = new AlertDialog.Builder(CreateBusinessCardActivity.this);
+
+                alertDialog.setTitle("명함 삭제");
+                alertDialog.setMessage("해당 명함을 삭제하시겠습니까?");
+
+                alertDialog.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        RemoveBusinessCardAsyncTask removeBusinessCardAsyncTask = new RemoveBusinessCardAsyncTask();
+                        removeBusinessCardAsyncTask.execute(businessCard);
+                    }
+                });
+                alertDialog.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                });
+                AlertDialog alert = alertDialog.create();
+                alert.show();
+                alert.setTitle("명함 삭제");
+
+
+
             }
         });
 
