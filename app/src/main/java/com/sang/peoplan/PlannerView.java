@@ -3,8 +3,10 @@ package com.sang.peoplan;
 import android.content.Context;
 import android.graphics.Color;
 import android.support.constraint.ConstraintLayout;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -13,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -310,17 +313,34 @@ public class PlannerView extends ConstraintLayout {
             view.setLayoutParams(new LinearLayout.LayoutParams(parent.getWidth() / 7, parent.getHeight() / (this.count / 7)));
             final ViewHolder viewHolder = new ViewHolder(view);
 
-            view.setOnClickListener(new OnClickListener() {
+            View.OnClickListener listener = new OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    DayScheduleDialog dialog = new DayScheduleDialog(context);
+                    DayScheduleDialog dialog = new DayScheduleDialog();
                     dialog.myEvent = viewHolder.adapter.events;
                     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd");
                     String date = dateFormat.format(viewHolder.getLocalDate().toDate());
-                    dialog.setDay(date);
-                    dialog.show();
+                    dialog.day = date;
+
+                    FragmentManager fragmentManager = ((AppCompatActivity) mContext).getSupportFragmentManager();
+                    dialog.show(fragmentManager, "DIALOG");
                 }
-            }); // item click listener
+            };
+
+            view.setOnClickListener(listener); // item click listener
+            viewHolder.dateListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                    DayScheduleDialog dialog = new DayScheduleDialog();
+                    dialog.myEvent = viewHolder.adapter.events;
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd");
+                    String date = dateFormat.format(viewHolder.getLocalDate().toDate());
+                    dialog.day = date;
+
+                    FragmentManager fragmentManager = ((AppCompatActivity) mContext).getSupportFragmentManager();
+                    dialog.show(fragmentManager, "DIALOG");
+                }
+            });
 
             return viewHolder;
         }
@@ -478,10 +498,12 @@ public class PlannerView extends ConstraintLayout {
 
             @Override
             public View getView(int i, View view, ViewGroup viewGroup) {
+                Event event = this.events.get(i);
+
                 View item = LayoutInflater.from(mContext).inflate(R.layout.plan_item, null, false);
+                item.setBackgroundColor(Color.parseColor("#" + event.getColor()));
                 TextView itemText = item.findViewById(R.id.plan_item_text);
 
-                Event event = this.events.get(i);
                 itemText.setText(event.getName());
 
                 return item;

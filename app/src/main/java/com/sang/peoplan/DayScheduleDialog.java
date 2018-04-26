@@ -4,18 +4,31 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.WindowManager;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -24,53 +37,39 @@ import java.util.ArrayList;
  * Created by sanginLee on 2018-01-10.
  */
 // dialog : 알림창
-public class DayScheduleDialog extends Dialog {
+public class DayScheduleDialog extends DialogFragment implements EventListFragment.OnFragmentInteractionListener {
     public String day;
-    public Context mContext;
-    RecyclerView eventListRecyclerView;
-    RecyclerViewAdapter adapter;
+
     ArrayList<Event> myEvent;
 
+    FragmentManager fragmentManager;
+    FragmentTransaction fragmentTransaction;
 
-    public DayScheduleDialog(@NonNull Context context) {
-        super(context);
-        mContext = context;
+    ImageView backButton;
+    FloatingActionButton fab;
+
+    public DayScheduleDialog() {
+        super();
+
+        myEvent = new ArrayList<>();
     }
 
-    public DayScheduleDialog(@NonNull Context context, int themeResId) {
-        super(context, themeResId);
-        mContext = context;
-    }
-
-    protected DayScheduleDialog(@NonNull Context context, boolean cancelable, @Nullable OnCancelListener cancelListener) {
-        super(context, cancelable, cancelListener);
-        mContext = context;
-    }
-
-    public void setDay(String day) {
-        this.day = day;
-    }
-
-
-
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        // 일정추가 물음
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.dialog_day_schedule);
-        getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.dialog_day_schedule, container);
 
-        TextView dayText = findViewById(R.id.dialog_day_text);
+        getDialog().requestWindowFeature(Window.FEATURE_NO_TITLE);
 
-        FloatingActionButton fab = findViewById(R.id.dialog_floating_bt);
-        eventListRecyclerView = findViewById(R.id.event_recyclerview);
+        TextView dayText = view.findViewById(R.id.dialog_day_text);
+        dayText.setText(day);
 
-        dayText.setText(this.day);
+        fab = view.findViewById(R.id.dialog_floating_bt);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 dismiss();
-                Activity activity = (Activity) mContext;
+                Activity activity = (Activity) getContext();
 
                 Intent intent = new Intent(getContext(), CreateScheduleActivity.class); // 스케줄 추가 액티비티 실행
                 intent.putExtra("day", day);
@@ -79,61 +78,58 @@ public class DayScheduleDialog extends Dialog {
             }
         });
 
-        if(myEvent == null) {
-            myEvent = new ArrayList<>();
-        }
+        backButton = view.findViewById(R.id.event_detail_back_bt);
 
-        eventListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayout.VERTICAL, false));
-        adapter = new RecyclerViewAdapter(myEvent);
-        eventListRecyclerView.setAdapter(adapter);
+        fragmentManager = getChildFragmentManager();
+        fragmentTransaction = fragmentManager.beginTransaction();
+        EventListFragment eventListFragment = EventListFragment.newInstance();
+        eventListFragment.dayScheduleDialog = this;
+        eventListFragment.myEvents = myEvent;
+        fragmentTransaction.add(R.id.event_frame, eventListFragment);
+        fragmentTransaction.commit();
+
+        return view;
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
 
-    public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
-        private ArrayList<Event> myEvent;
-
-        Context mContext;
-
-        public RecyclerViewAdapter(ArrayList<Event> myEvent){
-            this.myEvent = myEvent;
-        }
-
-        @Override
-        public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            mContext = parent.getContext();
-            View view = LayoutInflater.from(mContext).inflate(R.layout.event_list_item, parent, false);
-            final ViewHolder viewHolder = new ViewHolder(view);
-
-            return viewHolder;
-        }
-
-        @Override
-        public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-            ViewHolder viewHolder = (ViewHolder) holder;
-            Event event = myEvent.get(position);
-            String eventName = event.getName();
-            SimpleDateFormat dateFormat = new SimpleDateFormat("a hh:mm");
-            String eventTime = dateFormat.format(event.getStart()) + " ~ " + dateFormat.format(event.getEnd());
-
-            viewHolder.eventName.setText(eventName);
-            viewHolder.eventTime.setText(eventTime);
-        }
-
-        @Override
-        public int getItemCount() {
-            return myEvent.size();
+        Dialog dialog = getDialog();
+        if (dialog != null) {
+            dialog.getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
         }
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
-        TextView eventName;
-        TextView eventTime;
+    @Override
+    public void onFragmentInteraction(Event event) {
+        backButton.setVisibility(View.VISIBLE);
+        fab.setVisibility(View.GONE);
 
-        public ViewHolder(View itemView) {
-            super(itemView);
+        final Dialog dialog = getDialog();
 
-            eventName = itemView.findViewById(R.id.event_name);
-            eventTime = itemView.findViewById(R.id.event_time);
-        }
+        fragmentManager = getChildFragmentManager();
+        fragmentTransaction = fragmentManager.beginTransaction();
+        final EventDetailFragment eventDetailFragment = EventDetailFragment.newInstance(event);
+
+
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                fragmentManager.popBackStack();
+
+                backButton.setVisibility(View.GONE);
+                fab.setVisibility(View.VISIBLE);
+
+                if(dialog != null) {
+                    dialog.getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
+                }
+            }
+        });
+
+        fragmentTransaction.setCustomAnimations(R.anim.anim_slide_in_right, R.anim.anim_slide_out_left);
+        fragmentTransaction.replace(R.id.event_frame, eventDetailFragment);
+        fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.commit();
     }
 }

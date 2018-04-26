@@ -43,10 +43,17 @@
             android:label="@string/title_activity_group_detail"
             android:theme="@style/AppTheme" />
         <activity android:name=".SetImageActivity" />
+<<<<<<< HEAD
         <activity
             android:name=".CreateBusinessCardActivity"
             android:screenOrientation="landscape" />
         <activity android:name=".NotifycationActivity"></activity>
+=======
+        <activity android:name=".SetGroupActivity"></activity>
+        <activity android:name=".CreateBusinessCardActivity"
+            android:screenOrientation="landscape"></activity>
+        <activity android:name=".GroupDeleteOrLeave"></activity>
+>>>>>>> bd374f333c4a1e8f7f4ff307f2ba5ad2793c44ed
     </application>
 
 </manifest>

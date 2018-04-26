@@ -53,15 +53,15 @@ public class SetImageActivity extends AppCompatActivity {
                 Log.d("URI==", data.getDataString());
                 Uri imageUri = data.getData();
                 Picasso.with(mContext).load(imageUri).into(image);
-                /*
+
                 Intent intent = new Intent("com.android.camera.action.CROP");
                 intent.setDataAndType(imageUri, "image/*");
                 intent.putExtra("scale", true);
                 startActivityForResult(intent, REQ_CODE_CROP_IMAGE);
-                */
+
             }
         } else if(requestCode == REQ_CODE_CROP_IMAGE) {
-            if(requestCode == Activity.RESULT_OK) {
+            if(resultCode == Activity.RESULT_OK) {
                 Uri imageUri = data.getData();
                 Picasso.with(mContext).load(imageUri).into(image);
             }
