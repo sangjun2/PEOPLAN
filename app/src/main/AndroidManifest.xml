@@ -40,8 +40,7 @@
         <activity android:name=".SetGroupCategoryActivity" />
         <activity
             android:name=".GroupDetailActivity"
-            android:label="@string/title_activity_group_detail"
-            android:theme="@style/AppTheme" />
+            android:label="@string/title_activity_group_detail"/>
         <activity android:name=".SetImageActivity" />
         <activity
             android:name=".CreateBusinessCardActivity"

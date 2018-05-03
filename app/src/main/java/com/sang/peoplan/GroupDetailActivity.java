@@ -8,6 +8,7 @@ import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.NestedScrollView;
@@ -20,6 +21,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.leinardi.android.speeddial.SpeedDialActionItem;
+import com.leinardi.android.speeddial.SpeedDialOverlayLayout;
+import com.leinardi.android.speeddial.SpeedDialView;
 
 import java.util.ArrayList;
 
@@ -75,25 +80,28 @@ public class GroupDetailActivity extends AppCompatActivity {
         tabLayout = findViewById(R.id.group_detail_tab);
         viewPager = findViewById(R.id.group_viewpager);
         nestedScrollView = findViewById(R.id.group_nestedscrollview);
-        nestedScrollView.setFillViewport(true);
         tabViewPagerAdapter = new TabViewPagerAdapter();
         viewPager.setAdapter(tabViewPagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
+
+        nestedScrollView.setFillViewport(true);
+
+        FloatingActionButton fab = findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                GroupDetailFABDialog dialog = new GroupDetailFABDialog();
+
+                FragmentManager fragmentManager = ((AppCompatActivity) mContext).getSupportFragmentManager();
+                dialog.show(fragmentManager, "DIALOG");
+            }
+        });
+
 
         TextView groupTitle = findViewById(R.id.group_title_text);
         groupTitle.setText(group.getName());
         TextView groupContent = findViewById(R.id.group_data);
         groupContent.setText("멤버 : " + group.getMembers().size());
-
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
 
         groupImage = findViewById(R.id.group_image);
     }
