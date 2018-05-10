@@ -20,7 +20,6 @@ import com.kakao.usermgmt.callback.MeResponseCallback;
 import com.kakao.usermgmt.response.model.UserProfile;
 import com.kakao.util.exception.KakaoException;
 import com.kakao.util.helper.log.Logger;
-import com.sang.peoplan.group_pack.Group;
 
 import java.io.IOException;
 import java.util.ArrayList;

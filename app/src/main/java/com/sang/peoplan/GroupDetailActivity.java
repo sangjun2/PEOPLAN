@@ -1,4 +1,4 @@
-package com.sang.peoplan.group_pack;
+package com.sang.peoplan;
 
 import android.content.Context;
 import android.content.Intent;
@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.PagerAdapter;
@@ -21,9 +22,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.sang.peoplan.AppBarStateChangeListener;
-import com.sang.peoplan.R;
-import com.sang.peoplan.SetImageActivity;
+import com.leinardi.android.speeddial.SpeedDialActionItem;
+import com.leinardi.android.speeddial.SpeedDialOverlayLayout;
+import com.leinardi.android.speeddial.SpeedDialView;
 
 import java.util.ArrayList;
 
@@ -32,17 +33,17 @@ import java.util.ArrayList;
      */
 
 public class GroupDetailActivity extends AppCompatActivity {
-    private AppBarLayout appBarLayout;
-    private CollapsingToolbarLayout toolbarLayout;
-    private TabLayout tabLayout;
-    private NestedScrollView nestedScrollView;
-    private ViewPager viewPager;
-    private TabViewPagerAdapter tabViewPagerAdapter;
-    private ImageView groupImage;
+    AppBarLayout appBarLayout;
+    CollapsingToolbarLayout toolbarLayout;
+    TabLayout tabLayout;
+    NestedScrollView nestedScrollView;
+    ViewPager viewPager;
+    TabViewPagerAdapter tabViewPagerAdapter;
+    ImageView groupImage;
 
-    private Group group;
+    Group group;
 
-    private Context mContext;
+    Context mContext;
     final static int REQUEST_DELETE_GROUP = 100;
     final static int REQUEST_LEAVE_GROUP = 200;
 
@@ -50,20 +51,16 @@ public class GroupDetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group_detail);
-        // 툴바 설정
         Toolbar toolbar = findViewById(R.id.toolbar);
         mContext = this;
 
-        // 선택된 그룹 정보 가져오기
         Intent intent = getIntent();
         group = (Group) intent.getSerializableExtra("Group");
 
-        // 툴바 연결
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("");
 
-        // 화면 줄어들고, 커지고
         appBarLayout = findViewById(R.id.app_bar);
         appBarLayout.addOnOffsetChangedListener(new AppBarStateChangeListener() {
             @Override
@@ -72,11 +69,14 @@ public class GroupDetailActivity extends AppCompatActivity {
                     getSupportActionBar().setTitle(group.getName());
                 } else if(state == State.EXPANDED) {
                     getSupportActionBar().setTitle("");
+
                 } else {
 
                 }
             }
         });
+
+
         tabLayout = findViewById(R.id.group_detail_tab);
         viewPager = findViewById(R.id.group_viewpager);
         nestedScrollView = findViewById(R.id.group_nestedscrollview);
@@ -86,7 +86,6 @@ public class GroupDetailActivity extends AppCompatActivity {
 
         nestedScrollView.setFillViewport(true);
 
-        //
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -98,16 +97,13 @@ public class GroupDetailActivity extends AppCompatActivity {
             }
         });
 
-        // 그룹 이름 text
+
         TextView groupTitle = findViewById(R.id.group_title_text);
         groupTitle.setText(group.getName());
-
-        // group 멤버 수
         TextView groupContent = findViewById(R.id.group_data);
         groupContent.setText("멤버 : " + group.getMembers().size());
 
         groupImage = findViewById(R.id.group_image);
-
     }
 
     @Override
@@ -213,7 +209,7 @@ public class GroupDetailActivity extends AppCompatActivity {
         }
     }
 
-    private class GroupNoticeView {
+    public class GroupNoticeView {
         private int layout;
 
         public GroupNoticeView() {

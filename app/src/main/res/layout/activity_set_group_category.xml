@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.sang.peoplan.group_pack.SetGroupCategoryActivity">
+    tools:context="com.sang.peoplan.SetGroupCategoryActivity">
 
     <include
         android:id="@+id/set_group_category_toolbar"

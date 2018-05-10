@@ -1,4 +1,4 @@
-package com.sang.peoplan.group_pack;
+package com.sang.peoplan;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -12,8 +12,6 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.sang.peoplan.R;
 
 public class SetGroupCategoryActivity extends AppCompatActivity { // 그룹 카테고리 선택
     RadioGroup radioGroup;

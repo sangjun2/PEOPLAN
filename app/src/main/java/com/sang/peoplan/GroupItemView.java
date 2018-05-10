@@ -1,4 +1,4 @@
-package com.sang.peoplan.group_pack;
+package com.sang.peoplan;
 
 import android.content.Context;
 import android.support.constraint.ConstraintLayout;
@@ -10,25 +10,21 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.sang.peoplan.R;
-import com.sang.peoplan.WidthSquareImageView;
-
 /**
  * Created by Sangjun on 2018-03-26.
  */
 
 public class GroupItemView extends ConstraintLayout {
-    private WidthSquareImageView imageView;
-    private LinearLayout textLayout;
-    private GroupItemViewHolder viewHolder;
-    private ViewGroup viewGroup;
+    public WidthSquareImageView imageView;
+    public LinearLayout textLayout;
+    public GroupItemViewHolder viewHolder;
+    ViewGroup viewGroup;
 
     public GroupItemView(Context context) {
         super(context);
         initView();
     }
 
-    public GroupItemViewHolder getViewHolder(){ return viewHolder;}
     public GroupItemView(Context context, AttributeSet attrs) {
         super(context, attrs);
         initView();

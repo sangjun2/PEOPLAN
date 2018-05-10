@@ -1,5 +1,6 @@
-package com.sang.peoplan.group_pack;
+package com.sang.peoplan;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
@@ -8,10 +9,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.widget.TextView;
-
-import com.sang.peoplan.APIService;
-import com.sang.peoplan.GlobalApplication;
-import com.sang.peoplan.R;
 
 import java.io.IOException;
 

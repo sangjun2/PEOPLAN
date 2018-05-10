@@ -1,6 +1,9 @@
 package com.sang.peoplan;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -9,9 +12,11 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
-import com.sang.peoplan.group_pack.GroupFragment;
+
+import java.security.acl.Group;
 
 public class MainActivity extends AppCompatActivity { // 프래그먼트 변화만 관여
     FragmentManager fragmentManager;
