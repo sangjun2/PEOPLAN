@@ -54,13 +54,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="180dp"
                 android:orientation="vertical"
-                android:gravity="center">
+                android:gravity="center_vertical"
+                android:layout_gravity="center_vertical">
 
                 <com.sang.peoplan.HorizontalGridView
                     android:id="@+id/businesscard_wallet_view"
                     android:layout_width="match_parent"
-                    android:layout_height="180dp"
-                    android:background="@drawable/border">
+                    android:layout_height="match_parent"
+                    android:background="@drawable/border"
+                    android:layout_gravity="center_vertical">
                 </com.sang.peoplan.HorizontalGridView>
             </LinearLayout>
         </LinearLayout>
