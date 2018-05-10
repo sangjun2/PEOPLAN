@@ -22,9 +22,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.leinardi.android.speeddial.SpeedDialActionItem;
-import com.leinardi.android.speeddial.SpeedDialOverlayLayout;
-import com.leinardi.android.speeddial.SpeedDialView;
 
 import java.util.ArrayList;
 

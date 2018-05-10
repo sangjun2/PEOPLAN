@@ -34,18 +34,7 @@
                 android:layout_height="180dp"
                 android:orientation="vertical"
                 android:gravity="center">
-                <!--ImageView
-                    android:id="@+id/create_businesscard_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="60dp"
-                    app:srcCompat="@drawable/ic_add_circle_outline_black_24dp"/-->
-                <!--include
-                    android:id="@+id/my_businesscard"
-                    layout="@layout/business_card_item"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="8dp"
-                    android:visibility="gone"/-->
+
                 <android.support.v4.view.ViewPager
                     android:id="@+id/my_businesscard_view"
                     android:layout_width="match_parent"
@@ -61,6 +50,19 @@
                 android:text="명함 지갑"
                 android:textSize="16sp"
                 android:padding="8dp"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="180dp"
+                android:orientation="vertical"
+                android:gravity="center">
+
+                <com.sang.peoplan.HorizontalGridView
+                    android:id="@+id/businesscard_wallet_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="180dp"
+                    android:background="@drawable/border">
+                </com.sang.peoplan.HorizontalGridView>
+            </LinearLayout>
         </LinearLayout>
 
     </android.support.constraint.ConstraintLayout>
