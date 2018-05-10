@@ -325,10 +325,12 @@ public class CreateScheduleActivity extends AppCompatActivity implements ColorPi
                     } else {
                         content = eventContent.getText().toString();
                     }
+                    /*
                     Event event = new Event(eventTitle.getText().toString(), new Date(startTime.getMillis()), new Date(endTime.getMillis()), repeat, false, colorCode, content);
 
                     CreateEventAsyncTask task = new CreateEventAsyncTask();
                     task.execute(event);
+                    */
                 }
             }
         });

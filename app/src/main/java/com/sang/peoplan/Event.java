@@ -24,35 +24,40 @@ public class Event implements Serializable {
     public Date end;
     @SerializedName("repeat")
     public int repeat;
-    @SerializedName("alarm")
-    public boolean alarm;
     @SerializedName("color")
     public String color;
     @SerializedName("content")
     public String content;
+    @SerializedName("owner")
+    public String owner;
+    @SerializedName("participants")
+    public String[] participants;
+
 
     public Event() {
     }
 
-    public Event(String name, Date start, Date end, int repeat, boolean alarm, String color, String content) {
+    public Event(String name, Date start, Date end, int repeat, String color, String content, String owner, String[] participants) {
         this.name = name;
         this.start = start;
         this.end = end;
         this.repeat = repeat;
-        this.alarm = alarm;
         this.color = color;
         this.content = content;
+        this.owner = owner;
+        this.participants = participants;
     }
 
-    public Event(String _id, String name, Date start, Date end, int repeat, boolean alarm, String color, String content) {
+    public Event(String _id, String name, Date start, Date end, int repeat, String color, String content, String owner, String[] participants) {
         this._id = _id;
         this.name = name;
         this.start = start;
         this.end = end;
         this.repeat = repeat;
-        this.alarm = alarm;
         this.color = color;
         this.content = content;
+        this.owner = owner;
+        this.participants = participants;
     }
 
     public String get_id() {
@@ -95,14 +100,6 @@ public class Event implements Serializable {
         this.repeat = repeat;
     }
 
-    public boolean isAlarm() {
-        return alarm;
-    }
-
-    public void setAlarm(boolean alarm) {
-        this.alarm = alarm;
-    }
-
     public String getColor() {
         return color;
     }
@@ -117,5 +114,21 @@ public class Event implements Serializable {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public String getOwner() {
+        return owner;
+    }
+
+    public void setOwner(String owner) {
+        this.owner = owner;
+    }
+
+    public String[] getParticipants() {
+        return participants;
+    }
+
+    public void setParticipants(String[] participants) {
+        this.participants = participants;
     }
 }
