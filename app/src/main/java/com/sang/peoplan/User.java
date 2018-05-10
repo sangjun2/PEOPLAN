@@ -21,7 +21,8 @@ import java.net.URL;
  */
 
 public class User {
-
+    @SerializedName("_id")
+    public String _id;
     @SerializedName("kakaoid")
     public String kakaoUID;
     @SerializedName("name")
@@ -30,19 +31,48 @@ public class User {
     private String tel;
     @SerializedName("email")
     private String email;
+    @SerializedName("groups")
+    private String[] groups;
+    @SerializedName("businesscards")
+    private BusinessCard[] businessCards;
+    @SerializedName("limit")
+    private int limit;
+    @SerializedName("token")
+    private String token;
 
     public User() {
+        this._id = null;
         this.kakaoUID = null;
         this.name = null;
         this.tel = null;
         this.email = null;
+        this.groups = null;
+        this.businessCards = null;
+        this.limit = 1;
+        this.token = null;
     }
 
-    public User(String kakaoUID, String name, String tel, String email) {
+    public User(String kakaoUID, String name, String tel, String email, String[] groups, BusinessCard[] businessCards, int limit, String token) {
         this.kakaoUID = kakaoUID;
         this.name = name;
         this.tel = tel;
         this.email = email;
+        this.groups = groups;
+        this.businessCards = businessCards;
+        this.limit = limit;
+        this.token = token;
+    }
+
+    public User(String _id, String kakaoUID, String name, String tel, String email, String[] groups, BusinessCard[] businessCards, int limit, String token) {
+        this._id = _id;
+        this.kakaoUID = kakaoUID;
+        this.name = name;
+        this.tel = tel;
+        this.email = email;
+        this.groups = groups;
+        this.businessCards = businessCards;
+        this.limit = limit;
+        this.token = token;
     }
 
     public String getKakaoUID() {
@@ -75,5 +105,45 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String get_id() {
+        return _id;
+    }
+
+    public void set_id(String _id) {
+        this._id = _id;
+    }
+
+    public String[] getGroups() {
+        return groups;
+    }
+
+    public void setGroups(String[] groups) {
+        this.groups = groups;
+    }
+
+    public BusinessCard[] getBusinessCards() {
+        return businessCards;
+    }
+
+    public void setBusinessCards(BusinessCard[] businessCards) {
+        this.businessCards = businessCards;
+    }
+
+    public int getLimit() {
+        return limit;
+    }
+
+    public void setLimit(int limit) {
+        this.limit = limit;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 }
