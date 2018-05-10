@@ -60,7 +60,7 @@ public class CreateBusinessCardActivity extends AppCompatActivity {
         modified = getIntent().getBooleanExtra("modified", false);
         index = getIntent().getIntExtra("index", 0);
 
-        final BusinessCard businessCard = SplashActivity.BUSINESSCARD_LIST.get(index);
+
 
 
         myPicture.setOnClickListener(new View.OnClickListener() {
@@ -72,11 +72,14 @@ public class CreateBusinessCardActivity extends AppCompatActivity {
             }
         });
 
-        if(modified){
+        if(modified){//수정일 경우 원래값 입력
             name.setText(getIntent().getStringExtra("name"));
             department.setText(getIntent().getStringExtra("department"));
             address.setText(getIntent().getStringExtra("address"));
         }
+        //수정할 수 없는 부분 고정
+        phoneNumber.setText("Phone: " + SplashActivity.USER_TEL);
+        emailAddress.setText("e-mail: " + SplashActivity.USER_PROFILE.getEmail());
 
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -92,17 +95,12 @@ public class CreateBusinessCardActivity extends AppCompatActivity {
                 }
                 else{
                     //db저장
-
-                    businessCard.setName(name.getText().toString());
-                    businessCard.setDepartment(department.getText().toString());
-                    businessCard.setAddress(address.getText().toString());
-
-                    CreateBusinessCardAsyncTask businessCardAsyncTask = new CreateBusinessCardAsyncTask();
-                    if(modified){
-                        businessCardAsyncTask.setModified(modified);
-                        businessCardAsyncTask.setIndex(index);
+                    if(modified){//명함 수정
+                        modifyBusinessCard(name.getText().toString(), department.getText().toString(), address.getText().toString(), null);
                     }
-                    businessCardAsyncTask.execute(businessCard);
+                    else{//명함 생성
+                        createBusinessCard(name.getText().toString(), department.getText().toString(), address.getText().toString(), null);
+                    }
 
                 }
             }
@@ -120,6 +118,7 @@ public class CreateBusinessCardActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         RemoveBusinessCardAsyncTask removeBusinessCardAsyncTask = new RemoveBusinessCardAsyncTask();
+                        BusinessCard businessCard = SplashActivity.BUSINESSCARD_LIST.get(index);
                         removeBusinessCardAsyncTask.execute(businessCard);
                     }
                 });
@@ -138,8 +137,26 @@ public class CreateBusinessCardActivity extends AppCompatActivity {
             }
         });
 
-        phoneNumber.setText("Phone: " + SplashActivity.USER_TEL);
-        emailAddress.setText("e-mail: " + SplashActivity.USER_PROFILE.getEmail());
+
+    }
+
+    public void createBusinessCard(String name, String department, String address, String imgSrc){
+        BusinessCard businessCard = new BusinessCard(String.valueOf(SplashActivity.USER_PROFILE.getId()), name, department, SplashActivity.USER_TEL, address, imgSrc);
+        CreateBusinessCardAsyncTask businessCardAsyncTask = new CreateBusinessCardAsyncTask();
+        businessCardAsyncTask.execute(businessCard);
+    }
+
+    public void modifyBusinessCard(String name, String department, String address, String imgSrc){
+        BusinessCard businessCard;
+        businessCard = SplashActivity.BUSINESSCARD_LIST.get(index);//수정할 명함
+        businessCard.setName(name);
+        businessCard.setDepartment(department);
+        businessCard.setAddress(address);
+        businessCard.setImg(imgSrc);
+        CreateBusinessCardAsyncTask businessCardAsyncTask = new CreateBusinessCardAsyncTask();
+        businessCardAsyncTask.setModified(modified);
+        businessCardAsyncTask.setIndex(index);
+        businessCardAsyncTask.execute(businessCard);
     }
 
 
@@ -211,8 +228,10 @@ public class CreateBusinessCardActivity extends AppCompatActivity {
             Call<BusinessCard> businessCard;
             if(!modified){
                 businessCard = service.createBusinessCard(String.valueOf(SplashActivity.USER_PROFILE.getId()), businessCards[0]);
+                Log.d("owner==", businessCards[0].getOwner());
+                Log.d("name==", businessCards[0].getName());
                 try {
-                    if(businessCard.execute().code() == 200) { // 추가 성공
+                    if(businessCard.execute().code() == 201) { // 추가 성공
                         SplashActivity.BUSINESSCARD_LIST.add(businessCards[0]);
                         return true;
                     }
@@ -224,7 +243,7 @@ public class CreateBusinessCardActivity extends AppCompatActivity {
                 Log.d("id==", businessCards[0].get_id());
                 businessCard = service.updateBusinessCard(businessCards[0].get_id(), businessCards[0]);
                     try {
-                    if(businessCard.execute().code() == 200) { // 추가 성공
+                    if(businessCard.execute().code() == 201) { // 추가 성공
                         //splash에서 수정하는 부분 필요
 
                         return true;

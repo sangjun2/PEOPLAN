@@ -5,9 +5,13 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.ShapeDrawable;
+import android.graphics.drawable.shapes.OvalShape;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.annotation.RequiresApi;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.PagerAdapter;
@@ -15,10 +19,12 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -31,6 +37,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
 
+import static com.sang.peoplan.R.drawable.*;
+
 public class BusinessCardFragment extends Fragment {
 
     private Uri mImageCaptureUri;
@@ -41,7 +49,6 @@ public class BusinessCardFragment extends Fragment {
 
     private String absolutePath;
 
-    CreateBusinessCardDialog dialog;
 
     View myBusinessCardsView;
     ViewPager myBusinessCardsViewPager;
@@ -53,6 +60,9 @@ public class BusinessCardFragment extends Fragment {
     TextView address;
 
     BusinessCardPagerAdapter pagerAdapter;
+    ArrayList<BusinessCard> walletList = new ArrayList<>();
+    HorizontalGridView walletListView;
+    WalletAdapter walletAdapter;
 
     public BusinessCardFragment() {
         // Required empty public constructor
@@ -81,6 +91,15 @@ public class BusinessCardFragment extends Fragment {
 
         myBusinessCardsViewPager = view.findViewById(R.id.my_businesscard_view);
         myBusinessCardsViewPager.setAdapter(pagerAdapter);
+
+        walletListView = view.findViewById(R.id.businesscard_wallet_view);
+        BusinessCard b = new BusinessCard();
+        b.setName("이상인");
+        for(int i = 0; i < 7; i++){
+            walletList.add(b);
+        }
+        walletAdapter = new WalletAdapter(walletList);
+        walletListView.setAdapter(walletAdapter);
 
         return view;
     }
@@ -121,7 +140,6 @@ public class BusinessCardFragment extends Fragment {
                 String filePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/SmartWheel/" + System.currentTimeMillis() + ".jpg";
                 if(extras != null){
                     Bitmap photo = extras.getParcelable("data");
-                    dialog.setImageViewBitmap(photo);
 
                     storeCropImage(photo, filePath);
                     absolutePath = filePath;
@@ -191,23 +209,12 @@ public class BusinessCardFragment extends Fragment {
             if(position == myBusinessCards.size()){
 
                 ImageView createView = new ImageView(getContext());
-                createView.setImageResource(R.drawable.ic_add_circle_outline_black_24dp);
+                createView.setImageResource(ic_add_circle_outline_black_24dp);
 
                 createView.setMaxHeight(60);
                 createView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-//                        dialog = new CreateBusinessCardDialog(getContext());
-//                        dialog.setTitle("명함 만들기");
-//                        dialog.setModified(false);
-//                        dialog.show();
-//                        dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-//                            @Override
-//                            public void onDismiss(DialogInterface dialogInterface) {
-//                                notifyDataSetChanged();
-//
-//                            }
-//                        });
                         Intent intent = new Intent(getActivity(), CreateBusinessCardActivity.class);
                         intent.putExtra("modified", false);
                         intent.putExtra("index", position);
@@ -231,19 +238,6 @@ public class BusinessCardFragment extends Fragment {
                 businessCardSetting.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-//                        dialog = new CreateBusinessCardDialog(getContext());
-//                        dialog.setTitle("명함 수정");
-//                        dialog.setNameText(b.getName());
-//                        dialog.setDepartmentText(b.getDepartment());
-//                        dialog.setAddressText(b.getAddress());
-//                        dialog.setModified(true);
-//                        dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-//                            @Override
-//                            public void onDismiss(DialogInterface dialogInterface) {
-//                                notifyDataSetChanged();
-//                            }
-//                        });
-//                        dialog.show();
                         Intent intent = new Intent(getActivity(), CreateBusinessCardActivity.class);
                         intent.putExtra("modified", true);
                         intent.putExtra("index", position);
@@ -285,6 +279,47 @@ public class BusinessCardFragment extends Fragment {
         @Override
         public int getCount() {
             return this.myBusinessCards.size() + 1;
+        }
+    }
+
+    private class WalletAdapter extends BaseAdapter{
+        ArrayList<BusinessCard> businessCards = new ArrayList<BusinessCard>();
+        public WalletAdapter(ArrayList businessCards){
+            this.businessCards = businessCards;
+        }
+        @Override
+        public int getCount() {
+            return businessCards.size();
+        }
+
+        public void addItems(BusinessCard businessCard){businessCards.add(businessCard);}
+
+        @Override
+        public Object getItem(int i) {
+            return businessCards.get(i);
+        }
+
+        @Override
+        public long getItemId(int i) {
+            return i;
+        }
+
+        public void delete(int i){
+            this.businessCards.remove(i);
+        }
+
+        @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+        @Override
+        public View getView(int i, View contextView, ViewGroup viewGroup) {
+            View view = LayoutInflater.from(getContext()).inflate(R.layout.business_card_wallet_item, null);
+            ImageView imageView = view.findViewById(R.id.businesscard_image);
+            TextView textView = view.findViewById(R.id.businesscard_name);
+            textView.setText(businessCards.get(i).getName());
+            imageView.setImageResource(R.drawable.alarm_background);
+            imageView.setBackground(new ShapeDrawable(new OvalShape()));
+            imageView.setClipToOutline(true);
+
+            return view;
         }
     }
 

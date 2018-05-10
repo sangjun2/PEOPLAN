@@ -10,8 +10,12 @@ import com.google.gson.annotations.SerializedName;
 public class BusinessCard {
     @SerializedName("_id")
     public String _id;
-    @SerializedName("kakaoid")
-    public String kakaoid;
+    @SerializedName("owner")
+    public String owner;
+    @SerializedName("removed")
+    public boolean removed;
+    @SerializedName("counter")
+    public int counter;
     @SerializedName("name")
     public String name;
     @SerializedName("department")
@@ -20,17 +24,28 @@ public class BusinessCard {
     public String tel;
     @SerializedName("address")
     public String address;
+    @SerializedName("img")
+    public String img;
+
+    public String getImg() {
+        return img;
+    }
+
+    public void setImg(String img) {
+        this.img = img;
+    }
 
     public BusinessCard(){
 
     }
 
-    public BusinessCard(String kakaoid, String name, String department, String tel, String address){
-        this.kakaoid = kakaoid;
+    public BusinessCard(String owner, String name, String department, String tel, String address, String img){
+        this.owner = owner;
         this.name = name;
         this.department = department;
         this.tel = tel;
         this.address =  address;
+        this.img = img;
     }
 
     public String getAddress() {
@@ -41,12 +56,28 @@ public class BusinessCard {
         this.address = address;
     }
 
-    public String getKakaoid() {
-        return kakaoid;
+    public String getOwner() {
+        return owner;
     }
 
-    public void setKakaoid(String kakaoid) {
-        this.kakaoid = kakaoid;
+    public void setOwner(String owner) {
+        this.owner = owner;
+    }
+
+    public boolean isRemoved() {
+        return removed;
+    }
+
+    public void setRemoved(boolean removed) {
+        this.removed = removed;
+    }
+
+    public int getCounter() {
+        return counter;
+    }
+
+    public void setCounter(int counter) {
+        this.counter = counter;
     }
 
     public String getName() {
