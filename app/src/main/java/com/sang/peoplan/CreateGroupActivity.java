@@ -69,6 +69,7 @@ public class CreateGroupActivity extends AppCompatActivity { // 그룹 추가
         friends = new ArrayList<>();
         invitationList = new ArrayList<>();
 
+        /*
         User f1 = new User("01","정태표","1-2","a");
         User f2 = new User("02","이상인","2-2","b");
         User f3 = new User("03","이상준","3-2","c");
@@ -85,7 +86,7 @@ public class CreateGroupActivity extends AppCompatActivity { // 그룹 추가
         friends.add(f6);
         friends.add(f7);
         friends.add(f8);
-
+        */
         //화면 상위 확인 버튼
         Toolbar toolbar = findViewById(R.id.group_toolbar);
         TextView toolbarTitle = findViewById(R.id.confirm_toolbar_title);

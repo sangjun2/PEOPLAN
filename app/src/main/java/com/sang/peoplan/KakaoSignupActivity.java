@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
@@ -44,6 +45,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import retrofit2.Call;
+import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -105,6 +107,11 @@ public class KakaoSignupActivity extends AppCompatActivity { // DB에 유저정�
                 user.setName(userName.getText().toString());
                 user.setTel(userTel.getText().toString());
                 user.setEmail(userEmail.getText().toString());
+                user.setLimit(1);
+
+                SharedPreferences sharedPreferences = getSharedPreferences("TOKEN", MODE_PRIVATE);
+                String token = sharedPreferences.getString("token", "");
+                user.setToken(token);
 
                 // DB에 유저 정보 전달
                 CreateUserAsyncTask task = new CreateUserAsyncTask();
@@ -167,9 +174,11 @@ public class KakaoSignupActivity extends AppCompatActivity { // DB에 유저정�
         @Override
         protected Boolean doInBackground(User... users) {
             // 유저 정보 추가
-            Call<User> user = service.createUser(users[0]);
+            Call<Void> user = service.createUser(users[0]);
             try {
-                if(user.execute().code() == 200) { // 추가 성공
+                Response<Void> response = user.execute();
+
+                if(response.code() == 201) { // 추가 성공
                     SplashActivity.USER_TEL = users[0].getTel();
                     return true;
                 }

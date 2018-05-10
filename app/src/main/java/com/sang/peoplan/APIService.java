@@ -24,7 +24,10 @@ public interface APIService { // retrofit 사용을 위한 http api 인터페이
     Call<List<User>> getUser(@Path("user") String userUID);
 
     @POST("/api/users") // 유저 생성
-    Call<User> createUser(@Body User user);
+    Call<Void> createUser(@Body User user);
+
+    @PUT("/api/users/token")
+    Call<Token> refreshToken(@Body Token token);
 
     @GET("/api/users/{user}/calendars") // 유저 캘린더 데이터 가져오기
     Call<List<Event>> getUserEvents(@Path("user") String userUID);

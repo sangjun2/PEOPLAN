@@ -123,11 +123,13 @@ public class SplashActivity extends AppCompatActivity {
             @Override
             public void onSuccess(UserProfile userProfile) {
                 Log.d("KAKAOTAG==", "onSuccess");
-                USER_PROFILE = userProfile;
                 loginButton.setVisibility(View.GONE);
 
+                USER_PROFILE = userProfile;
+
                 GetUserAsyncTask asyncTask = new GetUserAsyncTask();
-                asyncTask.execute(String.valueOf(USER_PROFILE.getId()));
+                asyncTask.execute(String.valueOf(userProfile.getId()));
+
             }
 
             @Override
