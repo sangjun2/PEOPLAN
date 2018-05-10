@@ -1,37 +1,35 @@
-package com.sang.peoplan;
+package com.sang.peoplan.group_pack;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.Checkable;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
 
 import com.kakao.usermgmt.response.model.UserProfile;
+import com.sang.peoplan.APIService;
+import com.sang.peoplan.GlobalApplication;
+import com.sang.peoplan.R;
+import com.sang.peoplan.SplashActivity;
+import com.sang.peoplan.User;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -42,9 +40,9 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 
 public class CreateGroupActivity extends AppCompatActivity { // 그룹 추가
-    TextView category; // 선택된 카테고리 보이는 텍스트, 그룹 카테고리
-    LinearLayout categoryView; // 카테고리 종류 띄우는 뷰
-    Switch bPublic; // 공개.비공개 그룹 선택 뷰
+    private TextView category; // 선택된 카테고리 보이는 텍스트, 그룹 카테고리
+    private LinearLayout categoryView; // 카테고리 종류 띄우는 뷰
+    private Switch bPublic; // 공개.비공개 그룹 선택 뷰
     private RecyclerView friend_list_recycler_view; // 연락처 띄우는 뷰
     private RecyclerView.Adapter adapter; // 어댑터
     private RecyclerView.LayoutManager layoutManager; // 레이아웃 매니저
@@ -55,9 +53,6 @@ public class CreateGroupActivity extends AppCompatActivity { // 그룹 추가
 
     final int REQUESTCODE_CATEGORY = 500;
 
-    /*
-     * - 친구 목록 외부에서 가져오기
-     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,6 +64,7 @@ public class CreateGroupActivity extends AppCompatActivity { // 그룹 추가
         friends = new ArrayList<>();
         invitationList = new ArrayList<>();
 
+        // 친구 목록 리스트
         User f1 = new User("01","정태표","1-2","a");
         User f2 = new User("02","이상인","2-2","b");
         User f3 = new User("03","이상준","3-2","c");
@@ -86,20 +82,22 @@ public class CreateGroupActivity extends AppCompatActivity { // 그룹 추가
         friends.add(f7);
         friends.add(f8);
 
-        //화면 상위 확인 버튼
+        connectLayoutView();
+
+        // 그룹생성 액티비티 최상위 toolbar, 그룹 생성 버튼 및 액티비티 타이틀
         Toolbar toolbar = findViewById(R.id.group_toolbar);
         TextView toolbarTitle = findViewById(R.id.confirm_toolbar_title);
-
-        Button confirm_toolbar_bt = findViewById(R.id.confirm_toolbar_bt); // 그룹 생성 버튼
-        final EditText group_name = findViewById(R.id.group_name); // 그룹 이름 EditText
-
-        bPublic = findViewById(R.id.bPublic);
-        final boolean isPublic = true;
-        final TextView groupState = findViewById(R.id.groupState);
-
         toolbarTitle.setText("그룹 만들기");
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Button confirm_toolbar_bt = findViewById(R.id.confirm_toolbar_bt); // 그룹 생성 버튼
+
+        // 그룹 이름 text
+        final EditText group_name = findViewById(R.id.group_name);
+
+        // 공개 비공개 선택
+        Switch bPublic = findViewById(R.id.bPublic);
+        final TextView groupState = findViewById(R.id.groupState);
 
         // 생성 버튼 리스너 설정
         confirm_toolbar_bt.setOnClickListener(new View.OnClickListener() {
@@ -114,11 +112,19 @@ public class CreateGroupActivity extends AppCompatActivity { // 그룹 추가
                     Toast.makeText(getApplicationContext(), "그룹 카테고리를 선택해주세요.", Toast.LENGTH_SHORT).show();
                 }else {
                     // 그룹 멤버 데이터 추가
+                    // 선택한 이미지 처리
+                    // 공개 그룹, 비공개 그룹에 따른 값 처리
                     Group newGroup;
-                    if(groupState.getText().equals("공개그룹"))
-                        newGroup = new Group(String.valueOf(userProfile.getId()), group_name.getText().toString(), category.getText().toString(), true);
+                    if(groupState.getText().toString().equals("공개그룹"))
+                        newGroup = new Group(String.valueOf(userProfile.getId()),
+                                group_name.getText().toString(),
+                                category.getText().toString(),
+                                true, null);
                     else
-                        newGroup = new Group(String.valueOf(userProfile.getId()), group_name.getText().toString(), category.getText().toString(), false);
+                        newGroup = new Group(String.valueOf(userProfile.getId()),
+                                group_name.getText().toString(),
+                                category.getText().toString(),
+                                false, null);
 
                     addGroupMembers(newGroup);
                     // DB에만 저장
@@ -161,6 +167,9 @@ public class CreateGroupActivity extends AppCompatActivity { // 그룹 추가
         friend_list_recycler_view.setAdapter(adapter);
     }
 
+    private void connectLayoutView() {
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -193,14 +202,10 @@ public class CreateGroupActivity extends AppCompatActivity { // 그룹 추가
         overridePendingTransition(R.anim.anim_noanim, R.anim.anim_slide_out_bottom);
     }
 
-    private void addGroupMembers(Group newGroup){
-        for (String i: invitationList ) {
-            newGroup.addMember(i);
-        }
-    }
+    private void addGroupMembers(Group newGroup){ for (String i: invitationList ) newGroup.addMember(i); }
 
     // 스레드 이용한 DB에 그룹 데이터 저장
-    public class CreateGroupAsyncTask extends AsyncTask<Group, Void, Boolean> {
+    private class CreateGroupAsyncTask extends AsyncTask<Group, Void, Boolean> {
         Retrofit retrofit;
         APIService service;
 
@@ -243,6 +248,7 @@ public class CreateGroupActivity extends AppCompatActivity { // 그룹 추가
         }
     }
 
+    // 연락처 목록 뿌려주는 곳
     private class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.ItemViewHolder>{
         private ArrayList<User> friendlist; // 친구목록
 

@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.sang.peoplan.GroupFragment">
+    tools:context="com.sang.peoplan.group_pack.GroupFragment">
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"

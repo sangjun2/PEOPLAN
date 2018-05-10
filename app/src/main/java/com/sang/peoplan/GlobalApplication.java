@@ -16,7 +16,7 @@ import com.kakao.auth.KakaoSDK;
 
 public class GlobalApplication extends Application { // Application 상속 받은 놈이 먼저 실행됨
     private static volatile GlobalApplication instance = null;
-    public static final String SERVER_URL = "http://13.125.218.127:9000";
+    public static final String SERVER_URL = "http://52.78.216.60:9000";
 
     public static GlobalApplication getGlobalApplicationContext() {
         if(instance == null) {

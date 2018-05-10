@@ -16,7 +16,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".MainActivity" />
-        <activity android:name=".CreateGroupActivity" />
+        <activity android:name=".group_pack.CreateGroupActivity" />
         <activity android:name=".CreateScheduleActivity" />
 
         <meta-data
@@ -37,17 +37,16 @@
         <receiver android:name=".AlarmReceiver" />
 
         <activity android:name=".AlarmActivity" />
-        <activity android:name=".SetGroupCategoryActivity" />
+        <activity android:name=".group_pack.SetGroupCategoryActivity" />
         <activity
-            android:name=".GroupDetailActivity"
+            android:name=".group_pack.GroupDetailActivity"
             android:label="@string/title_activity_group_detail"/>
         <activity android:name=".SetImageActivity" />
         <activity
             android:name=".CreateBusinessCardActivity"
             android:screenOrientation="landscape" />
         <activity android:name=".NotifycationActivity"></activity>
-        <activity android:name=".SetGroupActivity"></activity>
-        <activity android:name=".GroupDeleteOrLeave"></activity>
+        <activity android:name=".group_pack.GroupDeleteOrLeave"></activity>
     </application>
 
 </manifest>

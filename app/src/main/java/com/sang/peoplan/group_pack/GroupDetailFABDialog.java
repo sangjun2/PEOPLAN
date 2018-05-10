@@ -1,4 +1,4 @@
-package com.sang.peoplan;
+package com.sang.peoplan.group_pack;
 
 import android.app.Dialog;
 import android.content.res.Resources;
@@ -11,6 +11,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+
+import com.sang.peoplan.R;
 
 /**
  * Created by Sangjun on 2018-04-17.
