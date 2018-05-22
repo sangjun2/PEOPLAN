@@ -214,7 +214,7 @@ public class CreateBusinessCardActivity extends AppCompatActivity {
                     returnIntent.putExtra("index", this.index);
                     returnIntent.putExtra("address", this.b.getAddress());
                     returnIntent.putExtra("name", this.b.getName());
-                    returnIntent.putExtra("department", this.b.getName());
+                    returnIntent.putExtra("department", this.b.getDepartment());
                 }
 
             }
