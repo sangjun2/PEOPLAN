@@ -44,12 +44,16 @@ public class GroupDetailActivity extends AppCompatActivity {
     final static int REQUEST_DELETE_GROUP = 100;
     final static int REQUEST_LEAVE_GROUP = 200;
 
+    boolean isMember;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group_detail);
         Toolbar toolbar = findViewById(R.id.toolbar);
         mContext = this;
+
+        isMember = false;
 
         Intent intent = getIntent();
         group = (Group) intent.getSerializableExtra("Group");
@@ -87,12 +91,33 @@ public class GroupDetailActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                GroupDetailFABDialog dialog = new GroupDetailFABDialog();
+                GroupDetailFABDialog dialog = GroupDetailFABDialog.newInstance(group.get_id());
 
                 FragmentManager fragmentManager = ((AppCompatActivity) mContext).getSupportFragmentManager();
                 dialog.show(fragmentManager, "DIALOG");
             }
         });
+
+        LinearLayout signupButton = findViewById(R.id.group_signup_bt);
+        signupButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+
+        for(String member : group.getMembers()) {
+            String _id = SplashActivity.USER.get_id();
+            if(member.equals(_id)) {
+                isMember = true;
+            }
+        }
+
+        if(isMember) {
+            signupButton.setVisibility(View.GONE);
+        } else {
+            fab.setVisibility(View.GONE);
+        }
 
 
         TextView groupTitle = findViewById(R.id.group_title_text);

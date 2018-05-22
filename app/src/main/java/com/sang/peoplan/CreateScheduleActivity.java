@@ -31,6 +31,7 @@ import java.io.*;
 import java.util.Date;
 
 import java.text.SimpleDateFormat;
+import java.util.Formatter;
 import java.util.List;
 import retrofit2.Call;
 import retrofit2.Response;
@@ -99,6 +100,9 @@ public class CreateScheduleActivity extends AppCompatActivity implements ColorPi
 
     Context mContext;
 
+    boolean isGroup;
+    String group_id;
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(requestCode == REQUESTCODE_REPEAT){
@@ -115,13 +119,21 @@ public class CreateScheduleActivity extends AppCompatActivity implements ColorPi
         setContentView(R.layout.activity_create_schedule);
         mContext = this;
 
+        Intent intent = getIntent();
+        isGroup = intent.getBooleanExtra("group", false);
+
         Toolbar toolbar = findViewById(R.id.schedule_toolbar);
         TextView toolbarTitle = findViewById(R.id.confirm_toolbar_title);
-        toolbarTitle.setText("일정 추가");
+        if(isGroup) {
+            toolbarTitle.setText("그룹 일정 추가");
+            SimpleDateFormat format = new SimpleDateFormat("yyyy.MM.dd");
+            this.day = format.format(new LocalDate().toDate());
+            this.group_id = intent.getStringExtra("group_id");
+        } else {
+            toolbarTitle.setText("일정 추가");
+            this.day = intent.getStringExtra("day");
+        }
         setSupportActionBar(toolbar);
-
-        Intent intent = getIntent();
-        this.day = intent.getStringExtra("day");
 
         isByDay = findViewById(R.id.is_byday);
         isAllDay = findViewById(R.id.is_allday);
@@ -326,7 +338,13 @@ public class CreateScheduleActivity extends AppCompatActivity implements ColorPi
                         content = eventContent.getText().toString();
                     }
 
-                    Event event = new Event(eventTitle.getText().toString(), new Date(startTime.getMillis()), new Date(endTime.getMillis()), repeat, colorCode, content, SplashActivity.USER.get_id(), null);
+                    Event event;
+
+                    if(isGroup) {
+                        event = new Event(eventTitle.getText().toString(), new Date(startTime.getMillis()), new Date(endTime.getMillis()), repeat, colorCode, content, group_id, null);
+                    } else {
+                        event = new Event(eventTitle.getText().toString(), new Date(startTime.getMillis()), new Date(endTime.getMillis()), repeat, colorCode, content, SplashActivity.USER.get_id(), null);
+                    }
 
                     CreateEventAsyncTask task = new CreateEventAsyncTask();
                     task.execute(event);

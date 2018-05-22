@@ -66,6 +66,7 @@
         </service>
 
         <activity android:name=".WalletBCDetailActivity"></activity>
+        <activity android:name=".CreateGroupScheduleActivity"></activity>
     </application>
 
 </manifest>

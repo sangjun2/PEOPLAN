@@ -188,11 +188,11 @@ public class SplashActivity extends AppCompatActivity {
                     if(response.body().size() == 1) {
                         USER = response.body().get(0);
 
-                        Call<List<Event>> callCalendar = service.getUserEvents(uid[0]);
+                        Call<List<Event>> callCalendar = service.getUserEvents(USER.get_id());
                         Response<List<Event>> calendars = callCalendar.execute();
-                        Call<List<BusinessCard>> callBusinessCards = service.getBusinessCards(uid[0]);
+                        Call<List<BusinessCard>> callBusinessCards = service.getBusinessCards(USER.get_id());
                         Response<List<BusinessCard>> businessCards = callBusinessCards.execute();
-                        Call<List<Group>> callGroupLists = service.getGroups(uid[0]);
+                        Call<List<Group>> callGroupLists = service.getGroups(USER.get_id());
                         Response<List<Group>> groups = callGroupLists.execute();
 
                         if(calendars.code() == 200) {
