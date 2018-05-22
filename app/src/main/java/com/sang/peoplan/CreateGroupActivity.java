@@ -1,10 +1,19 @@
 package com.sang.peoplan;
 
+import android.*;
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.AsyncTask;
+import android.provider.ContactsContract;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -50,9 +59,10 @@ public class CreateGroupActivity extends AppCompatActivity { // 그룹 추가
     private RecyclerView.LayoutManager layoutManager; // 레이아웃 매니저
 
     // ArrayList, 많은 양의 자료를 다루는 경우 이게 최선책인지 검토
-    private ArrayList<User> friends; // test 값, 친구 목록
+    private ArrayList<User> friends; //  친구 목록
     private ArrayList<String> invitationList; // 친구 id
 
+    private final int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 1000;
     final int REQUESTCODE_CATEGORY = 500;
 
     /*
@@ -66,27 +76,15 @@ public class CreateGroupActivity extends AppCompatActivity { // 그룹 추가
          // 그룹 만드는 본인 정보 수집
         final User userProfile = SplashActivity.USER;
         // 본인의 친구들 정보 수집, 초대목록 초기화
-        friends = new ArrayList<>();
+        if(ContextCompat.checkSelfPermission(this,Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED ){
+        // 주소록 권한이 없는 경우 권한 요청
+            ActivityCompat.requestPermissions( this, new String[] { Manifest.permission.READ_CONTACTS}, MY_PERMISSIONS_REQUEST_READ_CONTACTS );
+        }else{
+            friends = getContactList();
+        }
+
         invitationList = new ArrayList<>();
 
-        /*
-        User f1 = new User("01","정태표","1-2","a");
-        User f2 = new User("02","이상인","2-2","b");
-        User f3 = new User("03","이상준","3-2","c");
-        User f4 = new User("04","전철민","4-2","d");
-        User f5 = new User("05","정태표","1-2","a");
-        User f6 = new User("06","이상인","2-2","b");
-        User f7 = new User("07","이상준","3-2","c");
-        User f8 = new User("08","전철민","4-2","d");
-        friends.add(f1);
-        friends.add(f2);
-        friends.add(f3);
-        friends.add(f4);
-        friends.add(f5);
-        friends.add(f6);
-        friends.add(f7);
-        friends.add(f8);
-        */
         //화면 상위 확인 버튼
         Toolbar toolbar = findViewById(R.id.group_toolbar);
         TextView toolbarTitle = findViewById(R.id.confirm_toolbar_title);
@@ -160,6 +158,55 @@ public class CreateGroupActivity extends AppCompatActivity { // 그룹 추가
         friend_list_recycler_view.setLayoutManager(layoutManager);
         adapter = new FriendsAdapter(friends);
         friend_list_recycler_view.setAdapter(adapter);
+    }
+
+    private ArrayList<User> getContactList() {
+        Uri uri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
+
+        String[] projection = new String[]{
+                ContactsContract.CommonDataKinds.Phone.CONTACT_ID,
+                ContactsContract.CommonDataKinds.Phone.NUMBER,
+                ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME
+        };
+
+        String[] selectionArgs = null;
+
+        String sortOrder = ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME
+                + " COLLATE LOCALIZED ASC";
+
+        Cursor contactCursor = getContentResolver().query( uri, projection, null, selectionArgs, sortOrder );
+
+        ArrayList<User> contactList = new ArrayList<>();
+
+        if( contactCursor.moveToFirst() ){
+            do {
+                String phoneNumber = contactCursor.getString(1);
+
+                User friend = new User();
+
+                friend.setName( contactCursor.getString(2) );
+                friend.setTel( phoneNumber );
+                friend.setKakaoUID( contactCursor.getString(0) ); // 임시방편
+
+                contactList.add( friend );
+            } while ( contactCursor.moveToNext() );
+        }
+
+        return contactList;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch( requestCode ){
+            case MY_PERMISSIONS_REQUEST_READ_CONTACTS: {
+                if ( grantResults[0] == PackageManager.PERMISSION_GRANTED ) {
+                    friends = getContactList();
+                } else {
+                    Toast.makeText( this, "주소록 권한 없음", Toast.LENGTH_LONG).show();
+                }
+            }
+            return;
+        }
     }
 
     @Override
@@ -266,7 +313,7 @@ public class CreateGroupActivity extends AppCompatActivity { // 그룹 추가
         @Override
         public void onBindViewHolder(ItemViewHolder holder, int position) {
             // 일단 이름만 변경
-            holder._name.setText(friendlist.get(position).getName());
+            holder._name.setText(friendlist.get(position).getName() + friendlist.get(position).getTel() ) ;
             holder._position = position;
 
         }
@@ -290,6 +337,8 @@ public class CreateGroupActivity extends AppCompatActivity { // 그룹 추가
                 _choicecheckbox = itemView.findViewById(R.id.friend_choice_cb);
                 _choicecheckbox.setOnCheckedChangeListener(this);
                 _position = 0;
+                // 여기수정, Recyclerview 재활용때문에 발생하는 checkbox 리셋
+                this.setIsRecyclable(false);
             }
 
             @Override
@@ -304,7 +353,6 @@ public class CreateGroupActivity extends AppCompatActivity { // 그룹 추가
                             invitationList.remove(friendlist.get(_position).getKakaoUID()); // 초대목록에 선택된 유저 id 삭제
                         }
                 }
-
             }
 
             @Override
