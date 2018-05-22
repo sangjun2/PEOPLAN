@@ -52,4 +52,7 @@ public interface APIService { // retrofit 사용을 위한 http api 인터페이
 
     @GET("/api/users/{user}/groups") // 속한 그룹 찾기
     Call<List<Group>> getGroups(@Path("user") String userUID);
+
+    @GET("/api/groups/{name}") // 그룹 찾기
+    Call<List<Group>> searchGroups(@Path("name") String input);
 }

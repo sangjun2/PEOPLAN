@@ -96,6 +96,23 @@
         android:layout_gravity="bottom|end"
         app:srcCompat="@drawable/ic_add_white_24dp"/>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:layout_gravity="bottom"
+        android:background="@color/colorPrimary"
+        android:id="@+id/group_signup_bt">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:textAlignment="center"
+            android:textColor="#ffffff"
+            android:text="가입하기"/>
+    </LinearLayout>
+
 
 
 </android.support.design.widget.CoordinatorLayout>

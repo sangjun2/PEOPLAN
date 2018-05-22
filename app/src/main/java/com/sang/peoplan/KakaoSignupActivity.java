@@ -179,6 +179,7 @@ public class KakaoSignupActivity extends AppCompatActivity { // DB에 유저정�
                 Response<Void> response = user.execute();
 
                 if(response.code() == 201) { // 추가 성공
+                    SplashActivity.USER = users[0];
                     return true;
                 }
             } catch (IOException e) {
