@@ -11,6 +11,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +24,8 @@ import android.widget.ListView;
 import android.widget.NumberPicker;
 import android.widget.Scroller;
 import android.widget.TextView;
+
+import com.nex3z.notificationbadge.NotificationBadge;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -50,6 +53,8 @@ public class PlannerView extends ConstraintLayout {
     Context context;
 
     Button notificationButton;
+    NotificationBadge notificationBadge;
+
     Button calendarSelectButton;
 
     boolean isExistToday;
@@ -77,7 +82,7 @@ public class PlannerView extends ConstraintLayout {
         this.isCalendarSelectClicked = false;
     }
 
-    public void initView(final LocalDate localDate) {
+    public void initView(final LocalDate localDate, final PlannerFragment plannerFragment) {
         this.date = localDate;
         removeAllViews();
         this.isExistToday = false;
@@ -167,7 +172,16 @@ public class PlannerView extends ConstraintLayout {
             });
 
 
-            notificationButton = view.findViewById(R.id.calendar_notification_bt);
+            notificationButton = view.findViewById(R.id.planner_notification_bt);
+            notificationButton.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    plannerFragment.onNotificationButtonClicked();
+                }
+            });
+
+            notificationBadge = view.findViewById(R.id.planner_notification_badge);
+            notificationBadge.setNumber(0);
 
             calendarSelectLayout = view.findViewById(R.id.calendar_select_layout);
             calendarSelectLayout.setOnClickListener(new OnClickListener() {
@@ -182,7 +196,7 @@ public class PlannerView extends ConstraintLayout {
                         public void onClick(View view) {
                             isCalendarSelectClicked = false;
                             calendarSelectView.setVisibility(View.GONE);
-                            initView(new LocalDate(yearPicker.getValue(), monthPicker.getValue(), 1));
+                            initView(new LocalDate(yearPicker.getValue(), monthPicker.getValue(), 1), plannerFragment);
                         }
                     });
 

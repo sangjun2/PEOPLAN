@@ -3,24 +3,24 @@ package com.sang.peoplan;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.nex3z.notificationbadge.NotificationBadge;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,10 +37,16 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 
 public class GroupFragment extends Fragment {
-    Button toolbar_notification_bt; // 그룹 알림 버튼
     ArrayList<Group> groups;
     GroupListAdapter adapter;
     FloatingActionButton floatingActionButton;
+
+    OnFragmentInteractionListener mListener;
+
+    Button notificationButton;
+    NotificationBadge notificationBadge;
+
+    ConstraintLayout groupSearchLayout;
 
     public GroupFragment() {
         // Required empty public constructor
@@ -57,7 +63,7 @@ public class GroupFragment extends Fragment {
         super.onCreate(savedInstanceState);
         // 그룹 내용 동기화 //
         GetGroupsAsyncTask task = new GetGroupsAsyncTask();
-        task.execute(String.valueOf(SplashActivity.USER_PROFILE.getId()));
+        task.execute(SplashActivity.USER.get_id());
     }
 
     @Override
@@ -72,7 +78,15 @@ public class GroupFragment extends Fragment {
         TextView title = view.findViewById(R.id.toolbar_title);
         title.setText("그룹");
 
-        toolbar_notification_bt = view.findViewById(R.id.toolbar_notification_bt); // 그룹 알림 버튼
+        notificationButton = view.findViewById(R.id.toolbar_notification_bt);
+        notificationButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onNotificationButtonClicked();
+            }
+        });
+        notificationBadge = view.findViewById(R.id.toolbar_notification_badge);
+        notificationBadge.setNumber(1);
 
         //??
         AppCompatActivity activity = (AppCompatActivity) getActivity();
@@ -93,6 +107,14 @@ public class GroupFragment extends Fragment {
         adapter = new GroupListAdapter();
         recyclerView.setAdapter(adapter);
 
+        groupSearchLayout = view.findViewById(R.id.group_search_layout);
+        groupSearchLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onSearchButtonClicked();
+            }
+        });
+
         return view;
     }
 
@@ -101,22 +123,57 @@ public class GroupFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == 1){ // 그룹만들기 버튼 클릭시 requestCode 1 로 날라감
             if(resultCode == Activity.RESULT_OK){  // createGroupActivity에서 추가 성공시, 리프레쉬
-                GetGroupsAsyncTask task = new GetGroupsAsyncTask();
-                task.execute(String.valueOf(SplashActivity.USER_PROFILE.getId()));
+                //GetGroupsAsyncTask task = new GetGroupsAsyncTask();
+                //task.execute(String.valueOf(SplashActivity.USER_PROFILE.getId()));
             }
             if(resultCode == Activity.RESULT_CANCELED){ // createGroupActivity에서 추가 실패시, 물론 실패시 구현 안됨
             }
         }
     }
 
+    public void onNotificationButtonClicked() {
+        if(mListener != null) {
+            mListener.onGroupFragmentNotificationInteraction();
+        }
+    }
+
+    public void onSearchButtonClicked() {
+        if(mListener != null) {
+            mListener.onGroupFragmentSearchInteraction();
+        }
+    }
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+
+        if(context instanceof OnFragmentInteractionListener) {
+            mListener = (OnFragmentInteractionListener) context;
+        } else {
+            throw new RuntimeException(context.toString() + "must implement OnFragmentInteractionListener");
+        }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
+        mListener = null;
+    }
+
+    /**
+     * This interface must be implemented by activities that contain this
+     * fragment to allow an interaction in this fragment to be communicated
+     * to the activity and potentially other fragments contained in that
+     * activity.
+     * <p>
+     * See the Android Training lesson <a href=
+     * "http://developer.android.com/training/basics/fragments/communicating.html"
+     * >Communicating with Other Fragments</a> for more information.
+     */
+    public interface OnFragmentInteractionListener {
+        // TODO: Update argument type and name
+        void onGroupFragmentNotificationInteraction();
+        void onGroupFragmentSearchInteraction();
     }
 
     public class GetGroupsAsyncTask extends AsyncTask<String, Void, Boolean> {

@@ -19,6 +19,18 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <include
+            layout="@layout/search_bar"
+            android:id="@+id/group_search_layout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/group_toolbar">
+
+        </include>
+
         <android.support.v7.widget.RecyclerView
             android:id="@+id/group_recyclerview"
             android:layout_width="0dp"
@@ -27,14 +39,14 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/group_toolbar">
+            app:layout_constraintTop_toBottomOf="@+id/group_search_layout">
 
         </android.support.v7.widget.RecyclerView>
 
         <android.support.design.widget.FloatingActionButton
+            android:id="@+id/group_floating_bt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/group_floating_bt"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.95"

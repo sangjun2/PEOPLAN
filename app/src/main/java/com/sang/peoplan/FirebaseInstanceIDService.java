@@ -29,13 +29,13 @@ public class FirebaseInstanceIDService extends FirebaseInstanceIdService {
         editor.commit();
 
         Log.d(TAG, "Refreshed token: " + refreshedToken);
-        if(SplashActivity.USER_PROFILE != null) {
+        if(SplashActivity.USER != null) {
             refreshTokenToServer(refreshedToken);
         }
     }
 
     private void refreshTokenToServer(String token) {
-        Token t = new Token(String.valueOf(SplashActivity.USER_PROFILE.getId()), token);
+        Token t = new Token(String.valueOf(SplashActivity.USER.get_id()), token);
         RefreshTokenAsyncTask task = new RefreshTokenAsyncTask();
         task.execute(t);
     }

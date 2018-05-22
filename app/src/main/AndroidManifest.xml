@@ -15,9 +15,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name=".MainActivity"
+            android:windowSoftInputMode="adjustPan">
             <intent-filter>
-                <action android:name="MainActivity"/>
+                <action android:name="MainActivity" />
             </intent-filter>
         </activity>
         <activity android:name=".CreateGroupActivity" />
@@ -44,25 +45,24 @@
         <activity android:name=".SetGroupCategoryActivity" />
         <activity
             android:name=".GroupDetailActivity"
-            android:label="@string/title_activity_group_detail"/>
+            android:label="@string/title_activity_group_detail" />
         <activity android:name=".SetImageActivity" />
         <activity
             android:name=".CreateBusinessCardActivity"
             android:screenOrientation="landscape" />
-        <activity android:name=".NotifycationActivity"></activity>
-        <activity android:name=".SetGroupActivity"></activity>
-        <activity android:name=".GroupDeleteOrLeave"></activity>
+        <activity android:name=".NotificationView" />
+        <activity android:name=".SetGroupActivity" />
+        <activity android:name=".GroupDeleteOrLeave" />
 
         <service android:name=".FirebaseMessagingService">
             <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
         <service android:name=".FirebaseInstanceIDService">
             <intent-filter>
-                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
-
         </service>
     </application>
 

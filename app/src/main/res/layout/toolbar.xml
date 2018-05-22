@@ -3,42 +3,40 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="?attr/actionBarSize"
     android:background="@color/colorPrimary">
 
-    <android.support.constraint.ConstraintLayout
+    <TextView
+        android:id="@+id/toolbar_title"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical"
+        android:text="테스트입니다"
+        android:textColor="#ffffff"
+        android:textSize="20sp" />
+
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingTop="4dp"
-        android:paddingBottom="4dp">
-
-        <TextView
-            android:id="@+id/toolbar_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text=""
-            android:textColor="#ffffff"
-            android:textSize="20sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+        android:gravity="center_vertical|end">
 
         <Button
             android:id="@+id/toolbar_notification_bt"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:layout_marginBottom="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginTop="8dp"
-            android:background="@drawable/alarm"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:backgroundTint="#ffffff"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:background="@drawable/alarm"/>
 
+        <com.nex3z.notificationbadge.NotificationBadge
+            android:id="@+id/toolbar_notification_badge"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_toRightOf="@id/toolbar_notification_bt"
+            android:layout_alignTop="@id/toolbar_notification_bt"
+            android:layout_marginLeft="-20dp"
+            android:layout_marginTop="-4dp">
 
-    </android.support.constraint.ConstraintLayout>
+        </com.nex3z.notificationbadge.NotificationBadge>
+    </RelativeLayout>
 
 </android.support.v7.widget.Toolbar>
