@@ -141,9 +141,9 @@ public class CreateBusinessCardActivity extends AppCompatActivity {
     }
 
     public void createBusinessCard(String name, String department, String address, String imgSrc){
-        //BusinessCard businessCard = new BusinessCard(String.valueOf(SplashActivity.USER_PROFILE.getId()), name, department, SplashActivity.USER_TEL, address, imgSrc);
-        //CreateBusinessCardAsyncTask businessCardAsyncTask = new CreateBusinessCardAsyncTask();
-        //businessCardAsyncTask.execute(businessCard);
+        BusinessCard businessCard = new BusinessCard(String.valueOf(SplashActivity.USER.get_id()), name, department, SplashActivity.USER.getTel(), address, imgSrc);
+        CreateBusinessCardAsyncTask businessCardAsyncTask = new CreateBusinessCardAsyncTask();
+        businessCardAsyncTask.execute(businessCard);
     }
 
     public void modifyBusinessCard(String name, String department, String address, String imgSrc){
@@ -157,6 +157,7 @@ public class CreateBusinessCardActivity extends AppCompatActivity {
         businessCardAsyncTask.setModified(modified);
         businessCardAsyncTask.setIndex(index);
         businessCardAsyncTask.execute(businessCard);
+
     }
 
 
