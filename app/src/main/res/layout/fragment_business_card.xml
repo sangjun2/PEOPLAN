@@ -64,6 +64,19 @@
                     android:background="@drawable/border"
                     android:layout_gravity="center_vertical">
                 </com.sang.peoplan.HorizontalGridView>
+                <!--<HorizontalScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+                <GridView
+                    android:id="@+id/businesscard_wallet_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:numColumns="10"
+                    android:background="@drawable/border"
+                    android:layout_gravity="center_vertical">
+
+                </GridView>
+                </HorizontalScrollView>-->
             </LinearLayout>
         </LinearLayout>
 

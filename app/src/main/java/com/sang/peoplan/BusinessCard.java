@@ -48,6 +48,18 @@ public class BusinessCard {
         this.img = img;
     }
 
+    public BusinessCard(String _id, String owner, boolean removed, int counter, String name, String department, String tel, String address, String img) {
+        this._id = _id;
+        this.owner = owner;
+        this.removed = removed;
+        this.counter = counter;
+        this.name = name;
+        this.department = department;
+        this.tel = tel;
+        this.address = address;
+        this.img = img;
+    }
+
     public String getAddress() {
         return address;
     }
