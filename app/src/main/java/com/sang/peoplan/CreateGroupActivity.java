@@ -64,7 +64,7 @@ public class CreateGroupActivity extends AppCompatActivity { // 그룹 추가
         setContentView(R.layout.activity_create_group);
 
          // 그룹 만드는 본인 정보 수집
-        final UserProfile userProfile = SplashActivity.USER_PROFILE;
+        final User userProfile = SplashActivity.USER;
         // 본인의 친구들 정보 수집, 초대목록 초기화
         friends = new ArrayList<>();
         invitationList = new ArrayList<>();
@@ -117,9 +117,9 @@ public class CreateGroupActivity extends AppCompatActivity { // 그룹 추가
                     // 그룹 멤버 데이터 추가
                     Group newGroup;
                     if(groupState.getText().equals("공개그룹"))
-                        newGroup = new Group(String.valueOf(userProfile.getId()), group_name.getText().toString(), category.getText().toString(), true);
+                        newGroup = new Group(userProfile.get_id(), group_name.getText().toString(), category.getText().toString(), true);
                     else
-                        newGroup = new Group(String.valueOf(userProfile.getId()), group_name.getText().toString(), category.getText().toString(), false);
+                        newGroup = new Group(userProfile.get_id(), group_name.getText().toString(), category.getText().toString(), false);
 
                     addGroupMembers(newGroup);
                     // DB에만 저장

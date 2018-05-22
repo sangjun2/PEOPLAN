@@ -29,16 +29,16 @@ public interface APIService { // retrofit 사용을 위한 http api 인터페이
     @PUT("/api/users/token")
     Call<Token> refreshToken(@Body Token token);
 
-    @GET("/api/users/{user}/calendars") // 유저 캘린더 데이터 가져오기
+    @GET("/api/users/{user}/events") // 유저 event 데이터 가져오기
     Call<List<Event>> getUserEvents(@Path("user") String userUID);
 
-    @PUT("/api/users/{user}/calendars")
+    @POST("/api/users/{user}/events")
     Call<Event> createEvent(@Path("user") String userUID, @Body Event event);
 
     @POST("/api/users/{user}/businesscards")
     Call<BusinessCard> createBusinessCard(@Path("user") String userUID, @Body BusinessCard businessCard);
 
-    @GET("/api/user/{user}/businesscards")
+    @GET("/api/users/{user}/businesscards")
     Call<List<BusinessCard>> getBusinessCards(@Path("user") String userUID);
 
     @PUT("/api/businesscards/{id}")

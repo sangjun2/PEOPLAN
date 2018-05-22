@@ -2,7 +2,6 @@ package com.sang.peoplan;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.ShapeDrawable;
@@ -12,25 +11,18 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.RequiresApi;
-import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import org.joda.time.LocalDate;
+import com.nex3z.notificationbadge.NotificationBadge;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -64,6 +56,11 @@ public class BusinessCardFragment extends Fragment {
     HorizontalGridView walletListView;
     WalletAdapter walletAdapter;
 
+    Button toolbarNotificationButton;
+    NotificationBadge notificationBadge;
+
+    OnFragmentInteractionListener mListener;
+
     public BusinessCardFragment() {
         // Required empty public constructor
     }
@@ -89,6 +86,18 @@ public class BusinessCardFragment extends Fragment {
         ArrayList<BusinessCard> myBusinessCards = SplashActivity.BUSINESSCARD_LIST;
         pagerAdapter = new BusinessCardPagerAdapter(myBusinessCards);
 
+        toolbarNotificationButton = view.findViewById(R.id.toolbar_notification_bt); // 그룹 알림 버튼
+        toolbarNotificationButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onNotificationButtonClicked();
+            }
+        });
+
+        notificationBadge = view.findViewById(R.id.toolbar_notification_badge);
+        notificationBadge.setNumber(1);
+
+
         myBusinessCardsViewPager = view.findViewById(R.id.my_businesscard_view);
         myBusinessCardsViewPager.setAdapter(pagerAdapter);
 
@@ -104,14 +113,42 @@ public class BusinessCardFragment extends Fragment {
         return view;
     }
 
+    public void onNotificationButtonClicked() {
+        if(mListener != null) {
+            mListener.onBusinessCardFragmentInteraction();
+        }
+    }
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+
+        if(context instanceof OnFragmentInteractionListener) {
+            mListener = (OnFragmentInteractionListener) context;
+        } else {
+            throw new RuntimeException(context.toString() + "must implement OnFragmentInteractionListener");
+        }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
+        mListener = null;
+    }
+
+    /**
+     * This interface must be implemented by activities that contain this
+     * fragment to allow an interaction in this fragment to be communicated
+     * to the activity and potentially other fragments contained in that
+     * activity.
+     * <p>
+     * See the Android Training lesson <a href=
+     * "http://developer.android.com/training/basics/fragments/communicating.html"
+     * >Communicating with Other Fragments</a> for more information.
+     */
+    public interface OnFragmentInteractionListener {
+        // TODO: Update argument type and name
+        void onBusinessCardFragmentInteraction();
     }
 
     @Override
@@ -251,7 +288,7 @@ public class BusinessCardFragment extends Fragment {
                 department.setText(department.getText().toString() + b.getDepartment());
                 name.setText(name.getText().toString() + b.getName());
                 tel.setText(tel.getText().toString() + b.getTel());
-                email.setText(email.getText().toString() + SplashActivity.USER_PROFILE.getEmail());
+                email.setText(email.getText().toString() + SplashActivity.USER.getEmail());
                 address.setText(address.getText().toString() + b.getAddress());
 
                 container.addView(view);

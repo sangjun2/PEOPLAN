@@ -15,7 +15,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name=".MainActivity"
+            android:windowSoftInputMode="adjustPan">
             <intent-filter>
                 <action android:name="MainActivity" />
             </intent-filter>
@@ -49,7 +50,7 @@
         <activity
             android:name=".CreateBusinessCardActivity"
             android:screenOrientation="landscape" />
-        <activity android:name=".NotifycationActivity" />
+        <activity android:name=".NotificationView" />
         <activity android:name=".SetGroupActivity" />
         <activity android:name=".GroupDeleteOrLeave" />
 

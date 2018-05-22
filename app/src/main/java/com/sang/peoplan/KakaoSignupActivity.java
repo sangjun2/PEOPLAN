@@ -51,7 +51,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class KakaoSignupActivity extends AppCompatActivity { // DB에 유저정보 저장
 
-    UserProfile userProfile;
+    User userProfile;
     ImageView userImage;
     AutofitEdittext userName;
     AutofitEdittext userEmail;
@@ -69,7 +69,7 @@ public class KakaoSignupActivity extends AppCompatActivity { // DB에 유저정�
         mContext = this;
 
         // 카카오 연동된 유저 정보
-        userProfile = SplashActivity.USER_PROFILE;
+        userProfile = SplashActivity.USER;
 
         Toolbar toolbar = findViewById(R.id.kakao_toolbar);
         TextView toolbarTitle = findViewById(R.id.confirm_toolbar_title);
@@ -103,7 +103,7 @@ public class KakaoSignupActivity extends AppCompatActivity { // DB에 유저정�
             @Override
             public void onClick(View view) {
                 User user = new User(); // 어플에서 사용할 유저 클래스,
-                user.setKakaoUID(String.valueOf(userProfile.getId()));
+                user.setKakaoUID(String.valueOf(SplashActivity.KAKAO_PROFILE.getId()));
                 user.setName(userName.getText().toString());
                 user.setTel(userTel.getText().toString());
                 user.setEmail(userEmail.getText().toString());
@@ -119,13 +119,13 @@ public class KakaoSignupActivity extends AppCompatActivity { // DB에 유저정�
             }
         });
 
-        if(userProfile.getProfileImagePath() != null) {
-            Picasso.with(this).load(userProfile.getProfileImagePath()).into(userImage);
+        if(SplashActivity.KAKAO_PROFILE.getProfileImagePath() != null) {
+            Picasso.with(this).load(SplashActivity.KAKAO_PROFILE.getProfileImagePath()).into(userImage);
         }
         // ??
-        userName.setText(userProfile.getNickname());
+        userName.setText(SplashActivity.KAKAO_PROFILE.getNickname());
         userName.setSelection(userName.getText().toString().length());
-        userEmail.setText(userProfile.getEmail());
+        userEmail.setText(SplashActivity.KAKAO_PROFILE.getEmail());
     }
 
     public String getPhoneNumber() {
@@ -179,7 +179,6 @@ public class KakaoSignupActivity extends AppCompatActivity { // DB에 유저정�
                 Response<Void> response = user.execute();
 
                 if(response.code() == 201) { // 추가 성공
-                    SplashActivity.USER_TEL = users[0].getTel();
                     return true;
                 }
             } catch (IOException e) {

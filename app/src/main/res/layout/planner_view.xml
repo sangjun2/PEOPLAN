@@ -8,7 +8,7 @@
     <android.support.constraint.ConstraintLayout
         android:id="@+id/calendar_top_layout"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="?attr/actionBarSize"
         android:background="@color/colorPrimary"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
@@ -18,10 +18,9 @@
         <LinearLayout
             android:id="@+id/calendar_select_layout"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="4dp"
-            android:layout_marginTop="4dp"
+            android:layout_height="0dp"
             android:orientation="vertical"
+            android:gravity="center_vertical"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
@@ -75,18 +74,31 @@
             </LinearLayout>
         </LinearLayout>
 
-        <Button
-            android:id="@+id/calendar_notification_bt"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:layout_marginBottom="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginTop="8dp"
-            android:background="@drawable/alarm"
-            android:backgroundTint="#ffffff"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical|end">
+
+            <Button
+                android:id="@+id/planner_notification_bt"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:backgroundTint="#ffffff"
+                android:background="@drawable/alarm"/>
+
+            <com.nex3z.notificationbadge.NotificationBadge
+                android:id="@+id/planner_notification_badge"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_toRightOf="@id/planner_notification_bt"
+                android:layout_alignTop="@id/planner_notification_bt"
+                android:layout_marginLeft="-20dp"
+                android:layout_marginTop="-4dp">
+
+            </com.nex3z.notificationbadge.NotificationBadge>
+        </RelativeLayout>
+
+
 
         <Button
             android:id="@+id/calendar_select_bt"

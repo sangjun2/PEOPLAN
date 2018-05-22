@@ -325,12 +325,11 @@ public class CreateScheduleActivity extends AppCompatActivity implements ColorPi
                     } else {
                         content = eventContent.getText().toString();
                     }
-                    /*
-                    Event event = new Event(eventTitle.getText().toString(), new Date(startTime.getMillis()), new Date(endTime.getMillis()), repeat, false, colorCode, content);
+
+                    Event event = new Event(eventTitle.getText().toString(), new Date(startTime.getMillis()), new Date(endTime.getMillis()), repeat, colorCode, content, SplashActivity.USER.get_id(), null);
 
                     CreateEventAsyncTask task = new CreateEventAsyncTask();
                     task.execute(event);
-                    */
                 }
             }
         });
@@ -371,10 +370,10 @@ public class CreateScheduleActivity extends AppCompatActivity implements ColorPi
 
         @Override
         protected Boolean doInBackground(Event... events) {
-            Call<Event> event = service.createEvent(String.valueOf(SplashActivity.USER_PROFILE.getId()), events[0]);
+            Call<Event> event = service.createEvent(String.valueOf(SplashActivity.USER.get_id()), events[0]);
             try {
-                if(event.execute().code() == 200) {
-                    Call<List<Event>> callCalendar = service.getUserEvents(String.valueOf(SplashActivity.USER_PROFILE.getId()));
+                if(event.execute().code() == 201) {
+                    Call<List<Event>> callCalendar = service.getUserEvents(String.valueOf(SplashActivity.USER.get_id()));
                     Response<List<Event>> calendars = callCalendar.execute();
                     if(calendars.code() == 200) {
                         for(int i = 0; i < calendars.body().size(); i++) {

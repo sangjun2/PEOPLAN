@@ -32,7 +32,10 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class SplashActivity extends AppCompatActivity {
-    public static UserProfile USER_PROFILE;
+    public static User USER;
+
+    public static UserProfile KAKAO_PROFILE;
+
     public static HashMap<String, Event> EVENT_LIST;
     public static ArrayList<BusinessCard> BUSINESSCARD_LIST;
     public static ArrayList<Group> GROUP_LIST;
@@ -40,8 +43,6 @@ public class SplashActivity extends AppCompatActivity {
     private SessionCallback callback;
 
     private LoginButton loginButton;
-
-    public static String USER_TEL = null;
 
     ProgressBar progressBar;
 
@@ -62,10 +63,6 @@ public class SplashActivity extends AppCompatActivity {
         callback = new SessionCallback();
         Session.getCurrentSession().addCallback(callback);
         Session.getCurrentSession().checkAndImplicitOpen();
-
-        if(USER_PROFILE == null) {
-            loginButton.setVisibility(View.VISIBLE);
-        }
     }
 
     @Override
@@ -125,10 +122,10 @@ public class SplashActivity extends AppCompatActivity {
                 Log.d("KAKAOTAG==", "onSuccess");
                 loginButton.setVisibility(View.GONE);
 
-                USER_PROFILE = userProfile;
+                KAKAO_PROFILE = userProfile;
 
                 GetUserAsyncTask asyncTask = new GetUserAsyncTask();
-                asyncTask.execute(String.valueOf(userProfile.getId()));
+                asyncTask.execute(String.valueOf(userProfile.getId())); // kakaoid -> 유저 _id필요 (받아올 방법 : 세션말고없나)
 
             }
 
@@ -189,7 +186,8 @@ public class SplashActivity extends AppCompatActivity {
                     return 500;
                 } else if(response.code() == 200) {
                     if(response.body().size() == 1) {
-                        USER_TEL = response.body().get(0).getTel();
+                        USER = response.body().get(0);
+
                         Call<List<Event>> callCalendar = service.getUserEvents(uid[0]);
                         Response<List<Event>> calendars = callCalendar.execute();
                         Call<List<BusinessCard>> callBusinessCards = service.getBusinessCards(uid[0]);

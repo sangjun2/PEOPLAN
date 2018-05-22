@@ -78,8 +78,8 @@ public class CreateBusinessCardActivity extends AppCompatActivity {
             address.setText(getIntent().getStringExtra("address"));
         }
         //수정할 수 없는 부분 고정
-        phoneNumber.setText("Phone: " + SplashActivity.USER_TEL);
-        emailAddress.setText("e-mail: " + SplashActivity.USER_PROFILE.getEmail());
+        phoneNumber.setText("Phone: " + SplashActivity.USER.getTel());
+        emailAddress.setText("e-mail: " + SplashActivity.USER.getEmail());
 
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -141,9 +141,9 @@ public class CreateBusinessCardActivity extends AppCompatActivity {
     }
 
     public void createBusinessCard(String name, String department, String address, String imgSrc){
-        BusinessCard businessCard = new BusinessCard(String.valueOf(SplashActivity.USER_PROFILE.getId()), name, department, SplashActivity.USER_TEL, address, imgSrc);
-        CreateBusinessCardAsyncTask businessCardAsyncTask = new CreateBusinessCardAsyncTask();
-        businessCardAsyncTask.execute(businessCard);
+        //BusinessCard businessCard = new BusinessCard(String.valueOf(SplashActivity.USER_PROFILE.getId()), name, department, SplashActivity.USER_TEL, address, imgSrc);
+        //CreateBusinessCardAsyncTask businessCardAsyncTask = new CreateBusinessCardAsyncTask();
+        //businessCardAsyncTask.execute(businessCard);
     }
 
     public void modifyBusinessCard(String name, String department, String address, String imgSrc){
@@ -227,7 +227,7 @@ public class CreateBusinessCardActivity extends AppCompatActivity {
             this.b = businessCards[0];
             Call<BusinessCard> businessCard;
             if(!modified){
-                businessCard = service.createBusinessCard(String.valueOf(SplashActivity.USER_PROFILE.getId()), businessCards[0]);
+                businessCard = service.createBusinessCard(String.valueOf(SplashActivity.USER.get_id()), businessCards[0]);
                 Log.d("owner==", businessCards[0].getOwner());
                 Log.d("name==", businessCards[0].getName());
                 try {
