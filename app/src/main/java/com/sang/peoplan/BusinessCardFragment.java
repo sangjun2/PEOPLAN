@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.OvalShape;
 import android.net.Uri;
@@ -312,6 +313,7 @@ public class BusinessCardFragment extends Fragment {
         @Override
         public View getView(int i, View contextView, ViewGroup viewGroup) {
             View view = LayoutInflater.from(getContext()).inflate(R.layout.business_card_wallet_item, null);
+
             ImageView imageView = view.findViewById(R.id.businesscard_image);
             TextView textView = view.findViewById(R.id.businesscard_name);
             textView.setText(businessCards.get(i).getName());
