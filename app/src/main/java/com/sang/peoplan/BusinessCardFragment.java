@@ -1,8 +1,11 @@
 package com.sang.peoplan;
 
 import android.app.Activity;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.ShapeDrawable;
@@ -15,6 +18,7 @@ import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -86,6 +90,9 @@ public class BusinessCardFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_business_card, container, false);
 
+        TextView title = view.findViewById(R.id.toolbar_title);
+        title.setText("명함");
+
         ArrayList<BusinessCard> myBusinessCards = SplashActivity.BUSINESSCARD_LIST;
         pagerAdapter = new BusinessCardPagerAdapter(myBusinessCards);
 
@@ -139,6 +146,12 @@ public class BusinessCardFragment extends Fragment {
         mListener = null;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+
+    }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -161,34 +174,6 @@ public class BusinessCardFragment extends Fragment {
             return;
         }
         switch (requestCode){
-            case PICK_FROM_ALBUM:
-                mImageCaptureUri = data.getData();
-                Intent intent = new Intent("com.android.camera.action.CROP");
-                intent.setDataAndType(mImageCaptureUri, "image/*");
-
-                intent.putExtra("outputX", 120);
-                intent.putExtra("outputY", 160);
-                intent.putExtra("aspectX", 1);
-                intent.putExtra("aspectY", 1);
-                intent.putExtra("scale", true);
-                intent.putExtra("return-data", true);
-                startActivityForResult(intent, CROP_FROM_IMAGE);
-                break;
-
-            case CROP_FROM_IMAGE:
-                final Bundle extras = data.getExtras();
-                String filePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/SmartWheel/" + System.currentTimeMillis() + ".jpg";
-                if(extras != null){
-                    Bitmap photo = extras.getParcelable("data");
-
-                    storeCropImage(photo, filePath);
-                    absolutePath = filePath;
-                    break;
-                }
-                File f = new File(mImageCaptureUri.getPath());
-                if(f.exists()){
-                    f.delete();
-                }
             case MODIFY_BUSINESSCARD:
                 if(!data.getBooleanExtra("remove", false)){
                     int index = data.getIntExtra("index", 0);
@@ -201,32 +186,11 @@ public class BusinessCardFragment extends Fragment {
                 pagerAdapter.notifyDataSetChanged();
                 break;
             case CREATE_BUSINESSCARD:
-                pagerAdapter.notifyDataSetChanged();
+                getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+                Log.d("businesscardFragment==" , "true");
+                //pagerAdapter.notifyDataSetChanged();
+                //((MainActivity)getActivity()).replaceBusinessCardFragment();
                 break;
-        }
-    }
-
-    private void storeCropImage(Bitmap bitmap, String filePath){
-        String dirPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "SmartWheel";
-        File directory_SmartWheel = new File(dirPath);
-
-        if(!directory_SmartWheel.exists()){
-            directory_SmartWheel.mkdir();
-        }
-        File copyFile = new File(filePath);
-        BufferedOutputStream out = null;
-
-        try{
-            copyFile.createNewFile();
-            out = new BufferedOutputStream(new FileOutputStream(copyFile));
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
-
-            getActivity().sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(copyFile)));
-
-            out.flush();
-            out.close();
-        }catch(Exception e){
-            e.printStackTrace();
         }
     }
 

@@ -14,6 +14,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -82,6 +83,18 @@ public class MainActivity extends AppCompatActivity implements PlannerFragment.O
         notificationView = findViewById(R.id.notification_view);
 
         drawerLayout.setDrawerListener(drawerListener);
+
+    }
+
+    public void replaceBusinessCardFragment(){
+        fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.frame, BusinessCardFragment.newInstance());
+        fragmentTransaction.commit();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
     }
 

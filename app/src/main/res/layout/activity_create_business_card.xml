@@ -56,6 +56,7 @@
                         android:id="@+id/departmant"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:imeOptions="flagNoExtractUi"
                         android:layout_weight="3" />
                 </LinearLayout>
 
@@ -77,6 +78,7 @@
                         android:id="@+id/name"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:imeOptions="flagNoExtractUi"
                         android:layout_weight="3" />
                 </LinearLayout>
 
@@ -142,6 +144,7 @@
                         android:id="@+id/address"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:imeOptions="flagNoExtractUi"
                         android:layout_weight="3" />
                 </LinearLayout>
             </LinearLayout>
