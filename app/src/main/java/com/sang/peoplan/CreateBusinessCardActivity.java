@@ -204,7 +204,6 @@ public class CreateBusinessCardActivity extends AppCompatActivity {
             super.onPostExecute(isSuccessed);
             if(isSuccessed) {
                 Intent returnIntent = new Intent();
-                setResult(Activity.RESULT_OK,returnIntent);
 
                 if(modified) {
 //                    BusinessCard b = SplashActivity.BUSINESSCARD_LIST.get(index);
@@ -217,9 +216,12 @@ public class CreateBusinessCardActivity extends AppCompatActivity {
                     returnIntent.putExtra("name", this.b.getName());
                     returnIntent.putExtra("department", this.b.getDepartment());
                 }
-
+                setResult(Activity.RESULT_OK,returnIntent);
+                finish();
             }
-            finish();
+            else{
+                Toast.makeText(getApplicationContext(), "오류가 발생하였습니다.", Toast.LENGTH_SHORT).show();
+            }
         }
 
         @Override
