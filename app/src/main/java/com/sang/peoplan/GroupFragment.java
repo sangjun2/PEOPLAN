@@ -123,8 +123,8 @@ public class GroupFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == 1){ // 그룹만들기 버튼 클릭시 requestCode 1 로 날라감
             if(resultCode == Activity.RESULT_OK){  // createGroupActivity에서 추가 성공시, 리프레쉬
-                //GetGroupsAsyncTask task = new GetGroupsAsyncTask();
-                //task.execute(String.valueOf(SplashActivity.USER_PROFILE.getId()));
+                GetGroupsAsyncTask task = new GetGroupsAsyncTask();
+                task.execute(String.valueOf(SplashActivity.USER.get_id()));
             }
             if(resultCode == Activity.RESULT_CANCELED){ // createGroupActivity에서 추가 실패시, 물론 실패시 구현 안됨
             }

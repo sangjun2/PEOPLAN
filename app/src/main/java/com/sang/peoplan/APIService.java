@@ -58,4 +58,10 @@ public interface APIService { // retrofit 사용을 위한 http api 인터페이
 
     @GET("/api/groups/{name}") // 그룹 찾기
     Call<List<Group>> searchGroups(@Path("name") String input);
+
+    @DELETE("/api/groups/{group}") // 그룹 삭제
+    Call<Group> removeGroup(@Path("group") String group_id);
+
+    @PUT("/api/groups/{group}/members/{user}") // 그룹 탈퇴
+    Call<Group> leaveGroup(@Path("group") String group_id, @Path("user") String user_id);
 }
