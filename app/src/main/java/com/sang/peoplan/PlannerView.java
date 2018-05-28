@@ -69,6 +69,7 @@ public class PlannerView extends ConstraintLayout {
 
     private DayScheduleDialog mDayScheduleDialog;
 
+    PlannerFragment plannerFragment;
 
     public PlannerView(Context context) {
         super(context);
@@ -86,6 +87,8 @@ public class PlannerView extends ConstraintLayout {
         this.date = localDate;
         removeAllViews();
         this.isExistToday = false;
+
+        this.plannerFragment = plannerFragment;
 
         String infService = Context.LAYOUT_INFLATER_SERVICE;
         LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(infService);
@@ -335,6 +338,7 @@ public class PlannerView extends ConstraintLayout {
                     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd");
                     String date = dateFormat.format(viewHolder.getLocalDate().toDate());
                     dialog.day = date;
+                    dialog.plannerFragment = plannerFragment;
 
                     FragmentManager fragmentManager = ((AppCompatActivity) mContext).getSupportFragmentManager();
                     dialog.show(fragmentManager, "DIALOG");
@@ -350,6 +354,7 @@ public class PlannerView extends ConstraintLayout {
                     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd");
                     String date = dateFormat.format(viewHolder.getLocalDate().toDate());
                     dialog.day = date;
+                    dialog.plannerFragment = plannerFragment;
 
                     FragmentManager fragmentManager = ((AppCompatActivity) mContext).getSupportFragmentManager();
                     dialog.show(fragmentManager, "DIALOG");
@@ -368,19 +373,11 @@ public class PlannerView extends ConstraintLayout {
                 viewHolder.setLocalDate(this.previousCalendar);
                 viewHolder.dateText.setText(this.previousCalendar.dayOfMonth().getAsText());
                 viewHolder.dateText.setTextColor(Color.parseColor("#A9A9A9"));
-                if (isExistToday(this.previousCalendar)) {
-                    viewHolder.dateText.setBackgroundResource(R.drawable.ic_highlight_24dp);
-                    isExistToday = true;
-                }
             } else if (position >= startDay + this.calendarCount) { // 다음달
                 this.nextCalendar = this.calendar.plusDays(plusCount++);
                 viewHolder.setLocalDate(this.nextCalendar);
                 viewHolder.dateText.setText(this.nextCalendar.dayOfMonth().getAsText());
                 viewHolder.dateText.setTextColor(Color.parseColor("#A9A9A9"));
-                if (isExistToday(this.nextCalendar)) {
-                    viewHolder.dateText.setBackgroundResource(R.drawable.ic_highlight_24dp);
-                    isExistToday = true;
-                }
             } else { // 현재달
                 viewHolder.setLocalDate(this.calendar);
                 viewHolder.dateText.setText(this.calendar.dayOfMonth().getAsText());

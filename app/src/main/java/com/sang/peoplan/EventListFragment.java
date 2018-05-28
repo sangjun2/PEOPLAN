@@ -1,7 +1,6 @@
 package com.sang.peoplan;
 
 import android.content.Context;
-import android.graphics.*;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -69,7 +68,7 @@ public class EventListFragment extends Fragment {
     // TODO: Rename method, update argument and hook method into UI event
     public void onEventSelected(Event event) {
         if (mListener != null) {
-            mListener.onFragmentInteraction(event);
+            mListener.onEventListFragmentInteraction(event);
         }
     }
 
@@ -104,7 +103,7 @@ public class EventListFragment extends Fragment {
      */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onFragmentInteraction(Event event);
+        void onEventListFragmentInteraction(Event event);
     }
 
     public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{

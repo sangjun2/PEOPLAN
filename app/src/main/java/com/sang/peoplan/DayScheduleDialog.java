@@ -37,7 +37,7 @@ import java.util.ArrayList;
  * Created by sanginLee on 2018-01-10.
  */
 // dialog : 알림창
-public class DayScheduleDialog extends DialogFragment implements EventListFragment.OnFragmentInteractionListener {
+public class DayScheduleDialog extends DialogFragment implements EventListFragment.OnFragmentInteractionListener, EventDetailFragment.OnFragmentInteractionListener {
     public String day;
 
     ArrayList<Event> myEvent;
@@ -47,6 +47,8 @@ public class DayScheduleDialog extends DialogFragment implements EventListFragme
 
     ImageView backButton;
     FloatingActionButton fab;
+
+    PlannerFragment plannerFragment;
 
     public DayScheduleDialog() {
         super();
@@ -102,7 +104,7 @@ public class DayScheduleDialog extends DialogFragment implements EventListFragme
     }
 
     @Override
-    public void onFragmentInteraction(Event event) {
+    public void onEventListFragmentInteraction(Event event) {
         backButton.setVisibility(View.VISIBLE);
         fab.setVisibility(View.GONE);
 
@@ -111,6 +113,7 @@ public class DayScheduleDialog extends DialogFragment implements EventListFragme
         fragmentManager = getChildFragmentManager();
         fragmentTransaction = fragmentManager.beginTransaction();
         final EventDetailFragment eventDetailFragment = EventDetailFragment.newInstance(event);
+        eventDetailFragment.dayScheduleDialog = this;
 
 
         backButton.setOnClickListener(new View.OnClickListener() {
@@ -131,5 +134,12 @@ public class DayScheduleDialog extends DialogFragment implements EventListFragme
         fragmentTransaction.replace(R.id.event_frame, eventDetailFragment);
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
+    }
+
+    @Override
+    public void onEventDetailFragmentInteraction() {
+        dismiss();
+        plannerFragment.onStart();
+
     }
 }

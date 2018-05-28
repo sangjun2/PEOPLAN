@@ -315,7 +315,6 @@ public class CreateScheduleActivity extends AppCompatActivity implements ColorPi
                 if(isExistAllData(startTime, endTime)) {
 
                     SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm");
-                    Toast.makeText(getApplicationContext(), dateFormat.format(startTime.toDate()) + ", " + dateFormat.format(endTime.toDate()), Toast.LENGTH_SHORT).show();
                     intentAlarm.putExtra("eventTitle", eventTitle.getText().toString());
 
                     int repeat = REPEAT_NONE;
@@ -388,10 +387,11 @@ public class CreateScheduleActivity extends AppCompatActivity implements ColorPi
 
         @Override
         protected Boolean doInBackground(Event... events) {
-            Call<Event> event = service.createEvent(String.valueOf(SplashActivity.USER.get_id()), events[0]);
+            Call<Void> event = service.createEvent(events[0]);
             try {
-                if(event.execute().code() == 201) {
-                    Call<List<Event>> callCalendar = service.getUserEvents(String.valueOf(SplashActivity.USER.get_id()));
+                Response<Void> response = event.execute();
+                if(response.code() == 201) {
+                    Call<List<Event>> callCalendar = service.getUserEvents(SplashActivity.USER.get_id());
                     Response<List<Event>> calendars = callCalendar.execute();
                     if(calendars.code() == 200) {
                         for(int i = 0; i < calendars.body().size(); i++) {
@@ -405,13 +405,15 @@ public class CreateScheduleActivity extends AppCompatActivity implements ColorPi
                             }
                         }
                     }
+
                     return true;
+                } else {
+                    return false;
                 }
             } catch (IOException e) {
                 e.printStackTrace();
+                return false;
             }
-
-            return false;
         }
     }
 
