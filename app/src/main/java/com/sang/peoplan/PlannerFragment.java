@@ -38,7 +38,6 @@ public class PlannerFragment extends Fragment {
 
         // 달력 구성
         plannerView = view.findViewById(R.id.planner);
-        plannerView.initView(new LocalDate(), this);
 
         return view;
     }
@@ -63,6 +62,7 @@ public class PlannerFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+
         plannerView.initView(new LocalDate(), this);
     }
 
