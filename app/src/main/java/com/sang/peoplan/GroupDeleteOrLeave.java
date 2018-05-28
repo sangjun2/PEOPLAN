@@ -73,7 +73,7 @@ public class GroupDeleteOrLeave extends AppCompatActivity {
         finish();
     }
 
-    // 스레드 이용한 DB에 그룹 데이터 저장
+    // 스레드 이용한 DB에 변경사항 처리
     private class DeleteOrLeaveGroupAsyncTask extends AsyncTask<Group, Void, Boolean> {
         Retrofit retrofit;
         APIService service;
@@ -108,20 +108,30 @@ public class GroupDeleteOrLeave extends AppCompatActivity {
         protected Boolean doInBackground(Group... groups) {
             // 그룹 탈퇴 나 삭제
             // switch 문으로 요청에 따른 처리\
+
             Call<Group> group;
             switch(WhatToDo){
+
                 case GroupDetailActivity.REQUEST_DELETE_GROUP:
-                    group = service.createGroup(groups[0]);
+                    group = service.removeGroup(groups[0].get_id());
                     break;
+
                 case GroupDetailActivity.REQUEST_LEAVE_GROUP:
-                    group = service.createGroup(groups[0]);
+                    group = service.leaveGroup(groups[0].get_id(), SplashActivity.USER.get_id());
                     break;
+
                 default: // 잘못된 입력인 경우
                     group = null;
             }
             try {
                 if(group.execute().code() == 200) { // 처리 성공
+
                     return true;
+
+                }else{
+
+                    // 에러 처리
+
                 }
             } catch (IOException e) {
                 e.printStackTrace();

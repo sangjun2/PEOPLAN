@@ -59,10 +59,9 @@ public class CreateGroupActivity extends AppCompatActivity { // 그룹 추가
     private RecyclerView.LayoutManager layoutManager; // 레이아웃 매니저
 
     // ArrayList, 많은 양의 자료를 다루는 경우 이게 최선책인지 검토
-    private ArrayList<User> friends; //  친구 목록
+    private ArrayList<ContactModel> friends; //  친구 목록
     private ArrayList<String> invitationList; // 친구 id
 
-    private final int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 1000;
     final int REQUESTCODE_CATEGORY = 500;
 
     /*
@@ -78,7 +77,12 @@ public class CreateGroupActivity extends AppCompatActivity { // 그룹 추가
         // 본인의 친구들 정보 수집, 초대목록 초기화
         if(ContextCompat.checkSelfPermission(this,Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED ){
         // 주소록 권한이 없는 경우 권한 요청
-            ActivityCompat.requestPermissions( this, new String[] { Manifest.permission.READ_CONTACTS}, MY_PERMISSIONS_REQUEST_READ_CONTACTS );
+            if(ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_CONTACTS)){
+
+            }else{
+                Toast.makeText( this, "주소록 권한 없음", Toast.LENGTH_LONG).show();
+                finish();
+            }
         }else{
             friends = getContactList();
         }
@@ -160,7 +164,7 @@ public class CreateGroupActivity extends AppCompatActivity { // 그룹 추가
         friend_list_recycler_view.setAdapter(adapter);
     }
 
-    private ArrayList<User> getContactList() {
+    private ArrayList<ContactModel> getContactList() {
         Uri uri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
 
         String[] projection = new String[]{
@@ -176,7 +180,7 @@ public class CreateGroupActivity extends AppCompatActivity { // 그룹 추가
 
         Cursor contactCursor = getContentResolver().query( uri, projection, null, selectionArgs, sortOrder );
 
-        ArrayList<User> contactList = new ArrayList<>();
+        ArrayList<ContactModel> contactList = new ArrayList<>();
 
         if( contactCursor.moveToFirst() ){
             do {
@@ -187,26 +191,12 @@ public class CreateGroupActivity extends AppCompatActivity { // 그룹 추가
                 friend.setName( contactCursor.getString(2) );
                 friend.setTel( phoneNumber );
                 friend.setKakaoUID( contactCursor.getString(0) ); // 임시방편
-
-                contactList.add( friend );
+                ContactModel aModel = new ContactModel(friend, false);
+                contactList.add( aModel );
             } while ( contactCursor.moveToNext() );
         }
 
         return contactList;
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch( requestCode ){
-            case MY_PERMISSIONS_REQUEST_READ_CONTACTS: {
-                if ( grantResults[0] == PackageManager.PERMISSION_GRANTED ) {
-                    friends = getContactList();
-                } else {
-                    Toast.makeText( this, "주소록 권한 없음", Toast.LENGTH_LONG).show();
-                }
-            }
-            return;
-        }
     }
 
     @Override
@@ -291,10 +281,32 @@ public class CreateGroupActivity extends AppCompatActivity { // 그룹 추가
         }
     }
 
-    private class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.ItemViewHolder>{
-        private ArrayList<User> friendlist; // 친구목록
+    private class ContactModel{
+        private User user;
+        private boolean isChecked;
 
-        public FriendsAdapter(ArrayList<User> friendlist) {
+        public ContactModel(User user, boolean isChecked){
+            this.user = user;
+            this.isChecked = isChecked;
+        }
+
+        public boolean isChecked() {
+            return isChecked;
+        }
+
+        public void setChecked(boolean checked) {
+            isChecked = checked;
+        }
+
+        public User getUser() {
+            return user;
+        }
+    }
+
+    private class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.ItemViewHolder>{
+        private ArrayList<ContactModel> friendlist; // 친구목록
+
+        public FriendsAdapter(ArrayList<ContactModel> friendlist) {
             this.friendlist = friendlist;
         }
 
@@ -303,19 +315,31 @@ public class CreateGroupActivity extends AppCompatActivity { // 그룹 추가
         public ItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) { // xml 상에서 커스텀 된 레이아웃 사용 /?!!!
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.group_friendlist_item, parent, false);
             ItemViewHolder holder = new ItemViewHolder(view);
-            // 아이템 클릭시 반응
-            holder.itemView.setOnClickListener(holder);
 
             return holder;
         }
 
         // View의 내용을 해당 포지션의 데이터로 바꿉니다.
         @Override
-        public void onBindViewHolder(ItemViewHolder holder, int position) {
-            // 일단 이름만 변경
-            holder._name.setText(friendlist.get(position).getName() + friendlist.get(position).getTel() ) ;
-            holder._position = position;
+        public void onBindViewHolder(final ItemViewHolder holder, int position) {
+            holder._name.setText(friendlist.get(position).getUser().getName() + friendlist.get(position).getUser().getTel() ) ;
 
+            holder._choicecheckbox.setChecked(friendlist.get(position).isChecked());
+            holder._choicecheckbox.setTag(position);
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Integer pos = (Integer) holder._choicecheckbox.getTag();
+                    if (friendlist.get(pos).isChecked()) {
+                        friendlist.get(pos).setChecked(false);
+                        invitationList.remove(friendlist.get(pos).getUser().getKakaoUID());
+                    } else {
+                        friendlist.get(pos).setChecked(true);
+                        invitationList.add(friendlist.get(pos).getUser().getKakaoUID());
+                    }
+                    holder._choicecheckbox.toggle();
+                }
+            });
         }
 
         @Override
@@ -325,43 +349,15 @@ public class CreateGroupActivity extends AppCompatActivity { // 그룹 추가
 
         // 커스텀 뷰홀더, 이미지, 이름, 체크박스
         // 바인딩 완료
-        class ItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, CompoundButton.OnCheckedChangeListener{
+        class ItemViewHolder extends RecyclerView.ViewHolder{
             private ImageView _img;
             private TextView _name;
             private CheckBox _choicecheckbox; // 임시로 ID
-            private int _position; // 위치
             public ItemViewHolder(View itemView){
                 super(itemView);
                 _img = itemView.findViewById(R.id.friend_item_img);
                 _name = itemView.findViewById(R.id.friend_item_name);
                 _choicecheckbox = itemView.findViewById(R.id.friend_choice_cb);
-                _choicecheckbox.setOnCheckedChangeListener(this);
-                _position = 0;
-                // 여기수정, Recyclerview 재활용때문에 발생하는 checkbox 리셋
-                this.setIsRecyclable(false);
-            }
-
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                switch(compoundButton.getId()){
-                    case R.id.friend_choice_cb:
-                        if(b){
-                            _choicecheckbox.setChecked(true);
-                            invitationList.add(friendlist.get(_position).getKakaoUID()); // 초대목록에 선택된 유저 id 추가
-                        }else{
-                            _choicecheckbox.setChecked(false);
-                            invitationList.remove(friendlist.get(_position).getKakaoUID()); // 초대목록에 선택된 유저 id 삭제
-                        }
-                }
-            }
-
-            @Override
-            public void onClick(View view) {
-                if(_choicecheckbox.isChecked()){
-                    _choicecheckbox.setChecked(false);
-                }else{
-                    _choicecheckbox.setChecked(true);
-                }
             }
         }
     }

@@ -1,8 +1,13 @@
 package com.sang.peoplan;
 
+import android.*;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -46,10 +51,26 @@ public class SplashActivity extends AppCompatActivity {
 
     ProgressBar progressBar;
 
+    private final int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 1000;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
+
+        if(ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED ){
+            // 주소록 권한이 없는 경우 권한 요청
+            if(ActivityCompat.shouldShowRequestPermissionRationale(this, android.Manifest.permission.READ_CONTACTS)){
+
+            }else{
+                ActivityCompat.requestPermissions( this,
+                        new String[] { android.Manifest.permission.READ_CONTACTS},
+                        MY_PERMISSIONS_REQUEST_READ_CONTACTS );
+            }
+        }else{
+            // 걍 지나가~
+        }
+
 
         loginButton = findViewById(R.id.login_bt);
 
@@ -63,6 +84,19 @@ public class SplashActivity extends AppCompatActivity {
         callback = new SessionCallback();
         Session.getCurrentSession().addCallback(callback);
         Session.getCurrentSession().checkAndImplicitOpen();
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch( requestCode ){
+            case MY_PERMISSIONS_REQUEST_READ_CONTACTS: {
+                if ( grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED ) {
+
+                } else {
+                    finish();
+                }
+            }
+            return;
+        }
     }
 
     @Override
